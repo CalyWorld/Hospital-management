@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import { IRecord } from "./records";
 import { IMessage } from "./messages";
 import { IAppointment } from "./appointments";

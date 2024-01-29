@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import { ITreatment } from "./treatment";
 
 export interface IRecord {

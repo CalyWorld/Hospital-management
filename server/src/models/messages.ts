@@ -1,4 +1,4 @@
-import mongoose, { Schema, Types, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 
 export interface IMessage {
   sender: Schema.Types.ObjectId;
