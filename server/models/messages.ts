@@ -1,8 +1,8 @@
-import mongoose, { Schema, Model } from "mongoose";
+import mongoose, { Schema, Model, Types } from "mongoose";
 
 export interface IMessage {
-  sender: Schema.Types.ObjectId;
-  recipient: Schema.Types.ObjectId;
+  sender: Types.ObjectId;
+  recipient: Types.ObjectId;
   onModel: "Doctor" | "Patient";
   content: string;
   dateSent: Date;

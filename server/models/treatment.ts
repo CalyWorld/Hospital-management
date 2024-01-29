@@ -1,10 +1,10 @@
-import mongoose, { Schema, Model } from "mongoose";
+import mongoose, { Schema, Model, Types } from "mongoose";
 import { IMedications } from "./medication";
 export interface ITreatment {
   name: string;
   date: Date;
   totalFee: number;
-  doctor: Schema.Types.ObjectId;
+  doctor: Types.ObjectId;
   medication: IMedications[];
 }
 

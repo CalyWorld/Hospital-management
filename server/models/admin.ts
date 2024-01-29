@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model } from "mongoose";
+import mongoose, { Schema, Model, Types } from "mongoose";
 import { IDoctor } from "./doctor";
 import { IPatient } from "./patient";
 

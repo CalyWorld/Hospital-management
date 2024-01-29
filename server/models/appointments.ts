@@ -1,10 +1,10 @@
-import mongoose, { Schema, Model } from "mongoose";
+import mongoose, { Schema, Model, Types } from "mongoose";
 import { IPatient } from "./patient";
 import { IDoctor } from "./doctor";
 
 export interface IAppointment {
-  patient: Schema.Types.ObjectId;
-  doctor: Schema.Types.ObjectId;
+  patient: Types.ObjectId;
+  doctor: Types.ObjectId;
   date: Date;
   status: "Scheduled" | "Completed" | "Cancelled";
 }
