@@ -2,18 +2,18 @@ import mongoose, { Schema, Model } from "mongoose";
 import { IDoctor } from "./doctor";
 import { IPatient } from "./patient";
 
-interface IAdmin {
-  name: string;
+export interface IAdmin {
+  username: string;
   password: string;
-  Doctors: IDoctor;
-  Patients: IPatient;
+  doctors: IDoctor[];
+  patients: IPatient[];
 }
 
 const adminSchema = new Schema<IAdmin>({
-  name: { type: String, required: true },
+  username: { type: String, required: true },
   password: { type: String, required: true },
-  Doctors: { type: Schema.Types.ObjectId, ref: "Doctor" },
-  Patients: { type: Schema.Types.ObjectId, ref: "Patient" },
+  doctors: [{ type: Schema.Types.ObjectId, ref: "Doctor" }],
+  patients: [{ type: Schema.Types.ObjectId, ref: "Patient" }],
 });
 
 export const Admin: Model<IAdmin> = mongoose.model("Admin", adminSchema);

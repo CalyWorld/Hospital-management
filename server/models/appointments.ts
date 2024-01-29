@@ -3,15 +3,15 @@ import { IPatient } from "./patient";
 import { IDoctor } from "./doctor";
 
 export interface IAppointment {
-  patient: IPatient;
-  doctor: IDoctor;
+  patient: Schema.Types.ObjectId;
+  doctor: Schema.Types.ObjectId;
   date: Date;
   status: "Scheduled" | "Completed" | "Cancelled";
 }
 
 const appointmentSchema = new Schema<IAppointment>({
-  patient: { type: Schema.Types.ObjectId, ref: "Patient" },
-  doctor: { type: Schema.Types.ObjectId, ref: "Doctor" },
+  patient: [{ type: Schema.Types.ObjectId, ref: "Patient" }],
+  doctor: [{ type: Schema.Types.ObjectId, ref: "Doctor" }],
   date: Date,
   status: {
     type: String,
@@ -20,7 +20,7 @@ const appointmentSchema = new Schema<IAppointment>({
   },
 });
 
-export const Message: Model<IAppointment> = mongoose.model(
+export const Appointment: Model<IAppointment> = mongoose.model(
   "Appointment",
   appointmentSchema,
 );
