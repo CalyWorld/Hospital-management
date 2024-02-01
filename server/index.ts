@@ -8,6 +8,7 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import logger from "morgan";
 import mongoose from "mongoose";
+import { Admin } from "./models/admin";
 const authRoutes = require("./routes/auth");
 
 dotenv.config();
@@ -39,11 +40,41 @@ app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(authRoutes);
+passport.use(
+  new LocalStrategy(async (username: string, password: string, done) => {
+    try {
+      console.log("arrived here");
+      // const user = await Admin.findOne({ username: "admin1" });
+      // console.log(user);
+      // if (!user) {
+      //   return done(null, false, { message: "Incorrect Username" });
+      // }
+      // const match = await bcrypt.compare(password, user.password);
+      // if (!match) {
+      //   return done(null, false, { message: "Incorrect Password" });
+      // }
+      // return done(null, user);
+    } catch (err) {
+      console.log(err);
+      return done(err);
+    }
+  }),
+);
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
+passport.serializeUser((user: any, done) => {
+  done(null, user.id);
 });
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await Admin.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
+});
+
+app.use(authRoutes);
 
 app.use(logger("dev"));
 app.use(cookieParser());

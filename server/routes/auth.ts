@@ -1,14 +1,31 @@
 import express, { Request, Response } from "express";
-
+import passport from "passport";
 const router = express.Router();
+import { Admin } from "../models/admin";
+const asyncHandler = require("express-async-handler");
 
-router.get("/api/admin/login", (req: Request, res: Response) => {
-  res.send("Admin login");
-});
+router.post(
+  "/api/admin/login",
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/api/admin/login",
+  }),
+);
 
-router.post("/api/admin/login", (req: Request, res: Response) => {
-  res.send("Admin login");
-});
+router.get(
+  "/",
+  asyncHandler(async (req: Request, res: Response) => {
+    if (req.isAuthenticated()) {
+      const username = req.user;
+      console.log(username);
+      try {
+        res.json(username);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }),
+);
 
 router.post("/api/admin/logout", (req: Request, res: Response) => {
   res.send("Admin logout");
