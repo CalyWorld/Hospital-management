@@ -1,14 +1,11 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import dotenv from "dotenv";
 const cors = require("cors");
-import bcrypt from "bcryptjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
 import logger from "morgan";
 import mongoose from "mongoose";
-import { Admin } from "./models/admin";
+const passport = require("./middleware/passportConfig");
 const authRoutes = require("./routes/auth");
 
 dotenv.config();
@@ -39,40 +36,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
-
-passport.use(
-  new LocalStrategy(async (username: string, password: string, done) => {
-    try {
-      console.log("arrived here");
-      // const user = await Admin.findOne({ username: "admin1" });
-      // console.log(user);
-      // if (!user) {
-      //   return done(null, false, { message: "Incorrect Username" });
-      // }
-      // const match = await bcrypt.compare(password, user.password);
-      // if (!match) {
-      //   return done(null, false, { message: "Incorrect Password" });
-      // }
-      // return done(null, user);
-    } catch (err) {
-      console.log(err);
-      return done(err);
-    }
-  }),
-);
-
-passport.serializeUser((user: any, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await Admin.findById(id);
-    done(null, user);
-  } catch (err) {
-    done(err);
-  }
-});
 
 app.use(authRoutes);
 

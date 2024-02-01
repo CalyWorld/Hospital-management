@@ -23,7 +23,7 @@ export default function AdminForm() {
   const onSubmit: SubmitHandler<adminSignInSchemaType> = async (data) => {
     try {
       const adminUser = { username: data.username, password: data.password };
-      const response = await fetch("", {
+      const response = await fetch(`${import.meta.env.VITE_API_ADMIN_KEY}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
