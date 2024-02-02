@@ -1,6 +1,4 @@
 import mongoose, { Schema, Model, Types } from "mongoose";
-import { IPatient } from "./patient";
-import { IDoctor } from "./doctor";
 
 export interface IAppointment {
   patient: Types.ObjectId;
