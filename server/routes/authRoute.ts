@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import passport from "passport";
+import bcrypt from "bcryptjs";
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
 
@@ -9,22 +10,6 @@ router.post(
   passport.authenticate("admin", {
     successRedirect: "/api/admin",
     failureRedirect: "/api/admin/login",
-  }),
-);
-
-//
-router.get(
-  "/api/admin",
-  asyncHandler(async (req: Request, res: Response) => {
-    if (req.isAuthenticated()) {
-      const username = req.user;
-      console.log(username);
-      try {
-        res.json(username);
-      } catch (err) {
-        console.log(err);
-      }
-    }
   }),
 );
 
@@ -58,21 +43,6 @@ router.post("/api/doctor/signup", (req: Request, res: Response) => {
 });
 
 router.get(
-  "/api/doctor",
-  asyncHandler(async (req: Request, res: Response) => {
-    if (req.isAuthenticated()) {
-      const username = req.user;
-      console.log(username);
-      try {
-        res.json(username);
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  }),
-);
-
-router.get(
   "/api/doctor/logout",
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -97,24 +67,20 @@ router.post(
   }),
 );
 
-router.post("/api/patient/signup", (req: Request, res: Response) => {
-  res.send("patient signup");
-});
-
-router.get(
-  "/api/patient",
-  asyncHandler(async (req: Request, res: Response) => {
-    if (req.isAuthenticated()) {
-      const username = req.user;
-      console.log(username);
-      try {
-        res.json(username);
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  }),
-);
+// router.post("/api/patient/signup", asyncHandler(async(req: Request, res: Response, next:NextFunction) => {
+//   bcrypt.hash(
+//     req.body.password,
+//     10,
+//     async(err:Error, hashPassword:string)=>{
+//       if(err){
+//         return next(err)
+//       }
+//       const patient =  new Patient({
+//         username: req.body.username
+//       })
+//     }
+//   )
+// }));
 
 router.get(
   "/api/patient/logout",

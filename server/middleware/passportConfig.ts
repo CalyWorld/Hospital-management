@@ -11,13 +11,8 @@ passport.use(
   new LocalStrategy(async (username: string, password: string, done) => {
     try {
       const user = await Admin.findOne({ username: username });
-      console.log(user);
       if (!user) {
         return done(null, false, { message: "Incorrect Admin Username" });
-      }
-      const match = await bcrypt.compare(password, user.password);
-      if (!match) {
-        return done(null, false, { message: "Incorrect Admin Password" });
       }
       return done(null, user);
     } catch (err) {
@@ -70,6 +65,7 @@ passport.use(
 );
 
 passport.serializeUser((user: any, done) => {
+  console.log(user);
   done(null, user.id);
 });
 

@@ -6,7 +6,10 @@ import session from "express-session";
 import logger from "morgan";
 import mongoose from "mongoose";
 const passport = require("./middleware/passportConfig");
-const authRoutes = require("./routes/auth");
+const authRoutes = require("./routes/authRoute");
+const adminRoutes = require("./routes/adminRoute");
+const doctorRoutes = require("./routes/doctorRoute");
+const patientRoutes = require("./routes/patientRoute");
 
 dotenv.config();
 
@@ -38,6 +41,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(authRoutes);
+app.use(adminRoutes);
+app.use(doctorRoutes);
+app.use(patientRoutes);
 
 app.use(logger("dev"));
 app.use(cookieParser());

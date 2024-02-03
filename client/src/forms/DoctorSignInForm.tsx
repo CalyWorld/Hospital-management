@@ -2,33 +2,33 @@ import * as z from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-const adminFormSchema = z.object({
+const doctorFormSchema = z.object({
   username: z.string().min(4, { message: "username is required" }),
   password: z
     .string()
     .min(4, { message: "password must be at least 4 characters" }),
 });
 
-type adminSignInSchemaType = z.infer<typeof adminFormSchema>;
+type doctorSignInSchemaType = z.infer<typeof doctorFormSchema>;
 
-export default function AdminForm() {
+export default function DoctorForm() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<adminSignInSchemaType>({
-    resolver: zodResolver(adminFormSchema),
+  } = useForm<doctorSignInSchemaType>({
+    resolver: zodResolver(doctorFormSchema),
   });
 
-  const onSubmit: SubmitHandler<adminSignInSchemaType> = async (data) => {
+  const onSubmit: SubmitHandler<doctorSignInSchemaType> = async (data) => {
     try {
-      const adminUser = { username: data.username, password: data.password };
-      const response = await fetch(`${import.meta.env.VITE_API_ADMIN_API}`, {
+      const doctorUser = { username: data.username, password: data.password };
+      const response = await fetch(`${import.meta.env.VITE_API_DOCTOR_API}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(adminUser),
+        body: JSON.stringify(doctorUser),
         credentials: "include",
       });
       if (response.ok) {
@@ -47,7 +47,7 @@ export default function AdminForm() {
       style={{ height: "417px", width: "626px" }}
     >
       <div className="form-title">
-        <h1 className="text-center">Login Admin</h1>
+        <h1 className="text-center">Login Doctor</h1>
       </div>
       <form
         className="flex flex-col gap-5 w-96 justify-center"
