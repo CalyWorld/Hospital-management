@@ -14,6 +14,10 @@ passport.use(
       if (!user) {
         return done(null, false, { message: "Incorrect Admin Username" });
       }
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) {
+        return done(null, false, { message: "Incorrect Admin Password" });
+      }
       return done(null, user);
     } catch (err) {
       return done(err);
@@ -65,7 +69,6 @@ passport.use(
 );
 
 passport.serializeUser((user: any, done) => {
-  console.log(user);
   done(null, user.id);
 });
 
