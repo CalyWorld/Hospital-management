@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import Cookies from "js-cookie";
 
 interface AdminUser {
@@ -10,6 +16,7 @@ interface AdminUser {
 
 interface AdminUserContextProps {
   adminUser: AdminUser | null;
+  setAdminUser: React.Dispatch<React.SetStateAction<AdminUser | null>>;
   updateAdminUserDetails: (updatedDetails: AdminUser) => void;
 }
 
@@ -33,8 +40,21 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
   children,
 }: AdminUserProviderProps) => {
   const adminUserFromCookies = Cookies.get("adminUser");
-  const user = adminUserFromCookies ? JSON.parse(adminUserFromCookies) : null;
-  const [adminUser, setAdminUser] = useState<AdminUser | null>(user);
+  const initialUser = adminUserFromCookies
+    ? JSON.parse(adminUserFromCookies)
+    : null;
+
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(initialUser);
+
+  useEffect(() => {
+    if (adminUser) {
+      // Update cookies when adminUser changes
+      Cookies.set("adminUser", JSON.stringify(adminUser), { expires: 29 });
+    } else {
+      // Clear cookies if adminUser is null
+      Cookies.remove("adminUser");
+    }
+  }, [adminUser]);
 
   const updateAdminUserDetails = (updatedDetails: AdminUser) => {
     setAdminUser((prevAdminUser) => ({
@@ -45,6 +65,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
 
   const contextValue = {
     adminUser,
+    setAdminUser,
     updateAdminUserDetails,
   };
 

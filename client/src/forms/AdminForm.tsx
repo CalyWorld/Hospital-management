@@ -2,6 +2,7 @@ import * as z from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
+import { useAdminUser } from "../contexts/adminUserContext";
 
 const adminFormSchema = z.object({
   username: z.string().min(4, { message: "username is required" }),
@@ -20,6 +21,8 @@ export default function AdminForm() {
   } = useForm<adminSignInSchemaType>({
     resolver: zodResolver(adminFormSchema),
   });
+
+  const { setAdminUser } = useAdminUser();
 
   const onSubmit: SubmitHandler<adminSignInSchemaType> = async (data) => {
     try {
@@ -44,6 +47,7 @@ export default function AdminForm() {
           }),
           { expires: 29 },
         );
+        setAdminUser(user);
       } else {
         const errorData = await response.json();
         console.log(errorData.message);
