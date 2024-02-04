@@ -48,10 +48,8 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
 
   useEffect(() => {
     if (adminUser) {
-      // Update cookies when adminUser changes
       Cookies.set("adminUser", JSON.stringify(adminUser), { expires: 29 });
     } else {
-      // Clear cookies if adminUser is null
       Cookies.remove("adminUser");
     }
   }, [adminUser]);

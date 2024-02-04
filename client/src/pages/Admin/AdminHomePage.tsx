@@ -1,8 +1,19 @@
 import { useAdminUser } from "../../contexts/adminUserContext";
 import AdminLoginPage from "./AdminLoginPage";
-import AdminUserDashboard from "./DashBoard/AdminUserDashboard";
+import AdminPage from "./AdminPage";
+import React from "react";
 export default function AdminHomePage() {
   const { adminUser } = useAdminUser();
   console.log(adminUser);
-  return adminUser ? <AdminUserDashboard /> : <AdminLoginPage />;
+  return (
+    <>
+      {adminUser ? (
+        <React.Fragment>
+          <AdminPage />
+        </React.Fragment>
+      ) : (
+        <AdminLoginPage />
+      )}
+    </>
+  );
 }
