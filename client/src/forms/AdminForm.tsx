@@ -1,6 +1,7 @@
 import * as z from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Cookies from "js-cookie";
 
 const adminFormSchema = z.object({
   username: z.string().min(4, { message: "username is required" }),
@@ -32,7 +33,17 @@ export default function AdminForm() {
         credentials: "include",
       });
       if (response.ok) {
-        console.log(response);
+        const user = await response.json();
+        Cookies.set(
+          "adminUser",
+          JSON.stringify({
+            username: user.username,
+            password: user.password,
+            __v: user.__v,
+            _id: user._id,
+          }),
+          { expires: 29 },
+        );
       } else {
         const errorData = await response.json();
         console.log(errorData.message);
@@ -56,10 +67,8 @@ export default function AdminForm() {
         <label className="flex flex-col gap-1.5">
           Username <br />
           <input
-            className={`w-2.5/4 px-2 py-1 bg-white text-black border-1 border-indigo-10 border-b-indigo-100 ${
-              errors.username
-                ? "border-rose-500 border-b-1"
-                : "border-2 border-indigo-50 border-b-indigo-500"
+            className={`w-2.5/4 px-2 py-1 bg-white text-black ${
+              errors.username ? "border-rose-500 border-b" : "border-b"
             }`}
             id="username"
             type="text"
@@ -75,8 +84,8 @@ export default function AdminForm() {
         <label className="flex flex-col gap-3">
           Password <br />
           <input
-            className={`w-2.5/4 px-2 py-1 bg-white text-black border-slate-600 shadow-sm focus:outline-none focus:border-blue-500 ${
-              errors.password ? "border-rose-500" : ""
+            className={`w-2.5/4 px-2 py-1 bg-white text-black ${
+              errors.password ? "border-rose-500 border-b" : "border-b"
             }`}
             id="password"
             type="text"
