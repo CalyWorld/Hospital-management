@@ -1,8 +1,8 @@
 export default function AdminHeader() {
   return (
-    <header>
-      <nav>
-        <a href="/admin">Patient</a>
+    <header className="">
+      <nav className="flex justify-end">
+        <div className="">Profile</div>
       </nav>
     </header>
   );
