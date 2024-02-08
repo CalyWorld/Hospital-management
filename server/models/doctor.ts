@@ -10,7 +10,7 @@ export interface IDoctor {
   gender: string;
   country: string;
   age: number;
-  createdAT: Date;
+  createdAt: Date;
 }
 
 const doctorSchema = new Schema<IDoctor>({
@@ -25,7 +25,7 @@ const doctorSchema = new Schema<IDoctor>({
   gender: { type: String, required: true },
   country: { type: String, required: true },
   age: { type: Number, required: true },
-  createdAT: { type: Date, required: true },
+  createdAt: { type: Date, required: true },
 });
 
 export const Doctor: Model<IDoctor> = mongoose.model("Doctor", doctorSchema);

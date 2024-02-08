@@ -9,6 +9,7 @@ export interface IAdmin {
   password: string;
   doctors: [Types.ObjectId];
   patients: [Types.ObjectId];
+  createdAt: Date;
 }
 
 const adminSchema = new Schema<IAdmin>({
@@ -16,6 +17,7 @@ const adminSchema = new Schema<IAdmin>({
   password: { type: String, required: true },
   doctors: [{ type: Schema.Types.ObjectId, ref: "Doctor" }],
   patients: [{ type: Schema.Types.ObjectId, ref: "Patient" }],
+  createdAt: { type: Date, required: true },
 });
 
 export const Admin: Model<IAdmin> = mongoose.model("Admin", adminSchema);
