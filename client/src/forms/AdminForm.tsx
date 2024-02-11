@@ -1,7 +1,6 @@
 import * as z from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Cookies from "js-cookie";
 import { useAdminUser } from "../contexts/adminUserContext";
 
 const adminFormSchema = z.object({
@@ -37,16 +36,6 @@ export default function AdminForm() {
       });
       if (response.ok) {
         const user = await response.json();
-        Cookies.set(
-          "adminUser",
-          JSON.stringify({
-            username: user.username,
-            password: user.password,
-            __v: user.__v,
-            _id: user._id,
-          }),
-          { expires: 29 },
-        );
         setAdminUser(user);
       } else {
         const errorData = await response.json();
