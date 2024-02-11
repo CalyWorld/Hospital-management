@@ -1,45 +1,146 @@
-import { CompactTable } from "@table-library/react-table-library/compact";
-import { Doctor, useDoctor } from "../../contexts/doctorContext";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import { Doctor, useDoctor } from "../../contexts/doctorUserContext";
+import { useState } from "react";
+
+interface Column {
+  id: keyof Doctor;
+  label: string;
+  minWidth?: number;
+  align?: "center";
+  format?: (value: number) => string;
+  formatDate?: (value: string) => string;
+}
+
+const columns: Column[] = [
+  {
+    id: "id",
+    label: "NO",
+    minWidth: 40,
+    align: "center",
+    format: (value: number) => value.toLocaleString("en-US"),
+  },
+  {
+    id: "createdAt",
+    label: "DATE",
+    minWidth: 40,
+    align: "center",
+    formatDate: (value: string) => {
+      return new Date(value).toLocaleDateString("en-us", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    },
+  },
+  { id: "username", label: "NAME", minWidth: 40, align: "center" },
+  {
+    id: "age",
+    label: "AGE",
+    minWidth: 40,
+    align: "center",
+    format: (value: number) => value.toLocaleString("en-US"),
+  },
+  { id: "country", label: "COUNTRY", minWidth: 40, align: "center" },
+  { id: "gender", label: "GENDER", minWidth: 40, align: "center" },
+];
+
+function createData({
+  id,
+  createdAt,
+  firstName,
+  lastName,
+  age,
+  country,
+  gender,
+}: Doctor) {
+  const username = `${firstName} ${lastName}`;
+  return { id, createdAt, username, age, country, gender };
+}
+
 export default function DoctorsTable() {
   const { doctors, loading } = useDoctor();
-  const nodes = doctors;
-  console.log(nodes);
-  const COLUMNS = [
-    {
-      label: "DATE",
-      renderCell: (item: Doctor) => {
-        const createdAtDate = new Date(item.createdAt);
-        return isNaN(createdAtDate.getTime())
-          ? "Invalid Date"
-          : createdAtDate.toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            });
-      },
-    },
-    {
-      label: "Name",
-      renderCell: (item: Doctor) => `${item.firstName} ${item.lastName}`,
-    },
-    { label: "AGE", renderCell: (item: Doctor) => item.age },
-    { label: "COUNTRY", renderCell: (item: Doctor) => item.country },
-    { label: "GENDER", renderCell: (item: Doctor) => item.gender },
-  ];
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const Component = () => {
-    const data = { nodes };
+  const rows = doctors?.map((doctor: Doctor) => createData(doctor)) || [];
 
-    return <CompactTable columns={COLUMNS} data={data} />;
+  const handleChangePage = (_event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
   };
 
   return (
-    <div>
-      <p>LATEST DOCTOR</p>
+    <div className="text-black">
       {loading ? (
-        <p className="flex justify-center">Loading...</p>
+        <p className="flex flex-col items-center">loading</p>
       ) : (
-        Component()
+        <Paper sx={{ width: "100%", overflow: "hidden" }}>
+          <TableContainer sx={{ maxHeight: 110 }}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      style={{ minWidth: column.minWidth }}
+                    >
+                      {column.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows
+                  ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row: any) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.id}
+                      >
+                        {columns.map((column) => {
+                          const value = row[column.id];
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              {column.format && typeof value === "number"
+                                ? column.format(value)
+                                : column.formatDate && typeof value === "string"
+                                ? column.formatDate(value)
+                                : value}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
       )}
     </div>
   );
