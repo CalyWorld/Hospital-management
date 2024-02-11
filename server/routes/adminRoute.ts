@@ -1,6 +1,7 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import { Doctor } from "../models/doctor";
 import { Patient } from "../models/patient";
+import Cookies from "js-cookie";
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
 
@@ -10,6 +11,7 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     if (req.isAuthenticated()) {
       const username = req.user;
+      Cookies.set("adminUser", JSON.stringify(username), { expires: 29 });
       try {
         res.json(username);
       } catch (err) {
@@ -22,13 +24,11 @@ router.get(
 router.get(
   "/api/admin/doctor",
   asyncHandler(async (req: Request, res: Response) => {
-    if (req.isAuthenticated()) {
-      try {
-        const doctor = await Doctor.find({}, "username");
-        console.log(doctor);
-      } catch (err) {
-        console.log(err);
-      }
+    try {
+      const doctors = await Doctor.find().exec();
+      res.status(200).json(doctors);
+    } catch (err) {
+      console.log(err);
     }
   }),
 );
@@ -38,7 +38,7 @@ router.get(
   asyncHandler(async (req: Request, res: Response) => {
     if (req.isAuthenticated()) {
       try {
-        const patient = await Patient.find({}, "username");
+        const patient = await Patient.find().exec();
         console.log(patient);
       } catch (err) {
         console.log(err);
