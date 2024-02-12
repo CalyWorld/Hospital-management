@@ -6,6 +6,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
+import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
 import { Doctor, useDoctor } from "../../contexts/doctorUserContext";
 import { useState } from "react";
 
@@ -82,9 +84,12 @@ export default function DoctorsTable() {
   };
 
   return (
-    <div className="text-black">
+    <div className="p-5">
+      <h2>LATEST DOCTORS</h2>
       {loading ? (
-        <p className="flex flex-col items-center">loading</p>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <CircularProgress />
+        </Box>
       ) : (
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
           <TableContainer sx={{ maxHeight: 110 }}>

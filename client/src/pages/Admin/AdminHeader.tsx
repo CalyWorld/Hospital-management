@@ -1,8 +1,9 @@
+import PersonIcon from "@mui/icons-material/Person";
 export default function AdminHeader() {
   return (
     <header className="">
       <nav className="flex justify-end">
-        <div className="">Profile</div>
+        <PersonIcon />
       </nav>
     </header>
   );

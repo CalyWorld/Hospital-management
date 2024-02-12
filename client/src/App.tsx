@@ -7,6 +7,7 @@ import ErrorPage from "./errorPage";
 import DoctorsTable from "./pages/Admin/DoctorsTable";
 import PatientsTable from "./pages/Admin/PatientsTable";
 import AdminDashBoard from "./pages/Admin/AdminDashBoard";
+import { DoctorProvider } from "./contexts/doctorUserContext";
 const router = createBrowserRouter([
   {
     path: "/admin",
@@ -45,7 +46,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <AdminUserProvider>
-      <RouterProvider router={router} />
+      <DoctorProvider>
+        <RouterProvider router={router} />
+      </DoctorProvider>
     </AdminUserProvider>
   );
 }
