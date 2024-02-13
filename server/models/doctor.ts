@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, Date } from "mongoose";
+import mongoose, { Schema, Model, Date, Types } from "mongoose";
 import { IImage } from "./admin";
 
 export interface IDoctor {
@@ -11,6 +11,7 @@ export interface IDoctor {
   country: string;
   age: number;
   createdAt: Date;
+  patient: Types.ObjectId[];
 }
 
 const doctorSchema = new Schema<IDoctor>({
@@ -26,6 +27,7 @@ const doctorSchema = new Schema<IDoctor>({
   country: { type: String, required: true },
   age: { type: Number, required: true },
   createdAt: { type: Date, required: true },
+  patient: [{ type: Schema.Types.ObjectId, ref: "Patient" }],
 });
 
 export const Doctor: Model<IDoctor> = mongoose.model("Doctor", doctorSchema);
