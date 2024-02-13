@@ -10,6 +10,15 @@ const authRoutes = require("./routes/authRoute");
 const adminRoutes = require("./routes/adminRoute");
 const doctorRoutes = require("./routes/doctorRoute");
 const patientRoutes = require("./routes/patientRoute");
+import bcrypt from "bcryptjs";
+import { Doctor } from "./models/doctor";
+import { Admin } from "./models/admin";
+import { Patient } from "./models/patient";
+import { Medication } from "./models/medication";
+import { Treatment } from "./models/treatment";
+import { HealthRecords } from "./models/records";
+import { Message } from "./models/messages";
+import { Appointment } from "./models/appointments";
 
 dotenv.config();
 

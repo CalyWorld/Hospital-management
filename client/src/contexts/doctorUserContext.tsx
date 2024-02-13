@@ -4,9 +4,10 @@ import React, {
   useState,
   ReactNode,
   useEffect,
+  useMemo,
 } from "react";
 
-interface Image {
+export interface Image {
   data: Buffer;
   contentType: string;
 }
@@ -81,7 +82,10 @@ export const DoctorProvider: React.FC<DoctorProviderProps> = ({
     fetchData();
   }, []);
 
-  const contextValue = { doctors, loading, setDoctor };
+  const contextValue = useMemo(
+    () => ({ doctors, loading, setDoctor }),
+    [doctors, loading, setDoctor],
+  );
 
   return (
     <DoctorContext.Provider value={contextValue}>

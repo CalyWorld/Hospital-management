@@ -1,9 +1,9 @@
 import PersonIcon from "@mui/icons-material/Person";
 export default function AdminHeader() {
   return (
-    <header className="">
+    <header className="p-2">
       <nav className="flex justify-end">
-        <PersonIcon />
+        <PersonIcon fontSize="large" />
       </nav>
     </header>
   );

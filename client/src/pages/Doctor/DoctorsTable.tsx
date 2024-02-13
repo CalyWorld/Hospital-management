@@ -10,6 +10,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { Doctor, useDoctor } from "../../contexts/doctorUserContext";
 import { useState } from "react";
+import { useLocation } from "react-router";
+import { Link } from "react-router-dom";
 
 interface Column {
   id: keyof Doctor;
@@ -54,6 +56,7 @@ const columns: Column[] = [
 ];
 
 function createData({
+  _id,
   id,
   createdAt,
   firstName,
@@ -63,7 +66,7 @@ function createData({
   gender,
 }: Doctor) {
   const username = `${firstName} ${lastName}`;
-  return { id, createdAt, username, age, country, gender };
+  return { _id, id, createdAt, username, age, country, gender };
 }
 
 export default function DoctorsTable() {
@@ -71,7 +74,7 @@ export default function DoctorsTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const rows = doctors?.map((doctor: Doctor) => createData(doctor)) || [];
+  const rows = doctors?.map((doctor: Doctor) => createData(doctor)) ?? [];
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
@@ -113,10 +116,13 @@ export default function DoctorsTable() {
                   .map((row: any) => {
                     return (
                       <TableRow
+                        component={Link}
+                        to={`${location.pathname}/doctor/${row._id}`}
                         hover
                         role="checkbox"
+                        className="cursor-pointer"
                         tabIndex={-1}
-                        key={row.id}
+                        key={row._id}
                       >
                         {columns.map((column) => {
                           const value = row[column.id];
