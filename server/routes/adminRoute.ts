@@ -36,13 +36,11 @@ router.get(
 router.get(
   "/api/admin/patient",
   asyncHandler(async (req: Request, res: Response) => {
-    if (req.isAuthenticated()) {
-      try {
-        const patient = await Patient.find().exec();
-        console.log(patient);
-      } catch (err) {
-        console.log(err);
-      }
+    try {
+      const patients = await Patient.find().exec();
+      res.status(200).json(patients);
+    } catch (err) {
+      console.log(err);
     }
   }),
 );
