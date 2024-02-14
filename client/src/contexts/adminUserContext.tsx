@@ -23,6 +23,7 @@ interface AdminUserContextProps {
   patients: Patient[] | null;
   setPatient?: React.Dispatch<React.SetStateAction<Patient[] | null>>;
   setAdminUser: React.Dispatch<React.SetStateAction<AdminUser | null>>;
+  getDoctorDetails: (id: string) => Doctor | null;
   updateAdminUserDetails: (updatedDetails: AdminUser) => void;
 }
 
@@ -63,10 +64,10 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
         if (adminUser) {
           Cookies.set("adminUser", JSON.stringify(adminUser), { expires: 29 });
           const [doctorResponse, patientResponse] = await Promise.all([
-            fetch(`${import.meta.env.VITE_API_DOCTOR_API_DETAILS}`, {
+            fetch(`${import.meta.env.VITE_API_DOCTOR_API}`, {
               method: "GET",
             }),
-            fetch(`${import.meta.env.VITE_API_PATIENT_API_DETAILS}`, {
+            fetch(`${import.meta.env.VITE_API_PATIENT_API}`, {
               method: "GET",
             }),
           ]);
@@ -103,6 +104,30 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
       ...updatedDetails,
     }));
   };
+  const getDoctorDetails = (doctorId: string) => {
+    const [doctorDetailsData, setDoctorDetailsData] = useState<Doctor | null>(
+      null,
+    );
+    useEffect(() => {
+      const fetchDoctorDetails = async () => {
+        try {
+          const apiUrl = `http://localhost:3000/api/admin/doctor/${doctorId}`;
+          console.log(apiUrl);
+          const doctorDetailsResponse = await fetch(apiUrl, {
+            method: "GET",
+          });
+          const doctorDetailsData = await doctorDetailsResponse.json();
+          setLoading(false);
+          setDoctorDetailsData(doctorDetailsData);
+        } catch (error) {
+          console.error("Error fetching doctor details:", error);
+        }
+      };
+
+      fetchDoctorDetails();
+    }, [doctorId]);
+    return doctorDetailsData;
+  };
 
   const contextValue = {
     adminUser,
@@ -111,6 +136,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     loading,
     setAdminUser,
     updateAdminUserDetails,
+    getDoctorDetails,
   };
 
   return (

@@ -26,16 +26,20 @@ export default function AdminForm() {
   const onSubmit: SubmitHandler<adminSignInSchemaType> = async (data) => {
     try {
       const adminUser = { username: data.username, password: data.password };
-      const response = await fetch(`${import.meta.env.VITE_API_ADMIN_API}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${import.meta.env.VITE_API_ADMIN_API_LOGIN}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(adminUser),
+          credentials: "include",
         },
-        body: JSON.stringify(adminUser),
-        credentials: "include",
-      });
+      );
       if (response.ok) {
         const user = await response.json();
+        console.log(user);
         setAdminUser(user);
       } else {
         const errorData = await response.json();

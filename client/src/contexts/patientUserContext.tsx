@@ -50,35 +50,35 @@ export const PatientProvider: React.FC<PatientProviderProps> = ({
 }: PatientProviderProps) => {
   const [patients, setPatient] = useState<Patient[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  useEffect(() => {
-    let idCounter = 0;
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_PATIENT_API_DETAILS}`,
-          {
-            method: "GET",
-          },
-        );
-        if (response.ok) {
-          const patientData = await response.json();
-          const patientsDataWithId = patientData.map((patient: Patient) => ({
-            ...patient,
-            id: ++idCounter,
-          }));
-          setLoading(false);
-          setPatient(patientsDataWithId);
-        } else {
-          const errorData = await response.json();
-          console.log(errorData.message);
-        }
-      } catch (err) {
-        console.error("Error occurred during patient data fetch", err);
-      }
-    };
+  // useEffect(() => {
+  //   let idCounter = 0;
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${import.meta.env.VITE_API_PATIENT_API_DETAILS}`,
+  //         {
+  //           method: "GET",
+  //         },
+  //       );
+  //       if (response.ok) {
+  //         const patientData = await response.json();
+  //         const patientsDataWithId = patientData.map((patient: Patient) => ({
+  //           ...patient,
+  //           id: ++idCounter,
+  //         }));
+  //         setLoading(false);
+  //         setPatient(patientsDataWithId);
+  //       } else {
+  //         const errorData = await response.json();
+  //         console.log(errorData.message);
+  //       }
+  //     } catch (err) {
+  //       console.error("Error occurred during patient data fetch", err);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   const contextValue = useMemo(
     () => ({ patients, loading, setPatient }),

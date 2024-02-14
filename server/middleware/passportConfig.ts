@@ -11,7 +11,6 @@ passport.use(
   new LocalStrategy(async (username: string, password: string, done) => {
     try {
       const user = await Admin.findOne({ username: username });
-      console.log(user);
       if (!user) {
         return done(null, false, { message: "Incorrect Admin Username" });
       }

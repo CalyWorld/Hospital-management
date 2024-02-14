@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
+import { Patient } from "./patientUserContext";
 
 export interface Image {
   data: Buffer;
@@ -25,6 +26,7 @@ export interface Doctor {
   __v?: number;
   _id?: string;
   id: string;
+  patient: [Patient];
 }
 
 interface DoctorContextProps {
@@ -52,35 +54,35 @@ export const DoctorProvider: React.FC<DoctorProviderProps> = ({
 }: DoctorProviderProps) => {
   const [doctors, setDoctor] = useState<Doctor[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  useEffect(() => {
-    let idCounter = 0;
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_DOCTOR_API_DETAILS}`,
-          {
-            method: "GET",
-          },
-        );
-        if (response.ok) {
-          const doctorData = await response.json();
-          const doctorsDataWithId = doctorData.map((doctor: Doctor) => ({
-            ...doctor,
-            id: ++idCounter,
-          }));
-          setLoading(false);
-          setDoctor(doctorsDataWithId);
-        } else {
-          const errorData = await response.json();
-          console.log(errorData.message);
-        }
-      } catch (err) {
-        console.error("Error occurred during doctor data fetch", err);
-      }
-    };
+  // useEffect(() => {
+  //   let idCounter = 0;
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${import.meta.env.VITE_API_DOCTOR_API_DETAILS}`,
+  //         {
+  //           method: "GET",
+  //         },
+  //       );
+  //       if (response.ok) {
+  //         const doctorData = await response.json();
+  //         const doctorsDataWithId = doctorData.map((doctor: Doctor) => ({
+  //           ...doctor,
+  //           id: ++idCounter,
+  //         }));
+  //         setLoading(false);
+  //         setDoctor(doctorsDataWithId);
+  //       } else {
+  //         const errorData = await response.json();
+  //         console.log(errorData.message);
+  //       }
+  //     } catch (err) {
+  //       console.error("Error occurred during doctor data fetch", err);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   const contextValue = useMemo(
     () => ({ doctors, loading, setDoctor }),
