@@ -3,6 +3,7 @@ import React, {
   useContext,
   useState,
   useEffect,
+  useMemo,
   ReactNode,
 } from "react";
 import Cookies from "js-cookie";
@@ -129,15 +130,26 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     return doctorDetailsData;
   };
 
-  const contextValue = {
-    adminUser,
-    doctors,
-    patients,
-    loading,
-    setAdminUser,
-    updateAdminUserDetails,
-    getDoctorDetails,
-  };
+  const contextValue = useMemo(
+    () => ({
+      adminUser,
+      doctors,
+      patients,
+      loading,
+      setAdminUser,
+      updateAdminUserDetails,
+      getDoctorDetails,
+    }),
+    [
+      adminUser,
+      doctors,
+      patients,
+      loading,
+      setAdminUser,
+      updateAdminUserDetails,
+      getDoctorDetails,
+    ],
+  );
 
   return (
     <AdminUserContext.Provider value={contextValue}>
