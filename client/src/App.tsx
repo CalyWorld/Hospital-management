@@ -5,10 +5,10 @@ import { AdminUserProvider } from "./contexts/adminUserContext";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./errorPage";
 import AdminDashBoard from "./components/pages/Admin/AdminDashBoard";
-
 import { DoctorDetails } from "./components/pages/Doctor/DoctorDetails";
 import PatientsTable from "./components/pages/Patient/PatientsTable";
 import { PatientDetails } from "./components/pages/Patient/PatientDetails";
+import DoctorsTable from "./components/pages/Doctor/DoctorsTable";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +43,18 @@ const router = createBrowserRouter([
           {
             path: "patient/:patientId",
             element: <PatientDetails />,
+            children: [
+              {
+                path: "active",
+              },
+              {
+                path: "completion",
+              },
+              {
+                path: "patients",
+                element: <DoctorsTable />,
+              },
+            ],
           },
         ],
       },
@@ -75,6 +87,18 @@ const router = createBrowserRouter([
           {
             path: "patient/:patientId",
             element: <PatientDetails />,
+            children: [
+              {
+                path: "active",
+              },
+              {
+                path: "completion",
+              },
+              {
+                path: "doctors",
+                element: <DoctorsTable />,
+              },
+            ],
           },
         ],
       },
