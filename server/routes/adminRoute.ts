@@ -4,6 +4,7 @@ import { Patient } from "../models/patient";
 import { Admin, IAdmin } from "../models/admin";
 import Cookies from "js-cookie";
 import { Appointment } from "../models/appointments";
+import { Treatment } from "../models/treatment";
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
 
@@ -56,6 +57,22 @@ router.get(
         .populate("patient")
         .exec();
       res.status(200).json(appointments);
+    } catch (err) {
+      console.log(err);
+    }
+  }),
+);
+
+router.get(
+  "/api/admin/doctor/treatments/:doctorId",
+  asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const treatment = await Treatment.find({
+        doctor: req.params.doctorId,
+      })
+        .populate("doctor")
+        .exec();
+      res.status(200).json(treatment);
     } catch (err) {
       console.log(err);
     }
