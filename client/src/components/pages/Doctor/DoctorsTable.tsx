@@ -8,9 +8,8 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { Doctor, useDoctor } from "../../../contexts/doctorUserContext";
+import { Doctor } from "../../../contexts/doctorUserContext";
 import { useState } from "react";
-import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { useAdminUser } from "../../../contexts/adminUserContext";
 
@@ -71,14 +70,12 @@ function createData({
 }
 
 export default function DoctorsTable() {
-  const { doctors, loading } = useAdminUser();
+  const { useGetDoctorAndPatientData } = useAdminUser();
+  const { doctors, loading } = useGetDoctorAndPatientData();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const location = useLocation();
 
   const rows = doctors?.map((doctor: Doctor) => createData(doctor)) ?? [];
-  console.log(location.pathname);
-  console.log(rows);
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -117,13 +114,16 @@ export default function DoctorsTable() {
                 {rows
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row: any) => {
+                    console.log(
+                      location.pathname.includes("/admin"),
+                      location.pathname,
+                    );
                     return (
                       <TableRow
                         component={Link}
                         to={`${
-                          location.pathname === "/admin"
-                            ? `${location.pathname}/doctors/doctor/${row._id}`
-                            : `${location.pathname}/doctor/${row._id}`
+                          location.pathname.includes("/admin") &&
+                          `/admin/doctors/doctor/${row._id}`
                         }`}
                         hover
                         role="checkbox"

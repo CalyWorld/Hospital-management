@@ -1,16 +1,15 @@
 import DoctorsTable from "../Doctor/DoctorsTable";
 import TuneIcon from "@mui/icons-material/Tune";
 import { FaUserDoctor } from "react-icons/fa6";
-import { useDoctor } from "../../../contexts/doctorUserContext";
 import { FaHospitalUser } from "react-icons/fa";
 import PatientsTable from "../Patient/PatientsTable";
 import { useState } from "react";
-import { usePatient } from "../../../contexts/patientUserContext";
 import { Outlet } from "react-router";
 import { useLocation } from "react-router";
 import { useAdminUser } from "../../../contexts/adminUserContext";
 export default function AdminDashBoard() {
   const { doctors, patients } = useAdminUser();
+  // const { doctors, patients } = useGetDoctorAndPatientData();
   const [switchTable, setTable] = useState<boolean>(false);
   const location = useLocation();
 

@@ -62,12 +62,14 @@ router.get(
 router.get(
   "/api/admin/patient/:patientId",
   asyncHandler(async (req: Request, res: Response) => {
-    // try {
-    //   const patients = await Patient.find().exec();
-    //   res.status(200).json(patients);
-    // } catch (err) {
-    //   console.log(err);
-    // }
+    try {
+      const patientById = await Patient.findById(req.params.patientId)
+        .populate("doctor")
+        .exec();
+      res.status(200).json(patientById);
+    } catch (err) {
+      console.log(err);
+    }
   }),
 );
 

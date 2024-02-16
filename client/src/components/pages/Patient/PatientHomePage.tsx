@@ -1,6 +1,5 @@
-import { useLocation } from "react-router";
 import PatientsTable from "./PatientsTable";
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 export default function PatientHomePage() {
   const location = useLocation();
   return (

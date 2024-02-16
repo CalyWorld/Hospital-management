@@ -5,21 +5,26 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 export function DoctorDetails() {
   const { doctorId } = useParams();
-  const { getDoctorDetails, loading } = useAdminUser();
+  const { useGetDoctorDetails } = useAdminUser();
+
   if (!doctorId) {
     return;
   }
-  const doctorDetails = getDoctorDetails(doctorId);
-  console.log("doctorDetails", doctorDetails);
+  const doctorDetails = useGetDoctorDetails(doctorId);
+  const loading = !doctorDetails;
   return (
     <div className="p-3 flex flex-col gap-5">
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <CircularProgress />{" "}
+          <CircularProgress />
         </Box>
       ) : (
         <div>
-          <h2>{`${doctorDetails?.firstName} ${doctorDetails?.lastName}`}</h2>
+          <h2>
+            {`${!loading && doctorDetails?.firstName} ${
+              doctorDetails?.lastName
+            }`}
+          </h2>
           <div className="flex justify-between">
             <div className="w-full">
               <div className="flex gap-5">

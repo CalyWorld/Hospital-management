@@ -16,15 +16,18 @@ interface AdminUser {
   _id: string;
 }
 
-interface AdminUserContextProps {
+interface DoctorAndPatientData {
   adminUser: AdminUser | null;
-  doctors: Doctor[] | null;
-  loading: boolean;
-  setDoctor?: React.Dispatch<React.SetStateAction<Doctor[] | null>>;
-  patients: Patient[] | null;
-  setPatient?: React.Dispatch<React.SetStateAction<Patient[] | null>>;
   setAdminUser: React.Dispatch<React.SetStateAction<AdminUser | null>>;
-  getDoctorDetails: (id: string) => Doctor | null;
+  doctors: Doctor[] | null;
+  patients: Patient[] | null;
+  loading: boolean;
+}
+
+interface AdminUserContextProps {
+  useGetDoctorAndPatientData: () => DoctorAndPatientData;
+  useGetDoctorDetails: (id: string) => Doctor | null;
+  useGetPatientDetails: (id: string) => Patient | null;
   updateAdminUserDetails: (updatedDetails: AdminUser) => void;
 }
 
@@ -47,73 +50,80 @@ export const useAdminUser = () => {
 export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
   children,
 }: AdminUserProviderProps) => {
-  const adminUserFromCookies = Cookies.get("adminUser");
-  const initialUser = adminUserFromCookies
-    ? JSON.parse(adminUserFromCookies)
-    : null;
+  const useGetDoctorAndPatientData = (): DoctorAndPatientData => {
+    const adminUserFromCookies = Cookies.get("adminUser");
+    const initialUser = adminUserFromCookies
+      ? JSON.parse(adminUserFromCookies)
+      : null;
 
-  const [adminUser, setAdminUser] = useState<AdminUser | null>(initialUser);
-  const [doctors, setDoctor] = useState<Doctor[] | null>(null);
-  const [patients, setPatient] = useState<Patient[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    let idCounter1 = 0;
-    let idCounter2 = 0;
-    async function fetchData() {
-      try {
-        if (adminUser) {
-          Cookies.set("adminUser", JSON.stringify(adminUser), { expires: 29 });
-          const [doctorResponse, patientResponse] = await Promise.all([
-            fetch(`${import.meta.env.VITE_API_DOCTOR_API}`, {
-              method: "GET",
-            }),
-            fetch(`${import.meta.env.VITE_API_PATIENT_API}`, {
-              method: "GET",
-            }),
-          ]);
-          if (doctorResponse.ok && patientResponse.ok) {
-            const [doctorData, patientData] = await Promise.all([
-              doctorResponse.json(),
-              patientResponse.json(),
+    const [adminUser, setAdminUser] = useState<AdminUser | null>(initialUser);
+    const [doctors, setDoctor] = useState<Doctor[] | null>(null);
+    const [patients, setPatient] = useState<Patient[] | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    useEffect(() => {
+      let idCounter1 = 0;
+      let idCounter2 = 0;
+      async function fetchData() {
+        try {
+          if (adminUser) {
+            Cookies.set("adminUser", JSON.stringify(adminUser), {
+              expires: 29,
+            });
+            const [doctorResponse, patientResponse] = await Promise.all([
+              fetch("http://localhost:3000/api/admin/doctor", {
+                method: "GET",
+              }),
+              fetch("http://localhost:3000/api/admin/patient", {
+                method: "GET",
+              }),
             ]);
-            const doctorsDataWithId = doctorData.map((doctor: Doctor) => ({
-              ...doctor,
-              id: ++idCounter1,
-            }));
-            const patientsDataWithId = patientData.map((patient: Patient) => ({
-              ...patient,
-              id: ++idCounter2,
-            }));
-            setLoading(false);
-            setDoctor(doctorsDataWithId);
-            setPatient(patientsDataWithId);
+            if (doctorResponse.ok && patientResponse.ok) {
+              const [doctorData, patientData] = await Promise.all([
+                doctorResponse.json(),
+                patientResponse.json(),
+              ]);
+              const doctorsDataWithId = doctorData.map((doctor: Doctor) => ({
+                ...doctor,
+                id: ++idCounter1,
+              }));
+              const patientsDataWithId = patientData.map(
+                (patient: Patient) => ({
+                  ...patient,
+                  id: ++idCounter2,
+                }),
+              );
+              setLoading(false);
+              setDoctor(doctorsDataWithId);
+              setPatient(patientsDataWithId);
+            }
+          } else {
+            Cookies.remove("adminUser");
           }
-        } else {
-          Cookies.remove("adminUser");
+        } catch (err) {
+          console.log("error getting data", err);
         }
-      } catch (err) {
-        console.log("error getting data", err);
       }
-    }
-    fetchData();
-  }, [adminUser]);
+      fetchData();
+    }, [adminUser]);
+    return { adminUser, setAdminUser, doctors, patients, loading };
+  };
 
   const updateAdminUserDetails = (updatedDetails: AdminUser) => {
+    const { setAdminUser } = useGetDoctorAndPatientData();
     setAdminUser((prevAdminUser) => ({
       ...prevAdminUser,
       ...updatedDetails,
     }));
   };
-  const getDoctorDetails = (doctorId: string) => {
+  const useGetDoctorDetails = (doctorId: string) => {
     const [doctorDetailsData, setDoctorDetailsData] = useState<Doctor | null>(
       null,
     );
+    const [loading, setLoading] = useState<boolean>(true);
     useEffect(() => {
       const fetchDoctorDetails = async () => {
         try {
           const apiUrl = `http://localhost:3000/api/admin/doctor/${doctorId}`;
-          console.log(apiUrl);
           const doctorDetailsResponse = await fetch(apiUrl, {
             method: "GET",
           });
@@ -127,27 +137,45 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
 
       fetchDoctorDetails();
     }, [doctorId]);
-    return doctorDetailsData;
+    return loading ? null : doctorDetailsData;
+  };
+
+  const useGetPatientDetails = (patientId: string) => {
+    const [patientDetailsData, setPatientDetailsData] =
+      useState<Patient | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    useEffect(() => {
+      const fetchPatientDetails = async () => {
+        try {
+          const apiUrl = `http://localhost:3000/api/admin/patient/${patientId}`;
+          const patientDetailsResponse = await fetch(apiUrl, {
+            method: "GET",
+          });
+          const patientDetailsData = await patientDetailsResponse.json();
+          setLoading(false);
+          setPatientDetailsData(patientDetailsData);
+        } catch (error) {
+          console.error("Error fetching doctor details:", error);
+        }
+      };
+
+      fetchPatientDetails();
+    }, [patientId]);
+    return loading ? null : patientDetailsData;
   };
 
   const contextValue = useMemo(
     () => ({
-      adminUser,
-      doctors,
-      patients,
-      loading,
-      setAdminUser,
+      useGetDoctorAndPatientData,
       updateAdminUserDetails,
-      getDoctorDetails,
+      useGetDoctorDetails,
+      useGetPatientDetails,
     }),
     [
-      adminUser,
-      doctors,
-      patients,
-      loading,
-      setAdminUser,
+      useGetDoctorAndPatientData,
       updateAdminUserDetails,
-      getDoctorDetails,
+      useGetDoctorDetails,
+      useGetPatientDetails,
     ],
   );
 

@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
-import { Image } from "./doctorUserContext";
+import { Doctor, Image } from "./doctorUserContext";
 
 export interface Patient {
   username: string;
@@ -21,6 +21,7 @@ export interface Patient {
   __v?: number;
   _id?: string;
   id: string;
+  doctor: [Doctor];
 }
 
 interface PatientContextProps {

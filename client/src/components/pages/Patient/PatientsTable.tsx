@@ -9,8 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router";
-import { Patient, usePatient } from "../../../contexts/patientUserContext";
+import { Patient } from "../../../contexts/patientUserContext";
 import { useState } from "react";
 import { useAdminUser } from "../../../contexts/adminUserContext";
 
@@ -71,13 +70,13 @@ function createData({
 }
 
 export default function PatientsTable() {
-  const { patients, loading } = useAdminUser();
+  const { useGetDoctorAndPatientData } = useAdminUser();
+  const { patients, loading } = useGetDoctorAndPatientData();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const location = useLocation();
+
   const rows = patients?.map((patient: Patient) => createData(patient)) ?? [];
-  console.log(location.pathname);
-  // console.log(rows);
+
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -116,13 +115,13 @@ export default function PatientsTable() {
                 {rows
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row: any) => {
+                    console.log(location.pathname.includes("/admin"));
                     return (
                       <TableRow
                         component={Link}
                         to={`${
-                          location.pathname.includes("/admin")
-                            ? `/admin/patients/patient/${row._id}`
-                            : `${location.pathname}/patient/${row._id}`
+                          location.pathname.includes("/admin") &&
+                          `/admin/patients/patient/${row._id}`
                         }`}
                         hover
                         role="checkbox"
