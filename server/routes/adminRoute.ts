@@ -3,6 +3,7 @@ import { Doctor } from "../models/doctor";
 import { Patient } from "../models/patient";
 import { Admin, IAdmin } from "../models/admin";
 import Cookies from "js-cookie";
+import { Appointment } from "../models/appointments";
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
 
@@ -39,6 +40,22 @@ router.get(
     try {
       const patients = await Patient.find().exec();
       res.status(200).json(patients);
+    } catch (err) {
+      console.log(err);
+    }
+  }),
+);
+
+router.get(
+  "/api/admin/doctor/appointments/:doctorId",
+  asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const appointments = await Appointment.find({
+        doctor: req.params.doctorId,
+      })
+        .populate("patient")
+        .exec();
+      res.status(200).json(appointments);
     } catch (err) {
       console.log(err);
     }

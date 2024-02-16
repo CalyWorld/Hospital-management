@@ -1,6 +1,7 @@
 import mongoose, { Schema, Model, Types } from "mongoose";
 
 export interface IAppointment {
+  title: string;
   patient: Types.ObjectId;
   doctor: Types.ObjectId;
   date: Date;
@@ -8,8 +9,9 @@ export interface IAppointment {
 }
 
 const appointmentSchema = new Schema<IAppointment>({
-  patient: [{ type: Schema.Types.ObjectId, ref: "Patient" }],
-  doctor: [{ type: Schema.Types.ObjectId, ref: "Doctor" }],
+  title: { type: String, required: true },
+  patient: { type: Schema.Types.ObjectId, ref: "Patient" },
+  doctor: { type: Schema.Types.ObjectId, ref: "Doctor" },
   date: Date,
   status: {
     type: String,
