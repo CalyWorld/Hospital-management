@@ -9,6 +9,10 @@ import { DoctorDetails } from "./components/pages/Doctor/DoctorDetails";
 import PatientsTable from "./components/pages/Patient/PatientsTable";
 import { PatientDetails } from "./components/pages/Patient/PatientDetails";
 import DoctorsTable from "./components/pages/Doctor/DoctorsTable";
+import DoctorScheduledAppointmentTable from "./components/pages/Doctor/DoctorScheduledAppointmentTable";
+import DoctorCompletedAppointmentTable from "./components/pages/Doctor/DoctorCompletedAppointmentTable";
+import PatientScheduledAppointmentTable from "./components/pages/Patient/PatientScheduledAppointmentTable";
+import PatientCompletedAppointmentTable from "./components/pages/Patient/PatientCompletedAppointmentTable";
 
 const router = createBrowserRouter([
   {
@@ -29,10 +33,13 @@ const router = createBrowserRouter([
             element: <DoctorDetails />,
             children: [
               {
+                index: true,
                 path: "active",
+                element: <DoctorScheduledAppointmentTable />,
               },
               {
                 path: "completion",
+                element: <DoctorCompletedAppointmentTable />,
               },
               {
                 path: "patients",
@@ -46,9 +53,11 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "active",
+                element: <PatientScheduledAppointmentTable />,
               },
               {
                 path: "completion",
+                element: <PatientCompletedAppointmentTable />,
               },
               {
                 path: "patients",
@@ -67,10 +76,13 @@ const router = createBrowserRouter([
             element: <DoctorDetails />,
             children: [
               {
+                index: true,
                 path: "active",
+                element: <DoctorScheduledAppointmentTable />,
               },
               {
                 path: "completion",
+                element: <DoctorCompletedAppointmentTable />,
               },
               {
                 path: "patients",
@@ -90,9 +102,11 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "active",
+                element: <PatientScheduledAppointmentTable />,
               },
               {
                 path: "completion",
+                element: <PatientCompletedAppointmentTable />,
               },
               {
                 path: "doctors",
