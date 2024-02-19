@@ -66,11 +66,7 @@ export function DoctorDetails() {
         </Box>
       ) : (
         <div className="flex flex-col gap-5">
-          <h1>
-            {`${!loading && doctorDetails?.firstName} ${
-              doctorDetails?.lastName
-            }`}
-          </h1>
+          <h1>{`${doctorDetails?.firstName} ${doctorDetails?.lastName}`}</h1>
           <div className="flex justify-center gap-10 p-5">
             <div className="w-full flex flex-col gap-10">
               <div className="flex gap-5">
@@ -93,21 +89,21 @@ export function DoctorDetails() {
               </div>
               <Outlet />
             </div>
-            <div className="w-96 flex flex-col gap-4 p-5">
-              <div className="flex flex-col gap-3">
-                <div className="bg-gray flex justify-between">
+            <div className="w-96 flex flex-col gap-10">
+              <div className="flex flex-col gap-5 bg-gray p-3">
+                <div className="flex justify-between">
                   <div>
                     <h2 className="text-darkBlue">Revenue last 30 days</h2>
                     <h1 className="text-darkBlue">{`₱${totalRevenueCurrentMonth}`}</h1>
                   </div>
                   <div>chart</div>
                 </div>
-                <div className="bg-gray">
+                <div className="">
                   <h2>All time revenue</h2>
                   <h1>{`₱${totalRevenueAllTime}`}</h1>
                 </div>
               </div>
-              <div className="bg-gray">doctor info</div>
+              <div className="bg-gray p-3">doctor info</div>
             </div>
           </div>
         </div>
