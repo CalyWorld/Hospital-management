@@ -8,8 +8,8 @@ import { Outlet } from "react-router";
 import { useLocation } from "react-router";
 import { useAdminUser } from "../../../contexts/adminUserContext";
 export default function AdminDashBoard() {
-  const { doctors, patients } = useAdminUser();
-  // const { doctors, patients } = useGetDoctorAndPatientData();
+  const { useGetDoctorAndPatientData } = useAdminUser();
+  const { doctors, patients } = useGetDoctorAndPatientData();
   const [switchTable, setTable] = useState<boolean>(false);
   const location = useLocation();
 
