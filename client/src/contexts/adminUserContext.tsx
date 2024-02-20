@@ -20,13 +20,37 @@ export interface Appointment {
   title: string;
   date: Date;
   status: string;
-  doctor: string;
+  doctor: Doctor;
   patient: Patient;
   patientName?: string;
+  doctorName?: string;
   statusAndDate?: string;
   __v: number;
   id: number;
   _id: string;
+}
+export interface Medications {
+  _id: string;
+  name: string;
+  fee: number;
+  quantity: number;
+  __v: number;
+}
+
+export interface Treatment {
+  _id: string;
+  name: string;
+  date: Date;
+  totalFee: number;
+  doctor: [Doctor];
+  medication?: [Medications];
+  __v: number;
+}
+
+export interface Records {
+  _id: string;
+  patient: Patient;
+  treatments: [Treatment];
 }
 
 interface DoctorAndPatientData {
@@ -43,6 +67,8 @@ interface AdminUserContextProps {
   useGetPatientDetails: (id: string) => Patient | null;
   useUpdateAdminUserDetails: (updatedDetails: AdminUser) => void;
   useGetDoctorAppointments: (id: string) => Appointment[] | null;
+  useGetPatientAppointments: (id: string) => Appointment[] | null;
+  useGetDoctorTreatments: (id: string) => Treatment[] | null;
 }
 
 interface AdminUserProviderProps {
@@ -193,7 +219,6 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
           });
           const appointmentsData = await appointmentsResponse.json();
           setLoading(false);
-          console.log(appointmentsData);
           setDoctorAppointmentData(appointmentsData);
         } catch (error) {
           console.error("Error fetching appointments:", error);
@@ -205,6 +230,56 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     return loading ? null : doctorAppointmentData;
   };
 
+  const useGetDoctorTreatments = (doctorId: string) => {
+    const [doctorTreatmentData, setDoctorTreatmentData] = useState<
+      Treatment[] | null
+    >(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    useEffect(() => {
+      const fetchTreatments = async () => {
+        try {
+          const apiUrl = `http://localhost:3000/api/admin/doctor/treatments/${doctorId}`;
+          const treatmentsResponse = await fetch(apiUrl, {
+            method: "GET",
+          });
+          const treatmentsData = await treatmentsResponse.json();
+          setLoading(false);
+          setDoctorTreatmentData(treatmentsData);
+        } catch (error) {
+          console.error("Error fetching appointments:", error);
+        }
+      };
+
+      fetchTreatments();
+    }, [doctorId]);
+    return loading ? null : doctorTreatmentData;
+  };
+
+  const useGetPatientAppointments = (patientId: string) => {
+    const [patientAppointmentData, setPatientAppointmentData] = useState<
+      Appointment[] | null
+    >(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    useEffect(() => {
+      const fetchAppointments = async () => {
+        try {
+          const apiUrl = `http://localhost:3000/api/admin/patient/appointments/${patientId}`;
+          const appointmentsResponse = await fetch(apiUrl, {
+            method: "GET",
+          });
+          const appointmentsData = await appointmentsResponse.json();
+          setLoading(false);
+          setPatientAppointmentData(appointmentsData);
+        } catch (error) {
+          console.error("Error fetching appointments:", error);
+        }
+      };
+
+      fetchAppointments();
+    }, [patientId]);
+    return loading ? null : patientAppointmentData;
+  };
+
   const contextValue = useMemo(
     () => ({
       useGetDoctorAndPatientData,
@@ -212,6 +287,8 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
       useGetDoctorDetails,
       useGetPatientDetails,
       useGetDoctorAppointments,
+      useGetPatientAppointments,
+      useGetDoctorTreatments,
     }),
     [
       useGetDoctorAndPatientData,
@@ -219,6 +296,8 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
       useGetDoctorDetails,
       useGetPatientDetails,
       useGetDoctorAppointments,
+      useGetPatientAppointments,
+      useGetDoctorTreatments,
     ],
   );
 
