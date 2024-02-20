@@ -59,8 +59,6 @@ export function PatientDetails() {
     useFetchData();
   }, [patientId]);
 
-  const loading = !patientDetails;
-
   const isCompleted = patientAppointments?.filter(
     (appointment) => appointment.status.toLocaleLowerCase() === "completed",
   );
@@ -128,6 +126,8 @@ export function PatientDetails() {
         accumulator + (currentTreatment.totalFee || 0),
       0,
     ) ?? 0;
+
+  const loading = !patientDetails;
 
   return (
     <div className="p-3 flex flex-col gap-5">
