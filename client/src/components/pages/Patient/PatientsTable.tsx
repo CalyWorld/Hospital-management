@@ -115,7 +115,6 @@ export default function PatientsTable() {
                 {rows
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row: any) => {
-                    console.log(location.pathname.includes("/admin"));
                     return (
                       <TableRow
                         component={Link}
