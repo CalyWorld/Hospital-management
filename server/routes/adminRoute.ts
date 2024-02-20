@@ -114,14 +114,10 @@ router.get(
   "/api/admin/patient/medications/:medicationId",
   asyncHandler(async (req: Request, res: Response) => {
     try {
-      console.log(req.params.medicationId);
-      const patientMedication = await Treatment.find({
-        medication: { $in: [req.params.medicationId] },
-      })
-        .populate("medication")
-        .exec();
-      console.log(patientMedication);
-      // res.status(200).json(patientMedication);
+      const patientMedication = await Medication.findById(
+        req.params.medicationId,
+      ).exec();
+      res.status(200).json(patientMedication);
     } catch (err) {
       console.log(err);
     }
