@@ -47,6 +47,20 @@ router.get(
 );
 
 router.get(
+  "/api/admin/totalFees",
+  asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const treatmentFees = await Treatment.find()
+        .populate("medication")
+        .exec();
+      res.status(200).json(treatmentFees);
+    } catch (err) {
+      console.log(err);
+    }
+  }),
+);
+
+router.get(
   "/api/admin/doctor/appointments/:doctorId",
   asyncHandler(async (req: Request, res: Response) => {
     try {

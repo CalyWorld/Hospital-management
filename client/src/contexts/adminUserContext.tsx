@@ -61,6 +61,12 @@ interface DoctorAndPatientData {
   loading: boolean;
 }
 
+interface TreatMentData {
+  treatMentsData: Treatment[] | null;
+  loading: boolean;
+  totalRevenue: number;
+}
+
 interface AdminUserContextProps {
   useGetDoctorAndPatientData: () => DoctorAndPatientData;
   useGetDoctorDetails: (id: string) => Doctor | null;
@@ -69,6 +75,7 @@ interface AdminUserContextProps {
   useGetDoctorAppointments: (id: string) => Appointment[] | null;
   useGetPatientAppointments: (id: string) => Appointment[] | null;
   useGetDoctorTreatments: (id: string) => Treatment[] | null;
+  useGetTotalRevenue: () => TreatMentData;
 }
 
 interface AdminUserProviderProps {
@@ -280,6 +287,50 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     return loading ? null : patientAppointmentData;
   };
 
+  const useGetTotalRevenue = () => {
+    const [treatMentsData, setTreatMentData] = useState<Treatment[] | null>(
+      null,
+    );
+    const [loading, setLoading] = useState<boolean>(true);
+    const medications = treatMentsData?.flatMap(
+      (treatment) => treatment.medication,
+    );
+    const treatMentFees = treatMentsData?.map(
+      (treatment) => treatment.totalFee,
+    );
+    const medicationFees = medications?.map((medication) => medication?.fee);
+    const totalMedicationFees =
+      medicationFees?.reduce(
+        (accumulator, currentValue) => (accumulator || 0) + (currentValue || 0),
+        0,
+      ) ?? 0;
+    const totalTreatMentFees =
+      treatMentFees?.reduce(
+        (accumulator, currentValue) => (accumulator || 0) + (currentValue || 0),
+        0,
+      ) ?? 0;
+    const totalRevenue = totalMedicationFees + totalTreatMentFees;
+
+    useEffect(() => {
+      const fetchTreatMents = async () => {
+        try {
+          const apiUrl = `http://localhost:3000/api/admin/totalFees`;
+          const treatMentResponse = await fetch(apiUrl, {
+            method: "GET",
+          });
+          const treatMentData = await treatMentResponse.json();
+          setLoading(false);
+          setTreatMentData(treatMentData);
+        } catch (error) {
+          console.error("Error fetching appointments:", error);
+        }
+      };
+
+      fetchTreatMents();
+    }, []);
+    return { treatMentsData, loading, totalRevenue };
+  };
+
   const contextValue = useMemo(
     () => ({
       useGetDoctorAndPatientData,
@@ -289,6 +340,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
       useGetDoctorAppointments,
       useGetPatientAppointments,
       useGetDoctorTreatments,
+      useGetTotalRevenue,
     }),
     [
       useGetDoctorAndPatientData,
@@ -298,6 +350,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
       useGetDoctorAppointments,
       useGetPatientAppointments,
       useGetDoctorTreatments,
+      useGetTotalRevenue,
     ],
   );
 

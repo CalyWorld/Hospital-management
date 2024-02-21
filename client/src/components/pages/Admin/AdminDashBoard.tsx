@@ -1,6 +1,6 @@
 import DoctorsTable from "../Doctor/DoctorsTable";
 import TuneIcon from "@mui/icons-material/Tune";
-import { FaUserDoctor } from "react-icons/fa6";
+import { FaUserDoctor, FaMoneyBill } from "react-icons/fa6";
 import { FaHospitalUser } from "react-icons/fa";
 import PatientsTable from "../Patient/PatientsTable";
 import { useState } from "react";
@@ -8,8 +8,10 @@ import { Outlet } from "react-router";
 import { useLocation } from "react-router";
 import { useAdminUser } from "../../../contexts/adminUserContext";
 export default function AdminDashBoard() {
-  const { useGetDoctorAndPatientData } = useAdminUser();
+  const { useGetDoctorAndPatientData, useGetTotalRevenue } = useAdminUser();
   const { doctors, patients } = useGetDoctorAndPatientData();
+  const { totalRevenue } = useGetTotalRevenue();
+
   const [switchTable, setTable] = useState<boolean>(false);
   const location = useLocation();
 
@@ -34,10 +36,10 @@ export default function AdminDashBoard() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div>icon</div>
+              <FaMoneyBill size={24} />
               <div className="flex flex-col items-center">
-                <div>Total Revenue</div>
-                <div>10k</div>
+                <p>Total Revenue</p>
+                <div>{`₱${totalRevenue}`}</div>
               </div>
             </div>
           </div>
@@ -74,10 +76,10 @@ export default function AdminDashBoard() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div>icon</div>
+              <FaMoneyBill size={24} />
               <div className="flex flex-col items-center">
-                <div>Total Revenue</div>
-                <div>10k</div>
+                <p>Total Revenue</p>
+                <div>{`₱${totalRevenue}`}</div>
               </div>
             </div>
           </div>
