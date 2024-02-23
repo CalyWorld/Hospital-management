@@ -8,6 +8,8 @@ export interface IPatient {
   image: IImage;
   gender: string;
   country: string;
+  address: string;
+  phoneBook: number;
   age: number;
   createdAt: Date;
   doctor: Types.ObjectId[];
@@ -24,6 +26,8 @@ const patientSchema = new Schema<IPatient>({
   },
   gender: { type: String, required: true },
   country: { type: String, required: true },
+  address: { type: String },
+  phoneBook: { type: Number },
   age: { type: Number, required: true },
   createdAt: { type: Date, required: true },
   doctor: [{ type: Schema.Types.ObjectId, ref: "Doctor" }],

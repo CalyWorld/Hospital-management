@@ -10,6 +10,12 @@ export interface IDoctor {
   gender: string;
   country: string;
   age: number;
+  startDate: Date;
+  endDate: Date;
+  startTime: Date;
+  endTime: Date;
+  address: string;
+  phoneBook: number;
   createdAt: Date;
   patient: Types.ObjectId[];
 }
@@ -26,6 +32,12 @@ const doctorSchema = new Schema<IDoctor>({
   gender: { type: String, required: true },
   country: { type: String, required: true },
   age: { type: Number, required: true },
+  startDate: { type: Date },
+  endDate: { type: Date },
+  startTime: { type: Date },
+  endTime: { type: Date },
+  address: { type: String },
+  phoneBook: { type: Number, required: true },
   createdAt: { type: Date, required: true },
   patient: [{ type: Schema.Types.ObjectId, ref: "Patient" }],
 });
