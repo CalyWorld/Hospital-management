@@ -1,25 +1,47 @@
+import * as React from "react";
 import { FaUserDoctor, FaMoneyBill } from "react-icons/fa6";
 import { FaHospitalUser, FaCalendarAlt } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { Outlet, useLocation } from "react-router";
 import { useAdminUser } from "../../../contexts/adminUserContext";
+import dayjs, { Dayjs } from "dayjs";
 import DateCalendarValue from "../../calendar";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 export default function AdminDashBoard() {
-  const { useGetDoctorAndPatientData, useGetTotalRevenue } = useAdminUser();
+  const {
+    useGetDoctorAndPatientData,
+    useGetTotalRevenue,
+    useGetPatientAppointmentsByDateTime,
+  } = useAdminUser();
   const { doctors, patients } = useGetDoctorAndPatientData();
   const { totalRevenue } = useGetTotalRevenue();
   const location = useLocation();
+  const currentDate = new Date();
+  const [value, setValue] = React.useState<Dayjs | null>(dayjs(currentDate));
+  const getMonthAndDate = (date: Dayjs | null) => {
+    return date ? date.toISOString() : "";
+  };
+  const date = getMonthAndDate(value);
+  const patientAppointmentDataByDateTime =
+    useGetPatientAppointmentsByDateTime(date);
+  const loading = !patientAppointmentDataByDateTime;
+  console.log(patientAppointmentDataByDateTime);
 
   return (
     <>
-      {location.pathname === "/admin" || "/admin/dashboard" ? (
+      {location.pathname === "/admin" ||
+      location.pathname === "/admin/dashboard" ? (
         <div className="flex justify-between gap-10 ">
-          <div className="left-side-container w-full flex flex-col gap-10">
+          <div
+            className="left-side-container flex flex-col gap-10"
+            style={{ width: "65%" }}
+          >
             <div className="welcome-info relative">
               <img
                 className="h-96 w-full"
                 src="https://www.mathematica.org/-/media/internet/health-graphics-and-photos/health-graphics/2020/medical_health_interactive_web.jpg"
-                alt="welcome-image"
+                alt="welcome"
               />
               <div className="absolute left-6 top-24 text-white flex flex-col gap-10">
                 <div>
@@ -79,25 +101,54 @@ export default function AdminDashBoard() {
               </div>
             </div>
           </div>
-          <div className="right-side-container shadow bg-white rounded-md">
+          <div
+            className="right-side-container shadow bg-white rounded-md"
+            style={{ width: "35%" }}
+          >
             <div className="calender-info p-3">
-              <DateCalendarValue />
+              <DateCalendarValue value={value} setValue={setValue} />
             </div>
-            <div>
-              <p>Number of appointments today</p>
-              <div>
-                <div>
-                  <p>schedule time</p>
-                  <div className="flex">
-                    <div className="image-container">image of patient</div>
-                    <div className="appointment-info">
-                      <p>Name of patient</p>
-                      <p>consultation with Doctor one</p>
+            {loading ? (
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <CircularProgress />
+              </Box>
+            ) : patientAppointmentDataByDateTime &&
+              patientAppointmentDataByDateTime.length > 0 ? (
+              <div className="p-3 flex flex-col gap-4">
+                <p className="items-center">
+                  {`${patientAppointmentDataByDateTime.length} Appointments`}
+                </p>
+                <div className="shadow bg-white rounded-md p-4">
+                  {patientAppointmentDataByDateTime.map((appointment) => (
+                    <div key={appointment._id} className="flex p-3">
+                      <div className="flex flex-col gap-2 w-full">
+                        <p>{dayjs(appointment.date).format("hh:mm A")}</p>
+                        <div className="flex gap-2">
+                          <div className="image-container">
+                            image of patient
+                          </div>
+                          <div className="appointment-info w-full">
+                            <p className="font-bold">{`${appointment.patient.firstName} ${appointment.patient.lastName}`}</p>
+                            <span className="text-sm">
+                              <p>
+                                <span>{appointment.title}</span> with{" "}
+                                <span>
+                                  {`${appointment.doctor.firstName} ${appointment.doctor.lastName}`}
+                                </span>
+                              </p>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex items-center flex-col">
+                No Appointments Today
+              </div>
+            )}
           </div>
         </div>
       ) : (
