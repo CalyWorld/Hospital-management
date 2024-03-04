@@ -93,6 +93,60 @@ router.get(
 );
 
 router.get(
+  "/api/admin/doctors/available/:date",
+  asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const startOfDay = new Date(req.params.date);
+      startOfDay.setUTCHours(0, 0, 0, 0);
+
+      const endOfDay = new Date(req.params.date);
+      endOfDay.setUTCHours(23, 59, 59, 999);
+
+      const availableDoctors = await Doctor.find({
+        startTime: {
+          $gte: startOfDay.toISOString(),
+        },
+        endTime: {
+          $lte: endOfDay.toISOString(),
+        },
+      })
+        .populate("patient")
+        .exec();
+      res.status(200).json(availableDoctors);
+    } catch (err) {
+      console.log(err);
+    }
+  }),
+);
+
+router.get(
+  "/api/admin/patients/appointments/:date",
+  asyncHandler(async (req: Request, res: Response) => {
+    try {
+      const startOfDay = new Date(req.params.date);
+      startOfDay.setUTCHours(0, 0, 0, 0);
+
+      const endOfDay = new Date(req.params.date);
+      endOfDay.setUTCHours(23, 59, 59, 999);
+
+      const appointments = await Appointment.find({
+        startDate: {
+          $gte: startOfDay.toISOString(),
+        },
+        endDate: {
+          $lte: endOfDay.toISOString(),
+        },
+      })
+        .populate("doctor patient")
+        .exec();
+      res.status(200).json(appointments);
+    } catch (err) {
+      console.log(err);
+    }
+  }),
+);
+
+router.get(
   "/api/admin/doctor/treatments/:doctorId",
   asyncHandler(async (req: Request, res: Response) => {
     try {
