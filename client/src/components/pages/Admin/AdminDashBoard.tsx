@@ -25,10 +25,11 @@ export default function AdminDashBoard() {
   };
   const date = getMonthAndDate(value);
   const startOfDay = new Date(date);
-  startOfDay.setUTCHours(23, 59, 59, 999);
+  startOfDay.setUTCHours(0, 0, 0, 0);
 
   const endOfDay = new Date(date);
   endOfDay.setUTCHours(23, 59, 59, 999);
+  console.log(endOfDay);
 
   const patientAppointmentDataByDateTime =
     useGetPatientAppointmentsByDateTime(date);
@@ -44,7 +45,7 @@ export default function AdminDashBoard() {
     <>
       {location.pathname === "/admin" ||
       location.pathname === "/admin/dashboard" ? (
-        <div className="flex justify-between gap-10 m-10 shadow bg-white rounded-md">
+        <div className="flex justify-between gap-10 m-10">
           <div
             className="left-side-container flex flex-col gap-10"
             style={{ width: "65%" }}
@@ -117,7 +118,7 @@ export default function AdminDashBoard() {
               </div>
               <div className="available-doctors-for-the-day">
                 <h2 className="font-bold">Todays Doctors</h2>
-                <div className="flex w-full snap-x">
+                <div className="flex w-full snap-x mt-3">
                   {doctors === null ? (
                     <div className="flex justify-center items-center w-full">
                       <Box>
@@ -151,7 +152,7 @@ export default function AdminDashBoard() {
             </div>
           </div>
           <div
-            className="right-side-container divide-y divide-gray flex flex-col gap-2 shadow bg-white rounded-md"
+            className="right-side-container divide-y divide-gray flex flex-col shadow bg-white rounded-md"
             style={{ width: "35%" }}
           >
             <div className="calender-info p-3 flex flex-col items-center">
@@ -201,8 +202,8 @@ export default function AdminDashBoard() {
                 </div>
               </div>
             ) : (
-              <div className="flex items-center flex-col">
-                No Appointments Today
+              <div className="flex flex-col items-center">
+                <p>No Appointments Today</p>
               </div>
             )}
           </div>
