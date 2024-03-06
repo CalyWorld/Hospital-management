@@ -9,6 +9,7 @@ import Box from "@mui/material/Box";
 import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 export function PatientDetails() {
+  const [activeTabLink, setActiveTabLink] = useState<string>("");
   const [patientRecords, setPatientRecord] = useState<Records[] | null>(null);
   const [medications, setMedications] = useState<Medications[] | null>(null);
   const { useGetPatientDetails, useGetPatientAppointments } = useAdminUser();
@@ -130,32 +131,104 @@ export function PatientDetails() {
   const loading = !patientDetails;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 p-3">
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <CircularProgress />
         </Box>
       ) : (
         <div className="flex flex-col gap-5">
-          <h1>{`${patientDetails?.firstName} ${patientDetails?.lastName}`}</h1>
+          <h1 className="text-2xl">{`${patientDetails?.firstName} ${patientDetails?.lastName}`}</h1>
           <div className="flex justify-center gap-10 p-5">
             <div className="w-full flex flex-col gap-10">
-              <div className="flex gap-5">
+              <div className="flex gap-1">
                 <Link
                   to={`/admin/patients/patient/${patientId}/active`}
-                  className="shadow-2xl p-2 cursor-pointer bg-gray"
+                  style={{
+                    boxShadow:
+                      activeTabLink === "active"
+                        ? "inset 2 2 2px rgba(0, 0, 0, 0.1)"
+                        : "none",
+                    padding: "8px",
+                    cursor: "pointer",
+                    backgroundColor:
+                      activeTabLink === "active" ? "white" : "#e5e7eb",
+                    borderLeft:
+                      activeTabLink === "active" ? "2px solid #e5e7eb" : "none",
+                    borderTop:
+                      activeTabLink === "active" ? "2px solid #e5e7eb" : "none",
+                    borderBottom:
+                      activeTabLink !== "active" ? "2px solid #e5e7eb" : "none",
+                    borderRight:
+                      activeTabLink === "active" ? "2px solid #e5e7eb" : "none",
+                    color: activeTabLink === "active" ? "#172554" : "inherit",
+                  }}
+                  onClick={() => {
+                    setActiveTabLink("active");
+                  }}
                 >
                   {`Active Consultations (${isScheduled?.length})`}
                 </Link>
                 <Link
                   to={`/admin/patients/patient/${patientId}/completion`}
-                  className="shadow-2xl p-2 cursor-pointer bg-gray"
+                  style={{
+                    boxShadow:
+                      activeTabLink === "completed"
+                        ? "inset 2 2 2px rgba(0, 0, 0, 0.1)"
+                        : "none",
+                    padding: "8px",
+                    cursor: "pointer",
+                    backgroundColor:
+                      activeTabLink === "completed" ? "white" : "#e5e7eb",
+                    borderLeft:
+                      activeTabLink === "completed"
+                        ? "2px solid #e5e7eb"
+                        : "none",
+                    borderTop:
+                      activeTabLink === "completed"
+                        ? "2px solid #e5e7eb"
+                        : "none",
+                    borderBottom:
+                      activeTabLink === "completed"
+                        ? "none"
+                        : "1px solid #e5e7eb",
+                    borderRight:
+                      activeTabLink === "completed"
+                        ? "2px solid #e5e7eb"
+                        : "none",
+                    color:
+                      activeTabLink === "completed" ? "#172554" : "inherit",
+                  }}
+                  onClick={() => {
+                    setActiveTabLink("completed");
+                  }}
                 >
                   {`Completed Consultations (${isCompleted?.length})`}
                 </Link>
                 <Link
                   to={`/admin/patients/patient/${patientId}/doctors`}
-                  className="shadow-2xl p-2 cursor-pointer bg-gray"
+                  style={{
+                    boxShadow:
+                      activeTabLink === "doctor"
+                        ? "inset 2 2 2px rgba(0, 0, 0, 0.1)"
+                        : "none",
+                    padding: "8px",
+                    cursor: "pointer",
+                    backgroundColor:
+                      activeTabLink === "doctor" ? "white" : "#e5e7eb",
+                    borderLeft:
+                      activeTabLink === "doctor" ? "2px solid #e5e7eb" : "none",
+                    borderTop:
+                      activeTabLink === "doctor" ? "2px solid #e5e7eb" : "none",
+                    borderBottom:
+                      activeTabLink === "doctor" ? "none" : "1px solid #e5e7eb",
+                    borderRight:
+                      activeTabLink === "doctor" ? "2px solid #e5e7eb" : "none",
+                    color: activeTabLink === "doctor" ? "#172554" : "inherit",
+                  }}
+                  onClick={() => {
+                    setActiveTabLink("doctor");
+                  }}
                 >{`Doctors (${patientDetails?.doctor?.length})`}</Link>
               </div>
               <Outlet />
