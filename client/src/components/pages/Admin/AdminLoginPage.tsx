@@ -9,7 +9,7 @@ export default function AdminLoginPage() {
           alt="admin-background"
         />
       </div>
-      {AdminForm()}
+      <AdminForm />
     </div>
   );
 }

@@ -2,7 +2,6 @@ import * as z from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAdminUser } from "../contexts/adminUserContext";
-
 const adminFormSchema = z.object({
   username: z.string().min(4, { message: "username is required" }),
   password: z
@@ -21,9 +20,8 @@ export default function AdminForm() {
     resolver: zodResolver(adminFormSchema),
   });
 
-  const { useGetDoctorAndPatientData } = useAdminUser();
-  const { setAdminUser } = useGetDoctorAndPatientData();
-
+  const { useGetAdmin } = useAdminUser();
+  const { setAdminUser } = useGetAdmin();
   const onSubmit: SubmitHandler<adminSignInSchemaType> = async (data) => {
     try {
       const adminUser = { username: data.username, password: data.password };
@@ -37,6 +35,7 @@ export default function AdminForm() {
       });
       if (response.ok) {
         const user = await response.json();
+        console.log("user-from-form", user);
         setAdminUser(user);
       } else {
         const errorData = await response.json();

@@ -52,6 +52,7 @@ const router = createBrowserRouter([
             element: <PatientDetails />,
             children: [
               {
+                index: true,
                 path: "active",
                 element: <PatientScheduledAppointmentTable />,
               },
@@ -101,6 +102,7 @@ const router = createBrowserRouter([
             element: <PatientDetails />,
             children: [
               {
+                index: true,
                 path: "active",
                 element: <PatientScheduledAppointmentTable />,
               },

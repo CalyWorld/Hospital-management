@@ -102,16 +102,8 @@ router.get(
       const endOfDay = new Date(req.params.date);
       endOfDay.setUTCHours(23, 59, 59, 999);
 
-      const availableDoctors = await Doctor.find({
-        startTime: {
-          $gte: startOfDay.toISOString(),
-        },
-        endTime: {
-          $lte: endOfDay.toISOString(),
-        },
-      })
-        .populate("patient")
-        .exec();
+      const availableDoctors = await Doctor.find().populate("patient").exec();
+      console.log(availableDoctors);
       res.status(200).json(availableDoctors);
     } catch (err) {
       console.log(err);

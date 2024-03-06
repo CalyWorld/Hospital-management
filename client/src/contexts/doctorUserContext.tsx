@@ -23,6 +23,12 @@ export interface Doctor {
   country: string;
   age: number;
   createdAt: string;
+  startDate: Date;
+  endDate: Date;
+  startTime: string;
+  endTime: string;
+  phoneBook: number;
+  address: string;
   __v?: number;
   _id?: string;
   id: string;

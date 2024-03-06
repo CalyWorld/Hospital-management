@@ -18,7 +18,8 @@ interface AdminUser {
 
 export interface Appointment {
   title: string;
-  date: Date;
+  startDate: Date;
+  endDate: Date;
   status: string;
   doctor: Doctor;
   patient: Patient;
@@ -54,8 +55,6 @@ export interface Records {
 }
 
 interface DoctorAndPatientData {
-  adminUser: AdminUser | null;
-  setAdminUser: React.Dispatch<React.SetStateAction<AdminUser | null>>;
   doctors: Doctor[] | null;
   patients: Patient[] | null;
   loading: boolean;
@@ -66,14 +65,19 @@ interface TreatMentData {
   loading: boolean;
   totalRevenue: number;
 }
-
+interface AdminUserType {
+  adminUser: AdminUser | null;
+  setAdminUser: React.Dispatch<React.SetStateAction<AdminUser | null>>;
+}
 interface AdminUserContextProps {
+  useGetAdmin: () => AdminUserType;
   useGetDoctorAndPatientData: () => DoctorAndPatientData;
   useGetDoctorDetails: (id: string) => Doctor | null;
   useGetPatientDetails: (id: string) => Patient | null;
   useUpdateAdminUserDetails: (updatedDetails: AdminUser) => void;
   useGetDoctorAppointments: (id: string) => Appointment[] | null;
   useGetPatientAppointments: (id: string) => Appointment[] | null;
+  useGetPatientAppointmentsByDateTime: (date: string) => Appointment[] | null;
   useGetDoctorTreatments: (id: string) => Treatment[] | null;
   useGetTotalRevenue: () => TreatMentData;
 }
@@ -97,52 +101,56 @@ export const useAdminUser = () => {
 export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
   children,
 }: AdminUserProviderProps) => {
-  const useGetDoctorAndPatientData = (): DoctorAndPatientData => {
+  const useGetAdmin = (): AdminUserType => {
     const adminUserFromCookies = Cookies.get("adminUser");
     const initialUser = adminUserFromCookies
       ? JSON.parse(adminUserFromCookies)
       : null;
-
     const [adminUser, setAdminUser] = useState<AdminUser | null>(initialUser);
+    useEffect(() => {
+      if (adminUser) {
+        Cookies.set("adminUser", JSON.stringify(adminUser), { expires: 29 });
+      } else {
+        Cookies.remove("adminUser");
+      }
+    }, [adminUser]);
+    return { adminUser, setAdminUser };
+  };
+
+  const useGetDoctorAndPatientData = (): DoctorAndPatientData => {
     const [doctors, setDoctor] = useState<Doctor[] | null>(null);
     const [patients, setPatient] = useState<Patient[] | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+
     useEffect(() => {
       let idCounter1 = 0;
       let idCounter2 = 0;
       async function fetchData() {
         try {
-          if (adminUser) {
-            Cookies.set("adminUser", JSON.stringify(adminUser), {
-              expires: 29,
-            });
-            const [doctorResponse, patientResponse] = await Promise.all([
-              fetch("http://localhost:3000/api/admin/doctor", {
-                method: "GET",
-              }),
-              fetch("http://localhost:3000/api/admin/patient", {
-                method: "GET",
-              }),
+          const [doctorResponse, patientResponse] = await Promise.all([
+            fetch("http://localhost:3000/api/admin/doctor", {
+              method: "GET",
+            }),
+            fetch("http://localhost:3000/api/admin/patient", {
+              method: "GET",
+            }),
+          ]);
+          if (doctorResponse.ok && patientResponse.ok) {
+            const [doctorData, patientData] = await Promise.all([
+              doctorResponse.json(),
+              patientResponse.json(),
             ]);
-            if (doctorResponse.ok && patientResponse.ok) {
-              const [doctorData, patientData] = await Promise.all([
-                doctorResponse.json(),
-                patientResponse.json(),
-              ]);
-              const doctorsDataWithId = doctorData.map((doctor: Doctor) => ({
-                ...doctor,
-                id: ++idCounter1,
-              }));
-              const patientsDataWithId = patientData.map(
-                (patient: Patient) => ({
-                  ...patient,
-                  id: ++idCounter2,
-                }),
-              );
-              setLoading(false);
-              setDoctor(doctorsDataWithId);
-              setPatient(patientsDataWithId);
-            }
+            const doctorsDataWithId = doctorData.map((doctor: Doctor) => ({
+              ...doctor,
+              id: ++idCounter1,
+            }));
+            const patientsDataWithId = patientData.map((patient: Patient) => ({
+              ...patient,
+              id: ++idCounter2,
+            }));
+            setLoading(false);
+            setDoctor(doctorsDataWithId);
+            setPatient(patientsDataWithId);
           } else {
             Cookies.remove("adminUser");
           }
@@ -151,16 +159,16 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
         }
       }
       fetchData();
-    }, [adminUser]);
-    return { adminUser, setAdminUser, doctors, patients, loading };
+    }, []);
+    return { doctors, patients, loading };
   };
 
   const useUpdateAdminUserDetails = (updatedDetails: AdminUser) => {
-    const { setAdminUser } = useGetDoctorAndPatientData();
-    setAdminUser((prevAdminUser) => ({
-      ...prevAdminUser,
-      ...updatedDetails,
-    }));
+    // const { setAdminUser } = useGetDoctorAndPatientData();
+    // setAdminUser((prevAdminUser) => ({
+    //   ...prevAdminUser,
+    //   ...updatedDetails,
+    // }));
   };
 
   const useGetDoctorDetails = (doctorId: string) => {
@@ -287,6 +295,32 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     return loading ? null : patientAppointmentData;
   };
 
+  const useGetPatientAppointmentsByDateTime = (date: string) => {
+    const [
+      patientAppointmentDataByDateTime,
+      setPatientAppointmentDataByDateTime,
+    ] = useState<Appointment[] | null>(null);
+    const [patientAppointMentLoading, setLoading] = useState<boolean>(true);
+    useEffect(() => {
+      const fetchAppointmentsByDateTime = async () => {
+        try {
+          const apiUrl = `http://localhost:3000/api/admin/patients/appointments/${date}`;
+          const appointmentsResponse = await fetch(apiUrl, {
+            method: "GET",
+          });
+          const appointmentsData = await appointmentsResponse.json();
+          setLoading(false);
+          setPatientAppointmentDataByDateTime(appointmentsData);
+        } catch (error) {
+          console.error("Error fetching appointments:", error);
+        }
+      };
+
+      fetchAppointmentsByDateTime();
+    }, [date]);
+    return patientAppointMentLoading ? null : patientAppointmentDataByDateTime;
+  };
+
   const useGetTotalRevenue = () => {
     const [treatMentsData, setTreatMentData] = useState<Treatment[] | null>(
       null,
@@ -301,7 +335,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     const medicationFees = medications?.map((medication) => medication?.fee);
     const totalMedicationFees =
       medicationFees?.reduce(
-        (accumulator, currentValue) => (accumulator || 0) + (currentValue || 0),
+        (accumulator, currentValue) => (accumulator ?? 0) + (currentValue ?? 0),
         0,
       ) ?? 0;
     const totalTreatMentFees =
@@ -333,22 +367,26 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
 
   const contextValue = useMemo(
     () => ({
+      useGetAdmin,
       useGetDoctorAndPatientData,
       useUpdateAdminUserDetails,
       useGetDoctorDetails,
       useGetPatientDetails,
       useGetDoctorAppointments,
       useGetPatientAppointments,
+      useGetPatientAppointmentsByDateTime,
       useGetDoctorTreatments,
       useGetTotalRevenue,
     }),
     [
+      useGetAdmin,
       useGetDoctorAndPatientData,
       useUpdateAdminUserDetails,
       useGetDoctorDetails,
       useGetPatientDetails,
       useGetDoctorAppointments,
       useGetPatientAppointments,
+      useGetPatientAppointmentsByDateTime,
       useGetDoctorTreatments,
       useGetTotalRevenue,
     ],

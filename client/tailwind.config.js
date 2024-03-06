@@ -6,7 +6,12 @@ export default {
       purple: "#701a75",
       white: "#f8fafc",
       darkBlue: "#1e293b",
-      gray: "#e5e7eb",
+      darkGray: "#4b5563",
+      gray: "#d4d4d8",
+    },
+    fontFamily: {
+      sans: ["Graphik", "sans-serif"],
+      serif: ["Merriweather", "serif"],
     },
   },
   plugins: [],

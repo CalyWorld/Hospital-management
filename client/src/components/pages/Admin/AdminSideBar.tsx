@@ -9,7 +9,7 @@ export default function AdminSideBar() {
   return (
     <div
       id="sidebar"
-      className="h-screen w-36 bg-darkBlue text-white flex flex-col items-center justify-between p-5"
+      className="w-36 bg-darkBlue text-white flex flex-col items-center justify-between p-5"
     >
       <div className="flex flex-col items-center gap-10">
         <a href="/admin">

@@ -59,7 +59,7 @@ export function DoctorDetails() {
 
   const loading = !doctorDetails;
   return (
-    <div className="p-3 flex flex-col gap-5">
+    <div className="flex flex-col gap-5">
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <CircularProgress />

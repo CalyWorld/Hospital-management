@@ -9,18 +9,18 @@ import Box from "@mui/material/Box";
 import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 export function PatientDetails() {
-  const { patientId } = useParams();
+  const [patientRecords, setPatientRecord] = useState<Records[] | null>(null);
+  const [medications, setMedications] = useState<Medications[] | null>(null);
   const { useGetPatientDetails, useGetPatientAppointments } = useAdminUser();
+  const { patientId } = useParams();
   if (!patientId) {
     return;
   }
   const patientDetails = useGetPatientDetails(patientId);
   const patientAppointments = useGetPatientAppointments(patientId);
-  const [patientRecords, setPatientRecord] = useState<Records[] | null>(null);
-  const [medications, setMedications] = useState<Medications[] | null>(null);
 
   useEffect(() => {
-    const useFetchData = async () => {
+    const fetchData = async () => {
       try {
         const apiUrl = `http://localhost:3000/api/admin/patient/records/${patientId}`;
         const recordsResponse = await fetch(apiUrl, {
@@ -56,7 +56,7 @@ export function PatientDetails() {
         console.error("err getting records", err);
       }
     };
-    useFetchData();
+    fetchData();
   }, [patientId]);
 
   const isCompleted = patientAppointments?.filter(
@@ -130,7 +130,7 @@ export function PatientDetails() {
   const loading = !patientDetails;
 
   return (
-    <div className="p-3 flex flex-col gap-5">
+    <div className="flex flex-col gap-5">
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <CircularProgress />

@@ -88,7 +88,7 @@ export default function PatientsTable() {
   };
 
   return (
-    <div className="p-5">
+    <div>
       <h2>LATEST PATIENTS</h2>
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
