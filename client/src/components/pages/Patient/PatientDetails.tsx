@@ -251,7 +251,17 @@ export function PatientDetails() {
                   }`}</h1>
                 </div>
               </div>
-              <div className="bg-gray p-3">patient info</div>
+              <div className=" flex flex-col bg-[#e5e7eb] gap-10 p-3 shadow rounded-md">
+                {" "}
+                <div>
+                  <p className="text-[#6b7280]">Phone number</p>
+                  <p>{`+63 ${patientDetails.phoneBook}`}</p>
+                </div>
+                <div>
+                  <p className="text-[#6b7280]">Address</p>
+                  <p>{patientDetails.address}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
