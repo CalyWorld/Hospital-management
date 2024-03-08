@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useAdminUser } from "../../../contexts/adminUserContext";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
+import { Doctor } from "../../../contexts/doctorUserContext";
 export function DoctorDetails() {
   const { doctorId } = useParams();
   const [activeTabLink, setActiveTabLink] = useState<string>("");
@@ -60,6 +61,48 @@ export function DoctorDetails() {
   );
 
   const loading = !doctorDetails;
+
+  const availableTimeOfDay = () => {
+    if (!doctorDetails) return;
+    const doctorStartTime = new Date(doctorDetails.startTime);
+    const doctorEndTime = new Date(doctorDetails.endTime);
+
+    const formattedStartTime = doctorStartTime.toLocaleTimeString("en-US", {
+      hour12: true,
+      hour: "numeric",
+      minute: "numeric",
+    });
+
+    const formattedEndTime = doctorEndTime.toLocaleTimeString("en-US", {
+      hour12: true,
+      hour: "numeric",
+      minute: "numeric",
+    });
+    return <div>{`${formattedStartTime} - ${formattedEndTime}`}</div>;
+  };
+
+  const availableDaysOfWeek = () => {
+    if (!doctorDetails) return;
+    let currentDate = new Date(doctorDetails?.startDate);
+    let endDate = new Date(doctorDetails?.endDate);
+    const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    const availableDaysOfWeek = [];
+    while (currentDate <= endDate) {
+      const dayIndex = currentDate.getDay();
+      availableDaysOfWeek.push(daysOfWeek[dayIndex]);
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return (
+      <div className="flex gap-2">
+        {availableDaysOfWeek.map((day) => (
+          <div className="bg-[#d1d5db] flex items-center justify-center p-1">
+            <p className="font-semibold">{day}</p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-5 p-3">
       {loading ? (
@@ -164,7 +207,7 @@ export function DoctorDetails() {
               <Outlet />
             </div>
             <div className="w-96 flex flex-col gap-10">
-              <div className="flex flex-col gap-5 bg-gray p-3">
+              <div className="flex flex-col gap-5 bg-[#e5e7eb] p-3 shadow rounded-md">
                 <div className="flex justify-between">
                   <div>
                     <h2 className="text-darkBlue">Revenue last 30 days</h2>
@@ -177,7 +220,24 @@ export function DoctorDetails() {
                   <h1>{`₱${totalRevenueAllTime}`}</h1>
                 </div>
               </div>
-              <div className="bg-gray p-3">doctor info</div>
+              <div className=" flex flex-col bg-[#e5e7eb] gap-10 p-3 shadow rounded-md">
+                <div>
+                  <p className="text-[#6b7280]">Phone number</p>
+                  <p>{`+63 ${doctorDetails.phoneBook}`}</p>
+                </div>
+                <div>
+                  <p className="text-[#6b7280]">Address</p>
+                  <p>{doctorDetails.address}</p>
+                </div>
+                <div>
+                  <p className="text-[#6b7280]">Availaiblity</p>
+                  <div>{availableDaysOfWeek()}</div>
+                </div>
+                <div>
+                  <p className="text-[#6b7280]">Available hours</p>
+                  <div>{availableTimeOfDay()}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
