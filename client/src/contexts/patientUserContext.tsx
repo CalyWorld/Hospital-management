@@ -13,6 +13,8 @@ export interface Patient {
   password?: string;
   firstName?: string;
   lastName?: string;
+  address: string;
+  phoneBook: string;
   image?: Image;
   gender: string;
   country: string;
