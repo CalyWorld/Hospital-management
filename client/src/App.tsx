@@ -1,18 +1,18 @@
-import DoctorHomePage from "./components/pages/Doctor/DoctorHomePage";
-import PatientHomePage from "./components/pages/Patient/PatientHomePage";
-import AdminHomePage from "./components/pages/Admin/AdminHomePage";
+import DoctorHomePage from "./pages/Doctor/DoctorHomePage";
+import PatientHomePage from "./pages/Patient/PatientHomePage";
+import AdminHomePage from "./pages/Admin/AdminHomePage";
 import { AdminUserProvider } from "./contexts/adminUserContext";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./errorPage";
-import AdminDashBoard from "./components/pages/Admin/AdminDashBoard";
-import { DoctorDetails } from "./components/pages/Doctor/DoctorDetails";
-import PatientsTable from "./components/pages/Patient/PatientsTable";
-import { PatientDetails } from "./components/pages/Patient/PatientDetails";
-import DoctorsTable from "./components/pages/Doctor/DoctorsTable";
-import DoctorScheduledAppointmentTable from "./components/pages/Doctor/DoctorScheduledAppointmentTable";
-import DoctorCompletedAppointmentTable from "./components/pages/Doctor/DoctorCompletedAppointmentTable";
-import PatientScheduledAppointmentTable from "./components/pages/Patient/PatientScheduledAppointmentTable";
-import PatientCompletedAppointmentTable from "./components/pages/Patient/PatientCompletedAppointmentTable";
+import AdminDashBoard from "./pages/Admin/AdminDashBoard";
+import { DoctorDetails } from "./pages/Doctor/DoctorDetails";
+import PatientsTable from "./pages/Patient/PatientsTable";
+import { PatientDetails } from "./pages/Patient/PatientDetails";
+import DoctorsTable from "./pages/Doctor/DoctorsTable";
+import DoctorScheduledAppointmentTable from "./pages/Doctor/DoctorScheduledAppointmentTable";
+import DoctorCompletedAppointmentTable from "./pages/Doctor/DoctorCompletedAppointmentTable";
+import PatientScheduledAppointmentTable from "./pages/Patient/PatientScheduledAppointmentTable";
+import PatientCompletedAppointmentTable from "./pages/Patient/PatientCompletedAppointmentTable";
 
 const router = createBrowserRouter([
   {

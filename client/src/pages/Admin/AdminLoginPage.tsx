@@ -1,4 +1,4 @@
-import AdminForm from "../../../forms/AdminForm";
+import AdminForm from "../../forms/AdminForm";
 
 export default function AdminLoginPage() {
   return (

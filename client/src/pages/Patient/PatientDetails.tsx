@@ -4,7 +4,7 @@ import {
   Medications,
   Records,
   useAdminUser,
-} from "../../../contexts/adminUserContext";
+} from "../../contexts/adminUserContext";
 import Box from "@mui/material/Box";
 import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";

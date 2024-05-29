@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import { useState } from "react";
-import { Appointment, useAdminUser } from "../../../contexts/adminUserContext";
+import { Appointment, useAdminUser } from "../../contexts/adminUserContext";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -29,11 +29,11 @@ const columns: Column[] = [
     minWidth: 40,
     align: "center",
   },
-  { id: "doctorName", label: "DOCTOR", minWidth: 40, align: "center" },
+  { id: "patientName", label: "PATIENT", minWidth: 40, align: "center" },
 ];
 
-function createData({ _id, title, status, date, doctor }: Appointment) {
-  const doctorName = `${doctor.firstName} ${doctor.lastName}`;
+function createData({ _id, title, status, date, patient }: Appointment) {
+  const patientName = `${patient?.firstName} ${patient.lastName}`;
   const formattedDate = new Date(date).toLocaleDateString("en-us", {
     year: "numeric",
     month: "short",
@@ -43,23 +43,26 @@ function createData({ _id, title, status, date, doctor }: Appointment) {
     timeZoneName: "short",
   });
   const statusAndDate = `${status} ${formattedDate}`;
-  return { _id, title, doctorName, statusAndDate };
+  return { _id, title, patientName, statusAndDate };
 }
 
-export default function PatientCompletedAppointmentTable() {
-  const { useGetPatientAppointments } = useAdminUser();
+export default function DoctorScheduledAppointmentTable() {
+  const { useGetDoctorAppointments } = useAdminUser();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { patientId } = useParams();
-  if (!patientId) {
+  const { doctorId } = useParams();
+  if (!doctorId) {
     return;
   }
-  const patientAppointmentData = useGetPatientAppointments(patientId);
-  const loading = !patientAppointmentData;
+  const doctorAppointmentData = useGetDoctorAppointments(doctorId);
+  const loading = !doctorAppointmentData;
 
   const rows = (
-    patientAppointmentData?.map((appointment) => {
-      if (appointment.status.toLocaleLowerCase() === "completed") {
+    doctorAppointmentData?.map((appointment) => {
+      if (
+        appointment.status.toLocaleLowerCase() === "scheduled" ||
+        "canceled"
+      ) {
         return createData(appointment);
       }
       return null;
@@ -137,7 +140,7 @@ export default function PatientCompletedAppointmentTable() {
         </Paper>
       ) : (
         <div className="flex justify-center">
-          No Completed Appointment so far
+          No Scheduled or Canceled Appointment so far
         </div>
       )}
     </div>

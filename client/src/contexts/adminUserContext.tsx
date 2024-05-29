@@ -60,17 +60,25 @@ interface DoctorAndPatientData {
   loading: boolean;
 }
 
+export interface Rows {
+  _id: string;
+  id: number;
+  createdAt: string;
+  username: string;
+  age: number;
+  country: string;
+  gender: string;
+}
+
 interface TreatMentData {
   treatMentsData: Treatment[] | null;
   loading: boolean;
   totalRevenue: number;
 }
-interface AdminUserType {
+
+interface AdminUserContextProps {
   adminUser: AdminUser | null;
   setAdminUser: React.Dispatch<React.SetStateAction<AdminUser | null>>;
-}
-interface AdminUserContextProps {
-  useGetAdmin: () => AdminUserType;
   useGetDoctorAndPatientData: () => DoctorAndPatientData;
   useGetDoctorDetails: (id: string) => Doctor | null;
   useGetPatientDetails: (id: string) => Patient | null;
@@ -101,21 +109,20 @@ export const useAdminUser = () => {
 export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
   children,
 }: AdminUserProviderProps) => {
-  const useGetAdmin = (): AdminUserType => {
-    const adminUserFromCookies = Cookies.get("adminUser");
-    const initialUser = adminUserFromCookies
-      ? JSON.parse(adminUserFromCookies)
-      : null;
-    const [adminUser, setAdminUser] = useState<AdminUser | null>(initialUser);
-    useEffect(() => {
-      if (adminUser) {
-        Cookies.set("adminUser", JSON.stringify(adminUser), { expires: 29 });
-      } else {
-        Cookies.remove("adminUser");
-      }
-    }, [adminUser]);
-    return { adminUser, setAdminUser };
-  };
+  const adminUserFromCookies = Cookies.get("adminUser");
+  const initialUser = adminUserFromCookies
+    ? JSON.parse(adminUserFromCookies)
+    : null;
+
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(initialUser);
+
+  useEffect(() => {
+    if (adminUser) {
+      Cookies.set("adminUser", JSON.stringify(adminUser), { expires: 29 });
+    } else {
+      Cookies.remove("adminUser");
+    }
+  }, [adminUser]);
 
   const useGetDoctorAndPatientData = (): DoctorAndPatientData => {
     const [doctors, setDoctor] = useState<Doctor[] | null>(null);
@@ -148,11 +155,10 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
               ...patient,
               id: ++idCounter2,
             }));
+
             setLoading(false);
             setDoctor(doctorsDataWithId);
             setPatient(patientsDataWithId);
-          } else {
-            Cookies.remove("adminUser");
           }
         } catch (err) {
           console.log("error getting data", err);
@@ -160,6 +166,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
       }
       fetchData();
     }, []);
+
     return { doctors, patients, loading };
   };
 
@@ -207,6 +214,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
           const patientDetailsResponse = await fetch(apiUrl, {
             method: "GET",
           });
+          console.log(patientDetailsResponse);
           const patientDetailsData = await patientDetailsResponse.json();
           setLoading(false);
           setPatientDetailsData(patientDetailsData);
@@ -367,7 +375,8 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
 
   const contextValue = useMemo(
     () => ({
-      useGetAdmin,
+      adminUser,
+      setAdminUser,
       useGetDoctorAndPatientData,
       useUpdateAdminUserDetails,
       useGetDoctorDetails,
@@ -379,7 +388,8 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
       useGetTotalRevenue,
     }),
     [
-      useGetAdmin,
+      adminUser,
+      setAdminUser,
       useGetDoctorAndPatientData,
       useUpdateAdminUserDetails,
       useGetDoctorDetails,

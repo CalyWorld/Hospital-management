@@ -93,25 +93,6 @@ router.get(
 );
 
 router.get(
-  "/api/admin/doctors/available/:date",
-  asyncHandler(async (req: Request, res: Response) => {
-    try {
-      const startOfDay = new Date(req.params.date);
-      startOfDay.setUTCHours(0, 0, 0, 0);
-
-      const endOfDay = new Date(req.params.date);
-      endOfDay.setUTCHours(23, 59, 59, 999);
-
-      const availableDoctors = await Doctor.find().populate("patient").exec();
-      console.log(availableDoctors);
-      res.status(200).json(availableDoctors);
-    } catch (err) {
-      console.log(err);
-    }
-  }),
-);
-
-router.get(
   "/api/admin/patients/appointments/:date",
   asyncHandler(async (req: Request, res: Response) => {
     try {

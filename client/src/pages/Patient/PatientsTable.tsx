@@ -8,13 +8,13 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { Doctor } from "../../../contexts/doctorUserContext";
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAdminUser } from "../../../contexts/adminUserContext";
+import { Patient } from "../../contexts/patientUserContext";
+import { useState } from "react";
+import { useAdminUser } from "../../contexts/adminUserContext";
 
 interface Column {
-  id: keyof Doctor;
+  id: keyof Patient;
   label: string;
   minWidth?: number;
   align?: "center";
@@ -64,18 +64,19 @@ function createData({
   age,
   country,
   gender,
-}: Doctor) {
+}: Patient) {
   const username = `${firstName} ${lastName}`;
   return { _id, id, createdAt, username, age, country, gender };
 }
 
-export default function DoctorsTable() {
+export default function PatientsTable() {
   const { useGetDoctorAndPatientData } = useAdminUser();
-  const { doctors, loading } = useGetDoctorAndPatientData();
+  const { patients, loading } = useGetDoctorAndPatientData();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const rows = doctors?.map((doctor: Doctor) => createData(doctor)) ?? [];
+  const rows = patients?.map((patient: Patient) => createData(patient)) ?? [];
+
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -87,8 +88,8 @@ export default function DoctorsTable() {
   };
 
   return (
-    <div>
-      <h2>LATEST DOCTORS</h2>
+    <div className="p-3">
+      <h2 className="text-2xl mb-4">LATEST PATIENTS</h2>
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <CircularProgress />
@@ -119,13 +120,12 @@ export default function DoctorsTable() {
                         component={Link}
                         to={`${
                           location.pathname.includes("/admin") &&
-                          `/admin/doctors/doctor/${row._id}`
+                          `/admin/patients/patient/${row._id}`
                         }`}
                         hover
                         role="checkbox"
-                        className="cursor-pointer"
                         tabIndex={-1}
-                        key={row._id}
+                        key={row.id}
                       >
                         {columns.map((column) => {
                           const value = row[column.id];

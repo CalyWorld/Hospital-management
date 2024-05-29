@@ -1,3 +1,6 @@
+import { useParams } from "react-router";
+import { useState } from "react";
+import { Appointment, useAdminUser } from "../../contexts/adminUserContext";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,13 +11,9 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { Link } from "react-router-dom";
-import { Patient } from "../../../contexts/patientUserContext";
-import { useState } from "react";
-import { useAdminUser } from "../../../contexts/adminUserContext";
 
 interface Column {
-  id: keyof Patient;
+  id: keyof Appointment;
   label: string;
   minWidth?: number;
   align?: "center";
@@ -23,59 +22,49 @@ interface Column {
 }
 
 const columns: Column[] = [
+  { id: "title", label: "CONSULTATION", minWidth: 40, align: "center" },
   {
-    id: "id",
-    label: "NO",
+    id: "statusAndDate",
+    label: "STATUS",
     minWidth: 40,
     align: "center",
-    format: (value: number) => value.toLocaleString("en-US"),
   },
-  {
-    id: "createdAt",
-    label: "DATE",
-    minWidth: 40,
-    align: "center",
-    formatDate: (value: string) => {
-      return new Date(value).toLocaleDateString("en-us", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-    },
-  },
-  { id: "username", label: "NAME", minWidth: 40, align: "center" },
-  {
-    id: "age",
-    label: "AGE",
-    minWidth: 40,
-    align: "center",
-    format: (value: number) => value.toLocaleString("en-US"),
-  },
-  { id: "country", label: "COUNTRY", minWidth: 40, align: "center" },
-  { id: "gender", label: "GENDER", minWidth: 40, align: "center" },
+  { id: "patientName", label: "PATIENT", minWidth: 40, align: "center" },
 ];
 
-function createData({
-  _id,
-  id,
-  createdAt,
-  firstName,
-  lastName,
-  age,
-  country,
-  gender,
-}: Patient) {
-  const username = `${firstName} ${lastName}`;
-  return { _id, id, createdAt, username, age, country, gender };
+function createData({ _id, title, status, date, patient }: Appointment) {
+  const patientName = `${patient?.firstName} ${patient.lastName}`;
+  const formattedDate = new Date(date).toLocaleDateString("en-us", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  });
+  const statusAndDate = `${status} ${formattedDate}`;
+  return { _id, title, patientName, statusAndDate };
 }
 
-export default function PatientsTable() {
-  const { useGetDoctorAndPatientData } = useAdminUser();
-  const { patients, loading } = useGetDoctorAndPatientData();
+export default function DoctorCompletedAppointmentTable() {
+  const { useGetDoctorAppointments } = useAdminUser();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const { doctorId } = useParams();
+  if (!doctorId) {
+    return;
+  }
+  const doctorAppointmentData = useGetDoctorAppointments(doctorId);
+  const loading = !doctorAppointmentData;
 
-  const rows = patients?.map((patient: Patient) => createData(patient)) ?? [];
+  const rows = (
+    doctorAppointmentData?.map((appointment) => {
+      if (appointment.status.toLocaleLowerCase() === "completed") {
+        return createData(appointment);
+      }
+      return null;
+    }) ?? []
+  ).filter(Boolean);
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
@@ -89,12 +78,11 @@ export default function PatientsTable() {
 
   return (
     <div>
-      <h2>LATEST PATIENTS</h2>
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <CircularProgress />
         </Box>
-      ) : (
+      ) : rows.length ? (
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
           <TableContainer sx={{ maxHeight: 110 }}>
             <Table stickyHeader aria-label="sticky table">
@@ -117,25 +105,17 @@ export default function PatientsTable() {
                   .map((row: any) => {
                     return (
                       <TableRow
-                        component={Link}
-                        to={`${
-                          location.pathname.includes("/admin") &&
-                          `/admin/patients/patient/${row._id}`
-                        }`}
                         hover
                         role="checkbox"
+                        className="cursor-pointer"
                         tabIndex={-1}
-                        key={row.id}
+                        key={row._id}
                       >
                         {columns.map((column) => {
                           const value = row[column.id];
                           return (
                             <TableCell key={column.id} align={column.align}>
-                              {column.format && typeof value === "number"
-                                ? column.format(value)
-                                : column.formatDate && typeof value === "string"
-                                ? column.formatDate(value)
-                                : value}
+                              {value}
                             </TableCell>
                           );
                         })}
@@ -155,6 +135,10 @@ export default function PatientsTable() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
+      ) : (
+        <div className="flex justify-center">
+          No Completed Appointment so far
+        </div>
       )}
     </div>
   );

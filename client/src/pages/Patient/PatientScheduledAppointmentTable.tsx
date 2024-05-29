@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import { useState } from "react";
-import { Appointment, useAdminUser } from "../../../contexts/adminUserContext";
+import { Appointment, useAdminUser } from "../../contexts/adminUserContext";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";

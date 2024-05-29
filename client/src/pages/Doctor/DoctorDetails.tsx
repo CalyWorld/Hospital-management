@@ -1,10 +1,10 @@
 import { useParams, Outlet } from "react-router";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAdminUser } from "../../../contexts/adminUserContext";
+import { useAdminUser } from "../../contexts/adminUserContext";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Doctor } from "../../../contexts/doctorUserContext";
+import { Doctor } from "../../contexts/doctorUserContext";
 export function DoctorDetails() {
   const { doctorId } = useParams();
   const [activeTabLink, setActiveTabLink] = useState<string>("");

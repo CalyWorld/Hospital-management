@@ -20,8 +20,7 @@ export default function AdminForm() {
     resolver: zodResolver(adminFormSchema),
   });
 
-  const { useGetAdmin } = useAdminUser();
-  const { setAdminUser } = useGetAdmin();
+  const { setAdminUser } = useAdminUser();
   const onSubmit: SubmitHandler<adminSignInSchemaType> = async (data) => {
     try {
       const adminUser = { username: data.username, password: data.password };
@@ -35,7 +34,6 @@ export default function AdminForm() {
       });
       if (response.ok) {
         const user = await response.json();
-        console.log("user-from-form", user);
         setAdminUser(user);
       } else {
         const errorData = await response.json();

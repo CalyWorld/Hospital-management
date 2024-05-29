@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import { useState } from "react";
-import { Appointment, useAdminUser } from "../../../contexts/adminUserContext";
+import { Appointment, useAdminUser } from "../../contexts/adminUserContext";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -29,11 +29,11 @@ const columns: Column[] = [
     minWidth: 40,
     align: "center",
   },
-  { id: "patientName", label: "PATIENT", minWidth: 40, align: "center" },
+  { id: "doctorName", label: "DOCTOR", minWidth: 40, align: "center" },
 ];
 
-function createData({ _id, title, status, date, patient }: Appointment) {
-  const patientName = `${patient?.firstName} ${patient.lastName}`;
+function createData({ _id, title, status, date, doctor }: Appointment) {
+  const doctorName = `${doctor.firstName} ${doctor.lastName}`;
   const formattedDate = new Date(date).toLocaleDateString("en-us", {
     year: "numeric",
     month: "short",
@@ -43,22 +43,22 @@ function createData({ _id, title, status, date, patient }: Appointment) {
     timeZoneName: "short",
   });
   const statusAndDate = `${status} ${formattedDate}`;
-  return { _id, title, patientName, statusAndDate };
+  return { _id, title, doctorName, statusAndDate };
 }
 
-export default function DoctorCompletedAppointmentTable() {
-  const { useGetDoctorAppointments } = useAdminUser();
+export default function PatientCompletedAppointmentTable() {
+  const { useGetPatientAppointments } = useAdminUser();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { doctorId } = useParams();
-  if (!doctorId) {
+  const { patientId } = useParams();
+  if (!patientId) {
     return;
   }
-  const doctorAppointmentData = useGetDoctorAppointments(doctorId);
-  const loading = !doctorAppointmentData;
+  const patientAppointmentData = useGetPatientAppointments(patientId);
+  const loading = !patientAppointmentData;
 
   const rows = (
-    doctorAppointmentData?.map((appointment) => {
+    patientAppointmentData?.map((appointment) => {
       if (appointment.status.toLocaleLowerCase() === "completed") {
         return createData(appointment);
       }

@@ -4,9 +4,9 @@ import { FaUserDoctor, FaMoneyBill } from "react-icons/fa6";
 import { FaHospitalUser, FaCalendarAlt } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { Outlet, useLocation } from "react-router";
-import { useAdminUser } from "../../../contexts/adminUserContext";
+import { useAdminUser } from "../../contexts/adminUserContext";
 import dayjs, { Dayjs } from "dayjs";
-import DateCalendarValue from "../../calendar";
+import DateCalendarValue from "../../components/calendar";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 export default function AdminDashBoard() {
@@ -29,7 +29,6 @@ export default function AdminDashBoard() {
 
   const endOfDay = new Date(date);
   endOfDay.setUTCHours(23, 59, 59, 999);
-  console.log(endOfDay);
 
   const patientAppointmentDataByDateTime =
     useGetPatientAppointmentsByDateTime(date);
@@ -39,7 +38,6 @@ export default function AdminDashBoard() {
       new Date(doctor.startDate) <= endOfDay &&
       new Date(doctor.endDate) >= startOfDay,
   );
-  console.log("range of doctors", rangeOfDoctorsAvailable);
 
   return (
     <>
@@ -47,7 +45,7 @@ export default function AdminDashBoard() {
       location.pathname === "/admin/dashboard" ? (
         <div className="flex justify-between gap-10 m-10">
           <div
-            className="left-side-container flex flex-col gap-10"
+            className="left-side-container flex flex-col gap-10 snap-y"
             style={{ width: "65%" }}
           >
             <div className="welcome-info relative">
