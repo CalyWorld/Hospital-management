@@ -11,7 +11,7 @@ export default function AdminLayout() {
   return (
     <nav
       id="sidebar"
-      className="w-64 h-screen bg-darkBlue text-white flex flex-col gap-10 p-3"
+      className="w-48 h-screen bg-darkBlue text-white flex flex-col gap-10 p-3"
     >
       <ul>
         <li>
