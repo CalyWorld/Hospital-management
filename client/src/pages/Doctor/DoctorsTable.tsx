@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -25,19 +26,14 @@ interface Column {
   formatDate?: (value: string) => string;
 }
 
-interface SearchBarProps {
-  searchQuery: string;
-  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
-}
-
-interface Rows {
+interface Row {
+  _id: string | undefined;
+  id: string;
+  createdAt: string;
+  username: string;
   age: number;
   country: string;
-  createdAt: string;
   gender: string;
-  id: string;
-  username: string;
-  _id: string | undefined;
 }
 
 const columns: Column[] = [
@@ -77,17 +73,16 @@ export default function DoctorsTable() {
   const { useGetDoctorAndPatientData } = useAdminUser();
   const { doctors, loading } = useGetDoctorAndPatientData();
   const tableRows = doctors?.map((doctor) => createData(doctor)) ?? [];
+  const [searchedItems, setSearchedItem] = useState<Row[]>(tableRows);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-  const [searchQuery, setSearchQuery] = useState("");
-  // console.log(searchQuery);
-  // const filterData = (query: string, data: Rows[] | null) => {
-  //   console.log(query);
-  //   // if (!query) {
-  //   //   return data;
-  //   // }
-  // };
-  // filterData(searchQuery, tableRows);
+  useEffect(() => {
+    if (searchedItems.length === 0 && tableRows.length > 0) {
+      setSearchedItem(tableRows);
+    }
+  }, [tableRows]);
+
+  const productsToRender = searchedItems.length ? searchedItems : tableRows;
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
@@ -112,30 +107,14 @@ export default function DoctorsTable() {
     return { _id, id, createdAt, username, age, country, gender };
   }
 
-  const SearchBar = ({ setSearchQuery }: SearchBarProps) => {
-    console.log(searchQuery);
-    return (
-      <>
-        <form>
-          <TextField
-            id="search-bar"
-            className="text"
-            label="Enter Doctor Name"
-            variant="outlined"
-            placeholder="Search..."
-            size="small"
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-            }}
-          >
-            <IconButton type="submit" aria-label="search">
-              <SearchIcon style={{ fill: "blue" }} />
-            </IconButton>
-          </TextField>
-        </form>
-      </>
+  const searchName = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    let value = (e.target as HTMLInputElement).value;
+    const searchedItem = tableRows.filter((table) =>
+      table.username.toLowerCase().includes(value),
     );
+    setSearchedItem(searchedItem);
   };
 
   return (
@@ -153,10 +132,23 @@ export default function DoctorsTable() {
               overflow: "hidden",
             }}
           >
-            <SearchBar
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-            />
+            <form>
+              <TextField
+                id="search-bar"
+                className="text"
+                label="Enter Doctor Name"
+                variant="outlined"
+                placeholder="Search..."
+                size="small"
+                onChange={(e) => {
+                  searchName(e);
+                }}
+              >
+                <IconButton type="submit" aria-label="search">
+                  <SearchIcon style={{ fill: "blue" }} />
+                </IconButton>
+              </TextField>
+            </form>
             <TableContainer sx={{ maxHeight: 110 }}>
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
@@ -173,7 +165,7 @@ export default function DoctorsTable() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {tableRows
+                  {productsToRender
                     ?.slice(
                       page * rowsPerPage,
                       page * rowsPerPage + rowsPerPage,
