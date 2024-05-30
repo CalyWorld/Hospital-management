@@ -11,7 +11,7 @@ export default function AdminLayout() {
   return (
     <nav
       id="sidebar"
-      className="w-48 h-screen bg-darkBlue text-white flex flex-col gap-10 p-3"
+      className="w-48 bg-darkBlue text-white flex flex-col gap-10 p-3"
     >
       <ul>
         <li>
@@ -34,7 +34,7 @@ export default function AdminLayout() {
                 setNavTabLink("dashboard");
               }}
             >
-              <HomeIcon sx={{ fontSize: 25 }} />
+              <HomeIcon sx={{ fontSize: 23 }} />
               <p>Dashboard</p>
             </Link>
           </li>

@@ -214,7 +214,6 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
           const patientDetailsResponse = await fetch(apiUrl, {
             method: "GET",
           });
-          console.log(patientDetailsResponse);
           const patientDetailsData = await patientDetailsResponse.json();
           setLoading(false);
           setPatientDetailsData(patientDetailsData);

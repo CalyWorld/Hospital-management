@@ -40,12 +40,12 @@ export default function AdminDashBoard() {
   );
 
   return (
-    <>
+    <div>
       {location.pathname === "/admin" ||
       location.pathname === "/admin/dashboard" ? (
         <div className="flex justify-between gap-10 m-10">
           <div
-            className="left-side-container flex flex-col gap-10 snap-y"
+            className="left-side-container flex flex-col gap-10"
             style={{ width: "65%" }}
           >
             <div className="welcome-info relative">
@@ -209,6 +209,6 @@ export default function AdminDashBoard() {
       ) : (
         <Outlet />
       )}
-    </>
+    </div>
   );
 }
