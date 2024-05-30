@@ -12,10 +12,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
+import InputAdornment from "@mui/material/InputAdornment";
 import { Doctor } from "../../contexts/doctorUserContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAdminUser } from "../../contexts/adminUserContext";
+import { searchName } from "../../components/searchTableName";
+import { createData } from "../../components/createTableData";
 
 interface Column {
   id: keyof Doctor;
@@ -26,14 +29,15 @@ interface Column {
   formatDate?: (value: string) => string;
 }
 
-interface Row {
+export interface Row {
   _id: string | undefined;
   id: string;
   createdAt: string;
-  username: string;
+  username: JSX.Element | string;
   age: number;
   country: string;
   gender: string;
+  action?: JSX.Element;
 }
 
 const columns: Column[] = [
@@ -67,6 +71,7 @@ const columns: Column[] = [
   },
   { id: "country", label: "COUNTRY", minWidth: 40, align: "center" },
   { id: "gender", label: "GENDER", minWidth: 40, align: "center" },
+  { id: "actions", label: "ACTION", minWidth: 40, align: "center" },
 ];
 
 export default function DoctorsTable() {
@@ -93,29 +98,6 @@ export default function DoctorsTable() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  function createData({
-    _id,
-    id,
-    createdAt,
-    firstName,
-    lastName,
-    age,
-    country,
-    gender,
-  }: Doctor) {
-    const username = `${firstName} ${lastName}`;
-    return { _id, id, createdAt, username, age, country, gender };
-  }
-
-  const searchName = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    let value = (e.target as HTMLInputElement).value;
-    const searchedItem = tableRows.filter((table) =>
-      table.username.toLowerCase().includes(value),
-    );
-    setSearchedItem(searchedItem);
-  };
 
   return (
     <div className="p-3">
@@ -132,7 +114,7 @@ export default function DoctorsTable() {
               overflow: "hidden",
             }}
           >
-            <form>
+            <form className="relative">
               <TextField
                 id="search-bar"
                 className="text"
@@ -141,13 +123,18 @@ export default function DoctorsTable() {
                 placeholder="Search..."
                 size="small"
                 onChange={(e) => {
-                  searchName(e);
+                  searchName(e, tableRows, setSearchedItem);
                 }}
-              >
-                <IconButton type="submit" aria-label="search">
-                  <SearchIcon style={{ fill: "blue" }} />
-                </IconButton>
-              </TextField>
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton type="submit" aria-label="search">
+                        <SearchIcon style={{ fill: "blue" }} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
             </form>
             <TableContainer sx={{ maxHeight: 110 }}>
               <Table stickyHeader aria-label="sticky table">
@@ -173,11 +160,6 @@ export default function DoctorsTable() {
                     .map((row: any) => {
                       return (
                         <TableRow
-                          component={Link}
-                          to={`${
-                            location.pathname.includes("/admin") &&
-                            `/admin/doctors/doctor/${row._id}`
-                          }`}
                           hover
                           role="checkbox"
                           className="cursor-pointer"
