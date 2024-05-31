@@ -12,7 +12,7 @@ export default function AdminHeader() {
     }
   };
   return (
-    <header className="ml-10 mr-10 mt-0 mb-0">
+    <header className="ml-10 mr-14 mt-0 mb-0">
       <nav className="flex justify-between items-center shadow bg-white rounded-md p-3">
         {getPathContent()}
         <PersonIcon fontSize="large" />

@@ -40,32 +40,29 @@ export default function AdminDashBoard() {
   );
 
   return (
-    <div>
+    <>
       {location.pathname === "/admin" ||
       location.pathname === "/admin/dashboard" ? (
-        <div className="flex justify-between gap-10 m-10">
+        <div className="flex gap-10 m-10">
           <div
             className="left-side-container flex flex-col gap-10"
             style={{ width: "65%" }}
           >
             <div className="welcome-info relative">
               <img
-                className="h-96 w-full"
+                className="h-full w-full"
                 src="https://www.mathematica.org/-/media/internet/health-graphics-and-photos/health-graphics/2020/medical_health_interactive_web.jpg"
                 alt="welcome"
               />
-              <div className="absolute left-6 top-24 text-white flex flex-col gap-10">
-                <div>
-                  <p>Welcome</p>
-                  <p className="font-semibold">Admin</p>
-                </div>
-                <div>
-                  <p>
-                    To keep the body in good health is a duty ... otherwise
-                    <br />
-                    we shall not be able to keep our mind strong and clear
-                  </p>
-                </div>
+              <div className="absolute left-[30px] top-[70px] text-white flex flex-col h-[20%] justify-between">
+                <h1>
+                  Welcome <span className="font-semibold">Admin</span>
+                </h1>
+                <p>
+                  To keep the body in good health is a duty ... otherwise
+                  <br />
+                  we shall not be able to keep our mind strong and clear
+                </p>
               </div>
             </div>
             <div className="stats-info flex flex-col gap-5">
@@ -116,7 +113,7 @@ export default function AdminDashBoard() {
               </div>
               <div className="available-doctors-for-the-day">
                 <h2 className="font-bold">Todays Doctors</h2>
-                <div className="flex w-full snap-x mt-3">
+                <div className="flex w-full mt-3">
                   {doctors === null ? (
                     <div className="flex justify-center items-center w-full">
                       <Box>
@@ -132,7 +129,7 @@ export default function AdminDashBoard() {
                       >
                         <div
                           key={doctor._id}
-                          className="flex flex-col shadow bg-white rounded-md justify-center items-center p-3 h-64 w-64 scroll-ml-6 snap-start"
+                          className="flex flex-col shadow bg-white rounded-md justify-center items-center p-3 h-64 w-64"
                         >
                           <div>image of patient</div>
                           <p>{`${doctor.firstName} ${doctor.lastName}`}</p>
@@ -209,6 +206,6 @@ export default function AdminDashBoard() {
       ) : (
         <Outlet />
       )}
-    </div>
+    </>
   );
 }

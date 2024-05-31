@@ -14,7 +14,7 @@ export interface Image {
 }
 
 export interface Doctor {
-  username: string;
+  username: JSX.Element | string;
   password?: string;
   firstName?: string;
   lastName?: string;
@@ -33,6 +33,7 @@ export interface Doctor {
   _id?: string;
   id: string;
   patient: [Patient];
+  actions?: JSX.Element;
 }
 
 interface DoctorContextProps {

@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { useAdminUser } from "../../contexts/adminUserContext";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Doctor } from "../../contexts/doctorUserContext";
 export function DoctorDetails() {
   const { doctorId } = useParams();
   const [activeTabLink, setActiveTabLink] = useState<string>("");
@@ -95,7 +94,10 @@ export function DoctorDetails() {
     return (
       <div className="flex gap-2">
         {availableDaysOfWeek.map((day) => (
-          <div className="bg-[#d1d5db] flex items-center justify-center p-1">
+          <div
+            className="bg-[#d1d5db] flex items-center justify-center p-1"
+            key={day}
+          >
             <p className="font-semibold">{day}</p>
           </div>
         ))}
@@ -116,6 +118,7 @@ export function DoctorDetails() {
             <div className="w-full flex flex-col gap-10">
               <div className="flex gap-1">
                 <Link
+                  key={doctorId}
                   to={`/admin/doctors/doctor/${doctorId}/active`}
                   style={{
                     boxShadow:

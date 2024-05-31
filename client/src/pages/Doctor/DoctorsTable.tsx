@@ -18,7 +18,6 @@ import { useState } from "react";
 import { useAdminUser } from "../../contexts/adminUserContext";
 import { searchName } from "../../components/searchTableName";
 import { createData } from "../../components/createTableData";
-import EditDoctorDetail from "../../forms/EditDoctorDetailsForm";
 
 interface Column {
   id: keyof Doctor;
@@ -74,8 +73,10 @@ const columns: Column[] = [
   { id: "actions", label: "ACTION", minWidth: 40, align: "center" },
 ];
 
-export default function DoctorsTable() {
-  const [openActionForm, setActionForm] = useState<boolean>(false);
+interface DoctorsTableProps {
+  setActionForm: React.Dispatch<React.SetStateAction<string>>;
+}
+export default function DoctorsTable({ setActionForm }: DoctorsTableProps) {
   const { useGetDoctorAndPatientData } = useAdminUser();
   const { doctors, loading } = useGetDoctorAndPatientData();
   const tableRows =
@@ -102,8 +103,7 @@ export default function DoctorsTable() {
   };
 
   return (
-    <div className="p-3 relative">
-      {openActionForm && <EditDoctorDetail />}
+    <div className="p-3">
       <h1 className="text-2xl mb-4">LATEST DOCTORS</h1>
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
