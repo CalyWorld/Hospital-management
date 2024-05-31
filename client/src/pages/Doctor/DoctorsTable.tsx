@@ -15,10 +15,10 @@ import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Doctor } from "../../contexts/doctorUserContext";
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { useAdminUser } from "../../contexts/adminUserContext";
 import { searchName } from "../../components/searchTableName";
 import { createData } from "../../components/createTableData";
+import EditDoctorDetail from "../../forms/EditDoctorDetailsForm";
 
 interface Column {
   id: keyof Doctor;
@@ -75,9 +75,11 @@ const columns: Column[] = [
 ];
 
 export default function DoctorsTable() {
+  const [openActionForm, setActionForm] = useState<boolean>(false);
   const { useGetDoctorAndPatientData } = useAdminUser();
   const { doctors, loading } = useGetDoctorAndPatientData();
-  const tableRows = doctors?.map((doctor) => createData(doctor)) ?? [];
+  const tableRows =
+    doctors?.map((doctor) => createData(doctor, setActionForm)) ?? [];
   const [searchedItems, setSearchedItem] = useState<Row[]>(tableRows);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -100,7 +102,8 @@ export default function DoctorsTable() {
   };
 
   return (
-    <div className="p-3">
+    <div className="p-3 relative">
+      {openActionForm && <EditDoctorDetail />}
       <h1 className="text-2xl mb-4">LATEST DOCTORS</h1>
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
