@@ -1,21 +1,17 @@
 import { DoctorsTableProps } from "../Doctor/DoctorsTable";
-import EditDoctorDetail from "../../forms/EditDoctorDetailsForm";
-import DeleteDoctor from "../../forms/DeleteDoctorForm";
-import BookAppointment from "../../forms/BookAppointment";
 import AdminHeader from "./AdminHeader";
 import AdminLayout from "./AdminLayout";
 import { Outlet } from "react-router";
 
 export default function AdminPage({ openActionForm }: DoctorsTableProps) {
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen z-10">
       <div className="flex w-full h-full">
-        {openActionForm === "editForm" && <EditDoctorDetail />}
-        {openActionForm === "deleteDoctor" && <DeleteDoctor />}
-        {openActionForm === "bookPatient" && <BookAppointment />}
         <div
           className={`${
-            openActionForm === "deleteDoctor"
+            openActionForm === "editForm" ||
+            openActionForm === "deleteDoctor" ||
+            openActionForm === "bookPatient"
               ? "bg-darkBlue blur-[4px]"
               : "bg-darkBlue"
           }`}
@@ -25,7 +21,11 @@ export default function AdminPage({ openActionForm }: DoctorsTableProps) {
         <div
           id="detail"
           className={`w-full flex flex-col ${
-            openActionForm === "deleteDoctor" ? "blur-[4px]" : "bg-white"
+            openActionForm === "editForm" ||
+            openActionForm === "deleteDoctor" ||
+            openActionForm === "bookPatient"
+              ? "blur-[4px]"
+              : "bg-white"
           }`}
         >
           <AdminHeader />
