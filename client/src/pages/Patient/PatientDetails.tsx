@@ -1,6 +1,5 @@
 import { useParams, Outlet } from "react-router";
 import { Link } from "react-router-dom";
-import { currentMonth } from "../../components/currentMonth";
 import {
   Medications,
   Records,
@@ -11,6 +10,7 @@ import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { completeAppointment } from "../../components/completeAppointment";
 import { scheduledAppointMent } from "../../components/scheduledAppointment";
+import { patientRevenue } from "../../components/patientRevenue";
 export function PatientDetails() {
   const [activeTabLink, setActiveTabLink] = useState<string>("");
   const [patientRecords, setPatientRecord] = useState<Records[] | null>(null);
@@ -65,60 +65,11 @@ export function PatientDetails() {
 
   const isCompleted = completeAppointment(patientAppointments);
   const isScheduled = scheduledAppointMent(patientAppointments);
-
-  // Get total fees from patient medications
-  const patientMedicationFees =
-    medications?.map((medication) => medication.fee) ?? [];
-
-  // Get all treatment fees for each patient record
-  const allTreatmentFees =
-    patientRecords?.map((record) =>
-      record.treatments.map((treatment) => treatment.totalFee),
-    ) ?? [];
-
-  // Calculate total revenue from all treatment fees across all records
-  const totalTreatmentRevenue =
-    allTreatmentFees
-      ?.flat()
-      ?.reduce(
-        (accumulator, currentValue) => accumulator + (currentValue || 0),
-        0,
-      ) ?? 0;
-
-  // Calculate total revenue from patient medication fees across all records
-  const totalMedicationRevenueAllTime =
-    patientMedicationFees
-      ?.flat()
-      ?.reduce(
-        (accumulator, currentValue) => accumulator + (currentValue || 0),
-        0,
-      ) ?? 0;
-
-  //Get all Treatments from records
-  const patientTreatments = patientRecords?.flatMap((record) =>
-    record.treatments.map((treatment) => treatment),
-  );
-
-  //Get all Treatments within the Current Month
-  const treatmentsWithinCurrentMonth = patientTreatments?.filter(
-    (treatment) => {
-      const treatmentDate = new Date(treatment.date);
-      return (
-        treatmentDate
-          .toLocaleDateString("en-us", { month: "short" })
-          .toLowerCase() === currentMonth
-      );
-    },
-  );
-
-  //Calculate Total Fees Within the Month
-  const totalRevenueCurrentMonth =
-    treatmentsWithinCurrentMonth?.reduce(
-      (accumulator, currentTreatment) =>
-        accumulator + (currentTreatment.totalFee || 0),
-      0,
-    ) ?? 0;
-
+  const {
+    totalTreatmentRevenue,
+    totalRevenueCurrentMonth,
+    totalMedicationRevenueAllTime,
+  } = patientRevenue({ patientRecords, medications });
   const loading = !patientDetails;
 
   return (
