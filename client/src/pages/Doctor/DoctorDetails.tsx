@@ -1,7 +1,6 @@
 import { useParams, Outlet } from "react-router";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { currentMonth } from "../../components/currentMonth";
 import { useAdminUser } from "../../contexts/adminUserContext";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -9,6 +8,7 @@ import { completeAppointment } from "../../components/completeAppointment";
 import { scheduledAppointMent } from "../../components/scheduledAppointment";
 import { availableTimeOfDay } from "../../components/availableTimeDay";
 import { availableDaysOfWeek } from "../../components/availableDayWeek";
+import { doctorRevenue } from "../../components/doctorRevenue";
 export function DoctorDetails() {
   const { doctorId } = useParams();
   const [activeTabLink, setActiveTabLink] = useState<string>("");
@@ -23,33 +23,8 @@ export function DoctorDetails() {
   const doctorDetails = useGetDoctorDetails(doctorId);
   const doctorAppointments = useGetDoctorAppointments(doctorId);
   const doctorTreatments = useGetDoctorTreatments(doctorId);
-
-  const allTreatmentsFees = doctorTreatments?.map(
-    (treatment) => treatment.totalFee,
-  );
-  const totalRevenueAllTime = allTreatmentsFees?.reduce(
-    (accumulator, currentValue) => accumulator + (currentValue || 0),
-    0,
-  );
-
-  const treatmentsWithinCurrentMonth = doctorTreatments?.filter((treatment) => {
-    const treatmentDate = new Date(treatment.date);
-    if (isNaN(treatmentDate.getTime())) {
-      return false;
-    }
-    return (
-      treatmentDate
-        .toLocaleDateString("en-us", { month: "short" })
-        .toLowerCase() === currentMonth
-    );
-  });
-
-  const totalRevenueCurrentMonth = treatmentsWithinCurrentMonth?.reduce(
-    (accumulator, currentTreatment) =>
-      accumulator + (currentTreatment.totalFee || 0),
-    0,
-  );
-
+  const { totalRevenueAllTime, totalRevenueCurrentMonth } =
+    doctorRevenue(doctorTreatments);
   const isCompleted = completeAppointment(doctorAppointments);
   const isScheduled = scheduledAppointMent(doctorAppointments);
   const loading = !doctorDetails;
