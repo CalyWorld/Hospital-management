@@ -5,77 +5,40 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
+import TextField from "@mui/material/TextField";
 import TableRow from "@mui/material/TableRow";
+import SearchIcon from "@mui/icons-material/Search";
+import IconButton from "@mui/material/IconButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { Link } from "react-router-dom";
+import InputAdornment from "@mui/material/InputAdornment";
 import { Patient } from "../../contexts/patientUserContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { TableProps } from "../Doctor/DoctorsTable";
+import { createData } from "../../components/createTableData";
+import { searchName } from "../../components/searchTableName";
 import { useAdminUser } from "../../contexts/adminUserContext";
+import { columns } from "../../components/columnStructure";
+import { Row } from "../Doctor/DoctorsTable";
 
-interface Column {
-  id: keyof Patient;
-  label: string;
-  minWidth?: number;
-  align?: "center";
-  format?: (value: number) => string;
-  formatDate?: (value: string) => string;
-}
-
-const columns: Column[] = [
-  {
-    id: "id",
-    label: "NO",
-    minWidth: 40,
-    align: "center",
-    format: (value: number) => value.toLocaleString("en-US"),
-  },
-  {
-    id: "createdAt",
-    label: "DATE",
-    minWidth: 40,
-    align: "center",
-    formatDate: (value: string) => {
-      return new Date(value).toLocaleDateString("en-us", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-    },
-  },
-  { id: "username", label: "NAME", minWidth: 40, align: "center" },
-  {
-    id: "age",
-    label: "AGE",
-    minWidth: 40,
-    align: "center",
-    format: (value: number) => value.toLocaleString("en-US"),
-  },
-  { id: "country", label: "COUNTRY", minWidth: 40, align: "center" },
-  { id: "gender", label: "GENDER", minWidth: 40, align: "center" },
-];
-
-function createData({
-  _id,
-  id,
-  createdAt,
-  firstName,
-  lastName,
-  age,
-  country,
-  gender,
-}: Patient) {
-  const username = `${firstName} ${lastName}`;
-  return { _id, id, createdAt, username, age, country, gender };
-}
-
-export default function PatientsTable() {
+export default function PatientsTable({ setActionForm }: TableProps) {
   const { useGetDoctorAndPatientData } = useAdminUser();
   const { patients, loading } = useGetDoctorAndPatientData();
+  const path = "patients/patient";
+  const tableRows =
+    patients?.map((patient: Patient) =>
+      createData(patient, path, setActionForm),
+    ) ?? [];
+  const [searchedItems, setSearchedItem] = useState<Row[]>(tableRows);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  useEffect(() => {
+    if (searchedItems.length === 0 && tableRows.length > 0) {
+      setSearchedItem(tableRows);
+    }
+  }, [tableRows]);
 
-  const rows = patients?.map((patient: Patient) => createData(patient)) ?? [];
+  const productsToRender = searchedItems.length ? searchedItems : tableRows;
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
@@ -96,6 +59,28 @@ export default function PatientsTable() {
         </Box>
       ) : (
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
+          <form className="relative">
+            <TextField
+              id="search-bar"
+              className="text"
+              label="Enter Doctor Name"
+              variant="outlined"
+              placeholder="Search..."
+              size="small"
+              onChange={(e) => {
+                searchName(e, tableRows, setSearchedItem);
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton type="submit" aria-label="search">
+                      <SearchIcon style={{ fill: "blue" }} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </form>
           <TableContainer sx={{ maxHeight: 110 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
@@ -112,16 +97,11 @@ export default function PatientsTable() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows
+                {productsToRender
                   ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row: any) => {
                     return (
                       <TableRow
-                        component={Link}
-                        to={`${
-                          location.pathname.includes("/admin") &&
-                          `/admin/patients/patient/${row._id}`
-                        }`}
                         hover
                         role="checkbox"
                         tabIndex={-1}
@@ -148,7 +128,7 @@ export default function PatientsTable() {
           <TablePagination
             rowsPerPageOptions={[10, 25, 100]}
             component="div"
-            count={rows.length}
+            count={tableRows.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
