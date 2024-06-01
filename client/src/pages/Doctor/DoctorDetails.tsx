@@ -1,9 +1,14 @@
 import { useParams, Outlet } from "react-router";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { currentMonth } from "../../components/currentMonth";
 import { useAdminUser } from "../../contexts/adminUserContext";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
+import { completeAppointment } from "../../components/completeAppointment";
+import { scheduledAppointMent } from "../../components/scheduledAppointment";
+import { availableTimeOfDay } from "../../components/availableTimeDay";
+import { availableDaysOfWeek } from "../../components/availableDayWeek";
 export function DoctorDetails() {
   const { doctorId } = useParams();
   const [activeTabLink, setActiveTabLink] = useState<string>("");
@@ -27,12 +32,6 @@ export function DoctorDetails() {
     0,
   );
 
-  const currentMonth = new Date()
-    .toLocaleDateString("en-us", {
-      month: "short",
-    })
-    .toLowerCase();
-
   const treatmentsWithinCurrentMonth = doctorTreatments?.filter((treatment) => {
     const treatmentDate = new Date(treatment.date);
     if (isNaN(treatmentDate.getTime())) {
@@ -51,59 +50,9 @@ export function DoctorDetails() {
     0,
   );
 
-  const isCompleted = doctorAppointments?.filter(
-    (appointment) => appointment.status.toLocaleLowerCase() === "completed",
-  );
-  const isScheduled = doctorAppointments?.filter(
-    (appointment) =>
-      appointment.status.toLocaleLowerCase() === "scheduled" || "canceled",
-  );
-
+  const isCompleted = completeAppointment(doctorAppointments);
+  const isScheduled = scheduledAppointMent(doctorAppointments);
   const loading = !doctorDetails;
-
-  const availableTimeOfDay = () => {
-    if (!doctorDetails) return;
-    const doctorStartTime = new Date(doctorDetails.startTime);
-    const doctorEndTime = new Date(doctorDetails.endTime);
-
-    const formattedStartTime = doctorStartTime.toLocaleTimeString("en-US", {
-      hour12: true,
-      hour: "numeric",
-      minute: "numeric",
-    });
-
-    const formattedEndTime = doctorEndTime.toLocaleTimeString("en-US", {
-      hour12: true,
-      hour: "numeric",
-      minute: "numeric",
-    });
-    return <div>{`${formattedStartTime} - ${formattedEndTime}`}</div>;
-  };
-
-  const availableDaysOfWeek = () => {
-    if (!doctorDetails) return;
-    let currentDate = new Date(doctorDetails?.startDate);
-    let endDate = new Date(doctorDetails?.endDate);
-    const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-    const availableDaysOfWeek = [];
-    while (currentDate <= endDate) {
-      const dayIndex = currentDate.getDay();
-      availableDaysOfWeek.push(daysOfWeek[dayIndex]);
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-    return (
-      <div className="flex gap-2">
-        {availableDaysOfWeek.map((day) => (
-          <div
-            className="bg-[#d1d5db] flex items-center justify-center p-1"
-            key={day}
-          >
-            <p className="font-semibold">{day}</p>
-          </div>
-        ))}
-      </div>
-    );
-  };
 
   return (
     <div className="flex flex-col gap-5 p-3">
@@ -234,11 +183,11 @@ export function DoctorDetails() {
                 </div>
                 <div>
                   <p className="text-[#6b7280]">Availaiblity</p>
-                  <div>{availableDaysOfWeek()}</div>
+                  <div>{availableDaysOfWeek(doctorDetails)}</div>
                 </div>
                 <div>
                   <p className="text-[#6b7280]">Available hours</p>
-                  <div>{availableTimeOfDay()}</div>
+                  <div>{availableTimeOfDay(doctorDetails)}</div>
                 </div>
               </div>
             </div>
