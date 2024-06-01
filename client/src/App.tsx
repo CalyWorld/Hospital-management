@@ -49,7 +49,7 @@ function routerFunc() {
                 },
                 {
                   path: "patients",
-                  element: <PatientsTable />,
+                  element: <PatientsTable setActionForm={setActionForm} />,
                 },
               ],
             },
@@ -93,7 +93,7 @@ function routerFunc() {
                 },
                 {
                   path: "patients",
-                  element: <PatientsTable />,
+                  element: <PatientsTable setActionForm={setActionForm} />,
                 },
               ],
             },
@@ -101,7 +101,7 @@ function routerFunc() {
         },
         {
           path: "patients",
-          element: <PatientHomePage />,
+          element: <PatientHomePage setActionForm={setActionForm} />,
           children: [
             {
               path: "patient/:patientId",
@@ -136,7 +136,11 @@ function App() {
     <div>
       <div
         onClick={() => {
-          if (openActionForm === "deleteDoctor") {
+          if (
+            openActionForm === "deleteDoctor" ||
+            openActionForm === "editForm" ||
+            openActionForm === "bookPatient"
+          ) {
             setActionForm("");
           }
         }}
@@ -146,7 +150,9 @@ function App() {
         </AdminUserProvider>
       </div>
       {openActionForm === "editForm" && <EditDoctorDetail />}
-      {openActionForm === "deleteDoctor" && <DeleteDoctor />}
+      {openActionForm === "deleteDoctor" && (
+        <DeleteDoctor setActionForm={setActionForm} />
+      )}
       {openActionForm === "bookPatient" && <BookAppointment />}
     </div>
   );
