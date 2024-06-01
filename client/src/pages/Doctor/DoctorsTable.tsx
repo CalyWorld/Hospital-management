@@ -13,20 +13,11 @@ import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
-import { Doctor } from "../../contexts/doctorUserContext";
+import { columns } from "../../components/columnStructure";
 import { useState } from "react";
 import { useAdminUser } from "../../contexts/adminUserContext";
 import { searchName } from "../../components/searchTableName";
 import { createData } from "../../components/createTableData";
-
-interface Column {
-  id: keyof Doctor;
-  label: string;
-  minWidth?: number;
-  align?: "center";
-  format?: (value: number) => string;
-  formatDate?: (value: string) => string;
-}
 
 export interface Row {
   _id: string | undefined;
@@ -39,48 +30,16 @@ export interface Row {
   action?: JSX.Element;
 }
 
-const columns: Column[] = [
-  {
-    id: "id",
-    label: "NO",
-    minWidth: 40,
-    align: "center",
-    format: (value: number) => value.toLocaleString("en-US"),
-  },
-  {
-    id: "createdAt",
-    label: "DATE",
-    minWidth: 40,
-    align: "center",
-    formatDate: (value: string) => {
-      return new Date(value).toLocaleDateString("en-us", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-    },
-  },
-  { id: "username", label: "NAME", minWidth: 40, align: "center" },
-  {
-    id: "age",
-    label: "AGE",
-    minWidth: 40,
-    align: "center",
-    format: (value: number) => value.toLocaleString("en-US"),
-  },
-  { id: "country", label: "COUNTRY", minWidth: 40, align: "center" },
-  { id: "gender", label: "GENDER", minWidth: 40, align: "center" },
-  { id: "actions", label: "ACTION", minWidth: 40, align: "center" },
-];
-
-interface DoctorsTableProps {
-  setActionForm: React.Dispatch<React.SetStateAction<string>>;
+export interface TableProps {
+  openActionForm?: string;
+  setActionForm?: React.Dispatch<React.SetStateAction<string>>;
 }
-export default function DoctorsTable({ setActionForm }: DoctorsTableProps) {
+export default function DoctorsTable({ setActionForm }: TableProps) {
   const { useGetDoctorAndPatientData } = useAdminUser();
   const { doctors, loading } = useGetDoctorAndPatientData();
+  const path = "doctors/doctor";
   const tableRows =
-    doctors?.map((doctor) => createData(doctor, setActionForm)) ?? [];
+    doctors?.map((doctor) => createData(doctor, path, setActionForm)) ?? [];
   const [searchedItems, setSearchedItem] = useState<Row[]>(tableRows);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
