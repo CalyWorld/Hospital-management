@@ -1,5 +1,6 @@
 import { useParams, Outlet } from "react-router";
 import { Link } from "react-router-dom";
+import { currentMonth } from "../../components/currentMonth";
 import {
   Medications,
   Records,
@@ -8,6 +9,8 @@ import {
 import Box from "@mui/material/Box";
 import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
+import { completeAppointment } from "../../components/completeAppointment";
+import { scheduledAppointMent } from "../../components/scheduledAppointment";
 export function PatientDetails() {
   const [activeTabLink, setActiveTabLink] = useState<string>("");
   const [patientRecords, setPatientRecord] = useState<Records[] | null>(null);
@@ -60,13 +63,8 @@ export function PatientDetails() {
     fetchData();
   }, [patientId]);
 
-  const isCompleted = patientAppointments?.filter(
-    (appointment) => appointment.status.toLocaleLowerCase() === "completed",
-  );
-  const isScheduled = patientAppointments?.filter(
-    (appointment) =>
-      appointment.status.toLocaleLowerCase() === "scheduled" || "canceled",
-  );
+  const isCompleted = completeAppointment(patientAppointments);
+  const isScheduled = scheduledAppointMent(patientAppointments);
 
   // Get total fees from patient medications
   const patientMedicationFees =
@@ -95,13 +93,6 @@ export function PatientDetails() {
         (accumulator, currentValue) => accumulator + (currentValue || 0),
         0,
       ) ?? 0;
-
-  //Get Current Month
-  const currentMonth = new Date()
-    .toLocaleDateString("en-us", {
-      month: "short",
-    })
-    .toLowerCase();
 
   //Get all Treatments from records
   const patientTreatments = patientRecords?.flatMap((record) =>
