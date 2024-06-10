@@ -1,9 +1,9 @@
-import { DoctorsTableProps } from "../Doctor/DoctorsTable";
+import { TableProps } from "../Doctor/DoctorsTable";
 import AdminHeader from "./AdminHeader";
 import AdminLayout from "./AdminLayout";
 import { Outlet } from "react-router";
 
-export default function AdminPage({ openActionForm }: DoctorsTableProps) {
+export default function AdminPage({ openActionForm }: TableProps) {
   return (
     <div className="flex h-screen z-10">
       <div className="flex w-full h-full">
@@ -12,7 +12,7 @@ export default function AdminPage({ openActionForm }: DoctorsTableProps) {
             openActionForm === "editForm" ||
             openActionForm === "deleteDoctor" ||
             openActionForm === "bookPatient"
-              ? "bg-darkBlue blur-[4px]"
+              ? "bg-[#020617] opacity-50"
               : "bg-darkBlue"
           }`}
         >
@@ -24,7 +24,7 @@ export default function AdminPage({ openActionForm }: DoctorsTableProps) {
             openActionForm === "editForm" ||
             openActionForm === "deleteDoctor" ||
             openActionForm === "bookPatient"
-              ? "blur-[4px]"
+              ? "bg-[#020617] opacity-50"
               : "bg-white"
           }`}
         >
