@@ -73,7 +73,6 @@ export default function DoctorsTable({ setActionForm }: TableProps) {
           <Paper
             sx={{
               width: "100%",
-              overflow: "hidden",
             }}
           >
             <form className="relative">

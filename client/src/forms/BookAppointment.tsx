@@ -1,7 +1,7 @@
 export default function BookAppointment() {
   return (
     <div
-      className="absolute shadow bg-[blue] rounded-md z-10 p-4"
+      className="fixed shadow-lg bg-[white] rounded-md  p-4 w-96"
       style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
     >
       book appointment
