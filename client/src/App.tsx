@@ -149,7 +149,6 @@ function routerFunc() {
 function App() {
   const { router, openActionForm, setActionForm, selectedId, setSelectedId } =
     routerFunc();
-  console.log("id", selectedId);
   return (
     <AdminUserProvider>
       <div className="relative">
