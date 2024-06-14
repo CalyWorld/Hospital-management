@@ -32,14 +32,21 @@ export interface Row {
 
 export interface TableProps {
   openActionForm?: string;
+  selectedId?: string;
   setActionForm?: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedId?: React.Dispatch<React.SetStateAction<string>>;
 }
-export default function DoctorsTable({ setActionForm }: TableProps) {
+export default function DoctorsTable({
+  setActionForm,
+  setSelectedId,
+}: TableProps) {
   const { useGetDoctorAndPatientData } = useAdminUser();
   const { doctors, loading } = useGetDoctorAndPatientData();
   const path = "doctors/doctor";
   const tableRows =
-    doctors?.map((doctor) => createData(doctor, path, setActionForm)) ?? [];
+    doctors?.map((doctor) =>
+      createData(doctor, path, setActionForm, setSelectedId),
+    ) ?? [];
   const [searchedItems, setSearchedItem] = useState<Row[]>(tableRows);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
@@ -73,6 +80,8 @@ export default function DoctorsTable({ setActionForm }: TableProps) {
           <Paper
             sx={{
               width: "100%",
+              background: "inherit",
+              overflow: "hidden",
             }}
           >
             <form className="relative">
@@ -105,7 +114,10 @@ export default function DoctorsTable({ setActionForm }: TableProps) {
                       <TableCell
                         key={column.id}
                         align={column.align}
-                        style={{ minWidth: column.minWidth }}
+                        style={{
+                          minWidth: column.minWidth,
+                        }}
+                        sx={{ background: "inherit" }}
                       >
                         {column.label}
                       </TableCell>

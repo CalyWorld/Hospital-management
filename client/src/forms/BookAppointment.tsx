@@ -1,9 +1,9 @@
-export default function BookAppointment() {
+import { TableProps } from "../pages/Doctor/DoctorsTable";
+
+export default function BookAppointment({ setActionForm }: TableProps) {
+  if (!setActionForm) return;
   return (
-    <div
-      className="fixed shadow-lg bg-[white] rounded-md  p-4 w-96"
-      style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
-    >
+    <div className="shadow-lg bg-[white] rounded-md  p-4 w-96">
       book appointment
     </div>
   );

@@ -1,9 +1,15 @@
-export default function EditDoctorDetail() {
+import { TableProps } from "../pages/Doctor/DoctorsTable";
+
+export default function EditDoctorDetail({
+  setActionForm,
+  selectedId,
+  setSelectedId,
+}: TableProps) {
+  if (!setActionForm) return;
+  if (!setSelectedId) return;
+  console.log("edit-form", selectedId);
   return (
-    <div
-      className="fixed shadow-lg bg-[white] rounded-md p-4"
-      style={{ top: "50%", left: "55%", transform: "translate(-50%, -50%)" }}
-    >
+    <div className="bg-white shadow-lg rounded-md p-4 w-full max-w-md">
       <form className="w-full max-w-lg">
         <div className="flex flex-wrap -mx-3 mb-6">
           <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
@@ -89,6 +95,21 @@ export default function EditDoctorDetail() {
               placeholder="Makati Manila"
             />
           </div>
+        </div>
+        <div className="flex justify-end gap-2">
+          <button className="bg-darkBlue text-white py-2 px-4 rounded">
+            Edit
+          </button>
+          <button
+            className="bg-darkBlue text-white py-2 px-4 rounded"
+            onClick={(e) => {
+              e.preventDefault(); // Prevent default form submission
+              setActionForm("");
+              setSelectedId("");
+            }}
+          >
+            Cancel
+          </button>
         </div>
       </form>
     </div>

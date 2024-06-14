@@ -56,6 +56,7 @@ export interface Records {
 
 interface DoctorAndPatientData {
   doctors: Doctor[] | null;
+  setDoctor?: React.Dispatch<React.SetStateAction<Doctor[] | null>>;
   patients: Patient[] | null;
   loading: boolean;
 }
@@ -167,7 +168,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
       fetchData();
     }, []);
 
-    return { doctors, patients, loading };
+    return { doctors, setDoctor, patients, loading };
   };
 
   const useUpdateAdminUserDetails = (updatedDetails: AdminUser) => {

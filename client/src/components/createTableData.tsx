@@ -21,6 +21,7 @@ export function createData(
   }: Doctor | Patient,
   path: string,
   setAction?: React.Dispatch<React.SetStateAction<string>>,
+  setSelectedId?: React.Dispatch<React.SetStateAction<string>>,
 ) {
   const username: JSX.Element | string = (
     <Link
@@ -34,14 +35,14 @@ export function createData(
     <div className="flex gap-2 justify-center">
       <button
         onClick={() => {
-          editDoctor(setAction, _id);
+          editDoctor(setAction, setSelectedId, _id);
         }}
       >
         <EditIcon />
       </button>
       <button
         onClick={() => {
-          deleteDoctor(setAction, _id);
+          deleteDoctor(setAction, setSelectedId, _id);
         }}
       >
         <DeleteIcon />

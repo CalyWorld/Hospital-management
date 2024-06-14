@@ -20,6 +20,7 @@ import PatientCompletedAppointmentTable from "./pages/Patient/PatientCompletedAp
 
 function routerFunc() {
   const [openActionForm, setActionForm] = useState<string>("");
+  const [selectedId, setSelectedId] = useState<string>("");
   const router = createBrowserRouter([
     {
       path: "/admin",
@@ -68,7 +69,12 @@ function routerFunc() {
                 },
                 {
                   path: "patients",
-                  element: <DoctorsTable setActionForm={setActionForm} />,
+                  element: (
+                    <DoctorsTable
+                      setActionForm={setActionForm}
+                      setSelectedId={setSelectedId}
+                    />
+                  ),
                 },
               ],
             },
@@ -76,7 +82,12 @@ function routerFunc() {
         },
         {
           path: "doctors",
-          element: <DoctorHomePage setActionForm={setActionForm} />,
+          element: (
+            <DoctorHomePage
+              setActionForm={setActionForm}
+              setSelectedId={setSelectedId}
+            />
+          ),
           children: [
             {
               path: "doctor/:doctorId",
@@ -118,7 +129,12 @@ function routerFunc() {
                 },
                 {
                   path: "doctors",
-                  element: <DoctorsTable setActionForm={setActionForm} />,
+                  element: (
+                    <DoctorsTable
+                      setActionForm={setActionForm}
+                      setSelectedId={setSelectedId}
+                    />
+                  ),
                 },
               ],
             },
@@ -127,34 +143,61 @@ function routerFunc() {
       ],
     },
   ]);
-  return { router, openActionForm, setActionForm };
+  return { router, openActionForm, setActionForm, selectedId, setSelectedId };
 }
 
 function App() {
-  const { router, openActionForm, setActionForm } = routerFunc();
+  const { router, openActionForm, setActionForm, selectedId, setSelectedId } =
+    routerFunc();
+  console.log("id", selectedId);
   return (
-    <div>
-      <div
-        onClick={() => {
-          if (
-            openActionForm === "deleteDoctor" ||
-            openActionForm === "editForm" ||
-            openActionForm === "bookPatient"
-          ) {
-            setActionForm("");
-          }
-        }}
-      >
-        <AdminUserProvider>
+    <AdminUserProvider>
+      <div className="relative">
+        <div
+          onClick={() => {
+            if (
+              openActionForm === "deleteDoctor" ||
+              openActionForm === "editForm" ||
+              openActionForm === "bookPatient"
+            ) {
+              setActionForm("");
+              setSelectedId("");
+            }
+          }}
+        >
           <RouterProvider router={router} />
-        </AdminUserProvider>
+        </div>
+        {openActionForm && (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: "1000",
+            }}
+          >
+            {openActionForm === "editForm" && selectedId && (
+              <EditDoctorDetail
+                setActionForm={setActionForm}
+                selectedId={selectedId}
+                setSelectedId={setSelectedId}
+              />
+            )}
+            {openActionForm === "deleteDoctor" && selectedId && (
+              <DeleteDoctor
+                selectedId={selectedId}
+                setActionForm={setActionForm}
+                setSelectedId={setSelectedId}
+              />
+            )}
+            {openActionForm === "bookPatient" && selectedId && (
+              <BookAppointment setActionForm={setActionForm} />
+            )}
+          </div>
+        )}
       </div>
-      {openActionForm === "editForm" && <EditDoctorDetail />}
-      {openActionForm === "deleteDoctor" && (
-        <DeleteDoctor setActionForm={setActionForm} />
-      )}
-      {openActionForm === "bookPatient" && <BookAppointment />}
-    </div>
+    </AdminUserProvider>
   );
 }
 

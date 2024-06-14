@@ -1,3 +1,4 @@
+import { Opacity } from "@mui/icons-material";
 import { TableProps } from "../Doctor/DoctorsTable";
 import AdminHeader from "./AdminHeader";
 import AdminLayout from "./AdminLayout";
@@ -12,7 +13,7 @@ export default function AdminPage({ openActionForm }: TableProps) {
             openActionForm === "editForm" ||
             openActionForm === "deleteDoctor" ||
             openActionForm === "bookPatient"
-              ? "bg-[#020617] opacity-50"
+              ? "backdrop-blur-[2px] bg-[#020617]/90"
               : "bg-darkBlue"
           }`}
         >
@@ -24,7 +25,7 @@ export default function AdminPage({ openActionForm }: TableProps) {
             openActionForm === "editForm" ||
             openActionForm === "deleteDoctor" ||
             openActionForm === "bookPatient"
-              ? "bg-[#020617] opacity-50"
+              ? "backdrop-blur-[2px] bg-[#090b116e]/90"
               : "bg-white"
           }`}
         >

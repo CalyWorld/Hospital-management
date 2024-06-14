@@ -28,6 +28,10 @@ router.get(
   "/api/admin/doctor/:doctorId",
   asyncHandler(adminController.getDoctorDetails.bind(adminController)),
 );
+router.delete(
+  "/api/admin/doctor/:doctorId/delete",
+  asyncHandler(adminController.deleteDoctor.bind(adminController)),
+);
 
 // Patient Routes
 router.get(

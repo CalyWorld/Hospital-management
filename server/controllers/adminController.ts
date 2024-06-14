@@ -7,7 +7,6 @@ import { HealthRecords } from "../models/records";
 import { Medication } from "../models/medication";
 class AdminController {
   private static instance: AdminController;
-  constructor() {}
   public static getInstance() {
     if (!AdminController.instance) {
       AdminController.instance = new AdminController();
@@ -159,6 +158,15 @@ class AdminController {
         .populate("doctor")
         .exec();
       res.status(200).json(patientById);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  public async deleteDoctor(req: Request, res: Response): Promise<void> {
+    try {
+      console.log(req.params.doctorId);
+      // await Doctor.findByIdAndDelete(req.params.doctorId);
+      res.status(200);
     } catch (err) {
       console.log(err);
     }

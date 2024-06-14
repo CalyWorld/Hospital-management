@@ -1,8 +1,11 @@
 export default function deleteDoctor(
   setAction?: React.Dispatch<React.SetStateAction<string>>,
+  setSelectedId?: React.Dispatch<React.SetStateAction<string>>,
   id?: string,
 ) {
   if (!setAction) return;
+  if (!setSelectedId) return;
+  if (!id) return;
   setAction("deleteDoctor");
-  console.log("doctor-delete-id", id);
+  setSelectedId(id);
 }

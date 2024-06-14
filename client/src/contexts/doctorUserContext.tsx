@@ -3,7 +3,6 @@ import React, {
   useContext,
   useState,
   ReactNode,
-  useEffect,
   useMemo,
 } from "react";
 import { Patient } from "./patientUserContext";
