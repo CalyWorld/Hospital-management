@@ -164,8 +164,7 @@ class AdminController {
   }
   public async deleteDoctor(req: Request, res: Response): Promise<void> {
     try {
-      console.log(req.params.doctorId);
-      // await Doctor.findByIdAndDelete(req.params.doctorId);
+      await Doctor.findByIdAndDelete(req.params.doctorId);
       res.status(200);
     } catch (err) {
       console.log(err);
