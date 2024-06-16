@@ -3,6 +3,8 @@ import { Outlet, useLocation } from "react-router";
 export default function DoctorHomePage({
   setActionForm,
   setSelectedId,
+  doctors,
+  loading,
 }: TableProps) {
   const location = useLocation();
   return (
@@ -11,6 +13,8 @@ export default function DoctorHomePage({
         <DoctorsTable
           setActionForm={setActionForm}
           setSelectedId={setSelectedId}
+          doctors={doctors}
+          loading={loading}
         />
       ) : (
         <Outlet />
