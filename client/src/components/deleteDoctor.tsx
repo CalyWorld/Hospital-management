@@ -6,6 +6,6 @@ export default function deleteDoctor(
   if (!setAction) return;
   if (!setSelectedId) return;
   if (!id) return;
-  setAction("deleteDoctor");
+  setAction("deleteDoctorForm");
   setSelectedId(id);
 }
