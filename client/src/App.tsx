@@ -155,8 +155,8 @@ function App() {
         <div
           onClick={() => {
             if (
-              openActionForm === "deleteDoctor" ||
-              openActionForm === "editForm" ||
+              openActionForm === "deleteDoctorForm" ||
+              openActionForm === "editDoctorForm" ||
               openActionForm === "bookPatient"
             ) {
               setActionForm("");
@@ -176,14 +176,14 @@ function App() {
               zIndex: "1000",
             }}
           >
-            {openActionForm === "editForm" && selectedId && (
+            {openActionForm === "editDoctorForm" && selectedId && (
               <EditDoctorDetail
                 setActionForm={setActionForm}
                 selectedId={selectedId}
                 setSelectedId={setSelectedId}
               />
             )}
-            {openActionForm === "deleteDoctor" && selectedId && (
+            {openActionForm === "deleteDoctorForm" && selectedId && (
               <DeleteDoctor
                 selectedId={selectedId}
                 setActionForm={setActionForm}
