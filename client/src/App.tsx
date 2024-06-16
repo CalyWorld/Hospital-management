@@ -2,7 +2,7 @@ import DoctorHomePage from "./pages/Doctor/DoctorHomePage";
 import PatientHomePage from "./pages/Patient/PatientHomePage";
 import AdminHomePage from "./pages/Admin/AdminHomePage";
 import { useState } from "react";
-import { AdminUserProvider } from "./contexts/adminUserContext";
+import { useAdminUser } from "./contexts/adminUserContext";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./errorPage";
 import AdminDashBoard from "./pages/Admin/AdminDashBoard";
@@ -21,6 +21,24 @@ import PatientCompletedAppointmentTable from "./pages/Patient/PatientCompletedAp
 function routerFunc() {
   const [openActionForm, setActionForm] = useState<string>("");
   const [selectedId, setSelectedId] = useState<string>("");
+  const { useGetDoctorAndPatientData } = useAdminUser();
+  const { doctors, setDoctor, loading, patients } =
+    useGetDoctorAndPatientData();
+
+  // Check if data is still loading or undefined
+  if (!doctors || !patients)
+    return {
+      router: undefined,
+      openActionForm,
+      setActionForm,
+      selectedId,
+      setSelectedId,
+      doctors: [],
+      patients: [],
+      setDoctor,
+      loading,
+    };
+
   const router = createBrowserRouter([
     {
       path: "/admin",
@@ -50,7 +68,13 @@ function routerFunc() {
                 },
                 {
                   path: "patients",
-                  element: <PatientsTable setActionForm={setActionForm} />,
+                  element: (
+                    <PatientsTable
+                      setActionForm={setActionForm}
+                      patients={patients}
+                      loading={loading}
+                    />
+                  ),
                 },
               ],
             },
@@ -73,6 +97,8 @@ function routerFunc() {
                     <DoctorsTable
                       setActionForm={setActionForm}
                       setSelectedId={setSelectedId}
+                      doctors={doctors}
+                      loading={loading}
                     />
                   ),
                 },
@@ -86,6 +112,8 @@ function routerFunc() {
             <DoctorHomePage
               setActionForm={setActionForm}
               setSelectedId={setSelectedId}
+              doctors={doctors}
+              loading={loading}
             />
           ),
           children: [
@@ -104,7 +132,13 @@ function routerFunc() {
                 },
                 {
                   path: "patients",
-                  element: <PatientsTable setActionForm={setActionForm} />,
+                  element: (
+                    <PatientsTable
+                      setActionForm={setActionForm}
+                      patients={patients}
+                      loading={loading}
+                    />
+                  ),
                 },
               ],
             },
@@ -112,7 +146,13 @@ function routerFunc() {
         },
         {
           path: "patients",
-          element: <PatientHomePage setActionForm={setActionForm} />,
+          element: (
+            <PatientHomePage
+              setActionForm={setActionForm}
+              patients={patients}
+              loading={loading}
+            />
+          ),
           children: [
             {
               path: "patient/:patientId",
@@ -133,6 +173,8 @@ function routerFunc() {
                     <DoctorsTable
                       setActionForm={setActionForm}
                       setSelectedId={setSelectedId}
+                      doctors={doctors}
+                      loading={loading}
                     />
                   ),
                 },
@@ -143,60 +185,100 @@ function routerFunc() {
       ],
     },
   ]);
-  return { router, openActionForm, setActionForm, selectedId, setSelectedId };
+
+  return {
+    router,
+    openActionForm,
+    setActionForm,
+    selectedId,
+    setSelectedId,
+    doctors,
+    patients,
+    setDoctor,
+    loading,
+  };
 }
 
 function App() {
-  const { router, openActionForm, setActionForm, selectedId, setSelectedId } =
-    routerFunc();
+  const {
+    router,
+    openActionForm,
+    setActionForm,
+    selectedId,
+    setSelectedId,
+    doctors,
+    patients,
+    setDoctor,
+    loading,
+  } = routerFunc();
+
+  if (!router) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          fontSize: "24px",
+        }}
+      >
+        Getting Page...
+      </div>
+    ); // Render a loading state while data is being fetched
+  }
+
   return (
-    <AdminUserProvider>
-      <div className="relative">
+    <div className="relative">
+      <div
+        onClick={() => {
+          if (
+            openActionForm === "deleteDoctorForm" ||
+            openActionForm === "editDoctorForm" ||
+            openActionForm === "bookPatient"
+          ) {
+            setActionForm("");
+            setSelectedId("");
+          }
+        }}
+      >
+        <RouterProvider router={router} />
+      </div>
+      {openActionForm && (
         <div
-          onClick={() => {
-            if (
-              openActionForm === "deleteDoctorForm" ||
-              openActionForm === "editDoctorForm" ||
-              openActionForm === "bookPatient"
-            ) {
-              setActionForm("");
-              setSelectedId("");
-            }
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: "1000",
           }}
         >
-          <RouterProvider router={router} />
+          {openActionForm === "editDoctorForm" && selectedId && (
+            <EditDoctorDetail
+              setActionForm={setActionForm}
+              selectedId={selectedId}
+              setSelectedId={setSelectedId}
+              doctors={doctors}
+              setDoctor={setDoctor}
+              loading={loading}
+            />
+          )}
+          {openActionForm === "deleteDoctorForm" && selectedId && (
+            <DeleteDoctor
+              selectedId={selectedId}
+              setActionForm={setActionForm}
+              setSelectedId={setSelectedId}
+              doctors={doctors}
+              setDoctor={setDoctor}
+            />
+          )}
+          {openActionForm === "bookPatient" && selectedId && (
+            <BookAppointment setActionForm={setActionForm} />
+          )}
         </div>
-        {openActionForm && (
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              zIndex: "1000",
-            }}
-          >
-            {openActionForm === "editDoctorForm" && selectedId && (
-              <EditDoctorDetail
-                setActionForm={setActionForm}
-                selectedId={selectedId}
-                setSelectedId={setSelectedId}
-              />
-            )}
-            {openActionForm === "deleteDoctorForm" && selectedId && (
-              <DeleteDoctor
-                selectedId={selectedId}
-                setActionForm={setActionForm}
-                setSelectedId={setSelectedId}
-              />
-            )}
-            {openActionForm === "bookPatient" && selectedId && (
-              <BookAppointment setActionForm={setActionForm} />
-            )}
-          </div>
-        )}
-      </div>
-    </AdminUserProvider>
+      )}
+    </div>
   );
 }
 
