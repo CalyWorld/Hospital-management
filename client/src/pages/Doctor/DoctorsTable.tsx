@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useAdminUser } from "../../contexts/adminUserContext";
 import { searchName } from "../../components/searchTableName";
 import { createData } from "../../components/createTableData";
+import { Doctor } from "../../contexts/doctorUserContext";
 
 export interface Row {
   _id: string | undefined;
@@ -35,6 +36,8 @@ export interface TableProps {
   selectedId?: string;
   setActionForm?: React.Dispatch<React.SetStateAction<string>>;
   setSelectedId?: React.Dispatch<React.SetStateAction<string>>;
+  doctor?: Doctor;
+  setDoctor?: React.Dispatch<React.SetStateAction<Doctor[] | null>>;
 }
 export default function DoctorsTable({
   setActionForm,
