@@ -1,16 +1,15 @@
-import { useAdminUser } from "../contexts/adminUserContext";
 import { TableProps } from "../pages/Doctor/DoctorsTable";
 
 export default function DeleteDoctor({
   setActionForm,
   selectedId,
   setSelectedId,
+  doctors,
+  setDoctor,
 }: TableProps) {
   if (!setActionForm || !setSelectedId) return;
 
   const doctorId = selectedId;
-  const { useGetDoctorAndPatientData } = useAdminUser();
-  const { doctors, setDoctor } = useGetDoctorAndPatientData();
   const doctor = doctors?.filter((doctor) => doctor._id === doctorId);
 
   if (!doctor) return;
