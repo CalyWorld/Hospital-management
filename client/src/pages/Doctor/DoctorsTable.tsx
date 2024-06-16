@@ -19,6 +19,7 @@ import { useAdminUser } from "../../contexts/adminUserContext";
 import { searchName } from "../../components/searchTableName";
 import { createData } from "../../components/createTableData";
 import { Doctor } from "../../contexts/doctorUserContext";
+import { Patient } from "../../contexts/patientUserContext";
 
 export interface Row {
   _id: string | undefined;
@@ -36,15 +37,17 @@ export interface TableProps {
   selectedId?: string;
   setActionForm?: React.Dispatch<React.SetStateAction<string>>;
   setSelectedId?: React.Dispatch<React.SetStateAction<string>>;
-  doctor?: Doctor;
+  doctors?: Doctor[];
+  patients?: Patient[];
   setDoctor?: React.Dispatch<React.SetStateAction<Doctor[] | null>>;
+  loading?: Boolean;
 }
 export default function DoctorsTable({
   setActionForm,
   setSelectedId,
+  doctors,
+  loading,
 }: TableProps) {
-  const { useGetDoctorAndPatientData } = useAdminUser();
-  const { doctors, loading } = useGetDoctorAndPatientData();
   const path = "doctors/doctor";
   const tableRows =
     doctors?.map((doctor) =>
