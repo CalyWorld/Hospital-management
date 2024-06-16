@@ -6,6 +6,6 @@ export default function editDoctor(
   if (!setAction) return;
   if (!setSelectedId) return;
   if (!id) return;
-  setAction("editForm");
+  setAction("editDoctorForm");
   setSelectedId(id);
 }
