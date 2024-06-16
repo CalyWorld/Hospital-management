@@ -14,16 +14,16 @@ import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Patient } from "../../contexts/patientUserContext";
 import { useState, useEffect } from "react";
-import { TableProps } from "../Doctor/DoctorsTable";
 import { createData } from "../../components/createTableData";
 import { searchName } from "../../components/searchTableName";
-import { useAdminUser } from "../../contexts/adminUserContext";
 import { columns } from "../../components/columnStructure";
-import { Row } from "../Doctor/DoctorsTable";
+import { Row, TableProps } from "../Doctor/DoctorsTable";
 
-export default function PatientsTable({ setActionForm }: TableProps) {
-  const { useGetDoctorAndPatientData } = useAdminUser();
-  const { patients, loading } = useGetDoctorAndPatientData();
+export default function PatientsTable({
+  setActionForm,
+  patients,
+  loading,
+}: TableProps) {
   const path = "patients/patient";
   const tableRows =
     patients?.map((patient: Patient) =>
