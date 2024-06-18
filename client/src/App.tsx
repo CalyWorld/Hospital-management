@@ -212,22 +212,7 @@ function App() {
     loading,
   } = routerFunc();
 
-  if (!router) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          fontSize: "24px",
-        }}
-      >
-        Getting Page...
-      </div>
-    ); // Render a loading state while data is being fetched
-  }
-
+  if (!router) return;
   return (
     <div className="relative">
       <div
