@@ -18,7 +18,7 @@ import DoctorCompletedAppointmentTable from "./pages/Doctor/DoctorCompletedAppoi
 import PatientScheduledAppointmentTable from "./pages/Patient/PatientScheduledAppointmentTable";
 import PatientCompletedAppointmentTable from "./pages/Patient/PatientCompletedAppointmentTable";
 
-function routerFunc() {
+function RouterFunc() {
   const [openActionForm, setActionForm] = useState<string>("");
   const [selectedId, setSelectedId] = useState<string>("");
   const { useGetDoctorAndPatientData } = useAdminUser();
@@ -210,7 +210,7 @@ function App() {
     patients,
     setDoctor,
     loading,
-  } = routerFunc();
+  } = RouterFunc();
 
   if (!router) return;
   return (
