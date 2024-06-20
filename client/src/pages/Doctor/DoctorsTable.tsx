@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -14,13 +14,10 @@ import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import { columns } from "../../components/columnStructure";
-import { useState } from "react";
-import { useAdminUser } from "../../contexts/adminUserContext";
 import { searchName } from "../../components/searchTableName";
-import { createData } from "../../components/createTableData";
-import { Doctor } from "../../contexts/doctorUserContext";
-import { Patient } from "../../contexts/patientUserContext";
-
+import { createDoctorTableData } from "../../components/createDoctorTableData";
+import { TableProps } from "../../components/tableProps";
+import { ActionDoctorEnum } from "../../components/actionEnum";
 export interface Row {
   _id: string | undefined;
   id: string;
@@ -32,16 +29,6 @@ export interface Row {
   action?: JSX.Element;
 }
 
-export interface TableProps {
-  openActionForm?: string;
-  selectedId?: string;
-  setActionForm?: React.Dispatch<React.SetStateAction<string>>;
-  setSelectedId?: React.Dispatch<React.SetStateAction<string>>;
-  doctors?: Doctor[];
-  patients?: Patient[];
-  setDoctor?: React.Dispatch<React.SetStateAction<Doctor[] | null>>;
-  loading?: Boolean;
-}
 export default function DoctorsTable({
   setActionForm,
   setSelectedId,
@@ -49,9 +36,16 @@ export default function DoctorsTable({
   loading,
 }: TableProps) {
   const path = "doctors/doctor";
+  const currentAction: typeof ActionDoctorEnum = ActionDoctorEnum;
   const tableRows =
     doctors?.map((doctor) =>
-      createData(doctor, path, setActionForm, setSelectedId),
+      createDoctorTableData(
+        doctor,
+        path,
+        currentAction,
+        setActionForm,
+        setSelectedId,
+      ),
     ) ?? [];
   const [searchedItems, setSearchedItem] = useState<Row[]>(tableRows);
   const [page, setPage] = useState<number>(0);
@@ -87,7 +81,6 @@ export default function DoctorsTable({
             sx={{
               width: "100%",
               background: "inherit",
-              overflow: "hidden",
             }}
           >
             <form className="relative">

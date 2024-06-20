@@ -14,10 +14,12 @@ import Box from "@mui/material/Box";
 import InputAdornment from "@mui/material/InputAdornment";
 import { Patient } from "../../contexts/patientUserContext";
 import { useState, useEffect } from "react";
-import { createData } from "../../components/createTableData";
+import { createPatientTableData } from "../../components/createPatientTableData";
 import { searchName } from "../../components/searchTableName";
 import { columns } from "../../components/columnStructure";
-import { Row, TableProps } from "../Doctor/DoctorsTable";
+import { Row } from "../Doctor/DoctorsTable";
+import { TableProps } from "../../components/tableProps";
+import { ActionPatientEnum } from "../../components/actionEnum";
 
 export default function PatientsTable({
   setActionForm,
@@ -25,9 +27,10 @@ export default function PatientsTable({
   loading,
 }: TableProps) {
   const path = "patients/patient";
+  const currentAction: typeof ActionPatientEnum = ActionPatientEnum;
   const tableRows =
     patients?.map((patient: Patient) =>
-      createData(patient, path, setActionForm),
+      createPatientTableData(patient, path, currentAction, setActionForm),
     ) ?? [];
   const [searchedItems, setSearchedItem] = useState<Row[]>(tableRows);
   const [page, setPage] = useState(0);
