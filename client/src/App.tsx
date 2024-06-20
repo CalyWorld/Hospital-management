@@ -219,6 +219,8 @@ function App() {
         onClick={() => {
           if (
             openActionForm === "deleteDoctorForm" ||
+            openActionForm === "deletePatientForm" ||
+            openActionForm === "editPatientForm" ||
             openActionForm === "editDoctorForm" ||
             openActionForm === "bookPatient"
           ) {
@@ -258,6 +260,25 @@ function App() {
               setDoctor={setDoctor}
             />
           )}
+          {/* {openActionForm === "editPatientForm" && selectedId && (
+            <EditDoctorDetail
+              setActionForm={setActionForm}
+              selectedId={selectedId}
+              setSelectedId={setSelectedId}
+              patients={patients}
+              setDoctor={setDoctor}
+              loading={loading}
+            />
+          )}
+          {openActionForm === "deletePatientForm" && selectedId && (
+            <DeleteDoctor
+              selectedId={selectedId}
+              setActionForm={setActionForm}
+              setSelectedId={setSelectedId}
+              patients={patients}
+              setDoctor={setDoctor}
+            />
+          )} */}
           {openActionForm === "bookPatient" && selectedId && (
             <BookAppointment setActionForm={setActionForm} />
           )}

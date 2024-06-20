@@ -73,8 +73,6 @@ export default function EditDoctorDetail({
         : null,
     );
   };
-
-  console.log(editDoctor);
   const onSubmit: SubmitHandler<editDoctorDetailSchemaType> = async (data) => {
     console.log(data);
   };

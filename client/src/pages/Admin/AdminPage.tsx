@@ -1,4 +1,4 @@
-import { TableProps } from "../Doctor/DoctorsTable";
+import { TableProps } from "../../components/tableProps";
 import AdminHeader from "./AdminHeader";
 import AdminLayout from "./AdminLayout";
 import { Outlet } from "react-router";
@@ -6,6 +6,8 @@ import { Outlet } from "react-router";
 export default function AdminPage({ openActionForm }: TableProps) {
   const isFormOpen =
     openActionForm === "editDoctorForm" ||
+    openActionForm === "editPatientForm" ||
+    openActionForm === "deletePatientForm" ||
     openActionForm === "deleteDoctorForm" ||
     openActionForm === "bookPatient";
   return (
