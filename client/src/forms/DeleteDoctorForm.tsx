@@ -1,4 +1,4 @@
-import { TableProps } from "../pages/Doctor/DoctorsTable";
+import { TableProps } from "../components/tableProps";
 
 export default function DeleteDoctor({
   setActionForm,
@@ -30,12 +30,24 @@ export default function DeleteDoctor({
   }
 
   return (
-    <div className="shadow-lg bg-white rounded-md p-4 w-96">
-      <h2 className="text-black text-lg font-bold mb-4">{`Delete ${doctor[0]?.firstName} ${doctor[0]?.lastName}`}</h2>
-      <p className="text-black mb-4">
-        Are you sure you want to delete this user?
-      </p>
+    <div className="rounded-md p-4 w-full">
+      <div className="mb-16">
+        {" "}
+        <h2 className="text-black text-lg font-bold mb-4">{`Delete ${doctor[0]?.firstName} ${doctor[0]?.lastName}`}</h2>
+        <p className="text-black mb-4">
+          Are you sure you want to delete this user?
+        </p>
+      </div>
       <div className="flex justify-end gap-2">
+        <button
+          className="text-black py-2 px-4 rounded"
+          onClick={() => {
+            setActionForm("");
+            setSelectedId("");
+          }}
+        >
+          Cancel
+        </button>
         <button
           className="bg-darkBlue text-white py-2 px-4 rounded"
           onClick={() => {
@@ -43,15 +55,6 @@ export default function DeleteDoctor({
           }}
         >
           Delete
-        </button>
-        <button
-          className="bg-darkBlue text-white py-2 px-4 rounded"
-          onClick={() => {
-            setActionForm("");
-            setSelectedId("");
-          }}
-        >
-          Cancel
         </button>
       </div>
     </div>

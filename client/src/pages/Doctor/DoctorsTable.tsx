@@ -10,19 +10,18 @@ import TableRow from "@mui/material/TableRow";
 import CircularProgress from "@mui/material/CircularProgress";
 import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
-import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
-import InputAdornment from "@mui/material/InputAdornment";
 import { columns } from "../../components/columnStructure";
 import { searchName } from "../../components/searchTableName";
 import { createDoctorTableData } from "../../components/createDoctorTableData";
 import { TableProps } from "../../components/tableProps";
 import { ActionDoctorEnum } from "../../components/actionEnum";
+import { InputBase } from "@mui/material";
 export interface Row {
   _id: string | undefined;
   id: string;
   createdAt: string;
-  username: JSX.Element | string;
+  username: React.ReactElement;
   age: number;
   country: string;
   gender: string;
@@ -57,7 +56,6 @@ export default function DoctorsTable({
   }, [tableRows]);
 
   const productsToRender = searchedItems.length ? searchedItems : tableRows;
-
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -76,35 +74,38 @@ export default function DoctorsTable({
           <CircularProgress />
         </Box>
       ) : (
-        <div className="flex flex-col items-center">
+        <div className="">
           <Paper
             sx={{
               width: "100%",
               background: "inherit",
             }}
           >
-            <form className="relative">
-              <TextField
-                id="search-bar"
-                className="text"
-                label="Enter Doctor Name"
-                variant="outlined"
-                placeholder="Search..."
-                size="small"
+            <Paper
+              component="form"
+              sx={{
+                p: "2px 4px",
+                display: "flex",
+                alignItems: "center",
+                width: "20%",
+                marginLeft: "5px",
+                marginTop: "5px",
+                marginBottom: "5px",
+                // boxShadow: "none",
+              }}
+            >
+              <InputBase
+                // sx={{ width: "15%" }}
+                placeholder="Enter Doctor Name"
                 onChange={(e) => {
                   searchName(e, tableRows, setSearchedItem);
                 }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton type="submit" aria-label="search">
-                        <SearchIcon style={{ fill: "blue" }} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
+                inputProps={{ "aria-label": "enter doctor name" }}
               />
-            </form>
+              <IconButton type="button" aria-label="search">
+                <SearchIcon style={{ fill: "blue" }} />
+              </IconButton>
+            </Paper>
             <TableContainer sx={{ maxHeight: 110 }}>
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>

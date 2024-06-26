@@ -20,6 +20,7 @@ import { columns } from "../../components/columnStructure";
 import { Row } from "../Doctor/DoctorsTable";
 import { TableProps } from "../../components/tableProps";
 import { ActionPatientEnum } from "../../components/actionEnum";
+import { InputBase } from "@mui/material";
 
 export default function PatientsTable({
   setActionForm,
@@ -41,7 +42,7 @@ export default function PatientsTable({
     }
   }, [tableRows]);
 
-  const productsToRender = searchedItems.length ? searchedItems : tableRows;
+  const productsToRender = searchedItems.length > 0 ? searchedItems : tableRows;
 
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
@@ -61,29 +62,32 @@ export default function PatientsTable({
           <CircularProgress />
         </Box>
       ) : (
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <form className="relative">
-            <TextField
-              id="search-bar"
-              className="text"
-              label="Enter Doctor Name"
-              variant="outlined"
-              placeholder="Search..."
-              size="small"
+        <Paper
+          sx={{ width: "100%", overflow: "hidden", background: "inherit" }}
+        >
+          <Paper
+            component="form"
+            sx={{
+              p: "2px 4px",
+              display: "flex",
+              alignItems: "center",
+              width: "20%",
+              marginLeft: "5px",
+              marginTop: "5px",
+              marginBottom: "5px",
+            }}
+          >
+            <InputBase
+              placeholder="Enter Doctor Name"
               onChange={(e) => {
                 searchName(e, tableRows, setSearchedItem);
               }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton type="submit" aria-label="search">
-                      <SearchIcon style={{ fill: "blue" }} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
+              inputProps={{ "aria-label": "enter doctor name" }}
             />
-          </form>
+            <IconButton type="button" aria-label="search">
+              <SearchIcon style={{ fill: "blue" }} />
+            </IconButton>
+          </Paper>
           <TableContainer sx={{ maxHeight: 110 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
