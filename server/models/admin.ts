@@ -7,9 +7,11 @@ export interface IImage {
 export interface IAdmin {
   username: string;
   password: string;
-  doctors: [Types.ObjectId];
-  patients: [Types.ObjectId];
-  createdAt: Date;
+  doctors?: [Types.ObjectId];
+  patients?: [Types.ObjectId];
+  createdAt?: Date;
+  __v?: number;
+  _id?: string;
 }
 
 const adminSchema = new Schema<IAdmin>({

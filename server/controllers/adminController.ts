@@ -1,175 +1,210 @@
-import express, { Request, Response } from "express";
-import { Doctor } from "../models/doctor";
-import { Patient } from "../models/patient";
-import { Appointment } from "../models/appointments";
-import { Treatment } from "../models/treatment";
-import { HealthRecords } from "../models/records";
-import { Medication } from "../models/medication";
-class AdminController {
-  private static instance: AdminController;
-  public static getInstance() {
-    if (!AdminController.instance) {
-      AdminController.instance = new AdminController();
-    }
-    return AdminController.instance;
-  }
+import { Request, Response } from "express";
+import { AdminService } from "../services/adminService";
+import { DoctorService } from "../services/doctorService";
+import { PatientService } from "../services/patientService";
+import { TreatmentService } from "../services/treatmentService";
+import { MedicationService } from "../services/medicationService";
+import { RecordService } from "../services/recordService";
+import { AppointmentService } from "../services/appointmentService";
+
+export class AdminController {
+  constructor(
+    private adminService: AdminService,
+    private doctorService: DoctorService,
+    private patientService: PatientService,
+    private treatmentService: TreatmentService,
+    private medicationService: MedicationService,
+    private recordService: RecordService,
+    private appointmentService: AppointmentService,
+  ) {}
+  //get admin method in adminController
   public async getAdmin(req: Request, res: Response): Promise<void> {
     if (req.isAuthenticated()) {
       try {
-        const username = req.user;
-        res.status(200).json(username);
+        //calls the action which is service and passes its params into the action
+        const adminUser = await this.adminService.getAdmin(req);
+        res.status(200).json(adminUser);
       } catch (err) {
         console.log(err);
+        res.status(500).send("Error fetching admin");
       }
+    } else {
+      res.status(401).send("Unauthorized");
     }
   }
+
+  //get all doctors method in adminController
   public async getAllDoctors(req: Request, res: Response): Promise<void> {
     try {
-      const doctors = await Doctor.find().exec();
-      res.status(200).json(doctors);
+      //calls the action which is service and passes its params into the action
+      const allDoctors = await this.doctorService.getAllDoctors();
+      res.status(200).json(allDoctors);
     } catch (err) {
       console.log(err);
+      res.status(500).send("Error fetching all doctors");
     }
   }
-  public async getAllPatients(req: Request, res: Response): Promise<void> {
+
+  //get doctorDetails method in adminController
+  public async getDoctorDetails(req: Request, res: Response): Promise<void> {
     try {
-      const patients = await Patient.find().exec();
-      res.status(200).json(patients);
+      //calls the action which is service and passes its params into the action
+      const doctorDetails = await this.doctorService.getDoctorDetails(
+        req.params.doctorId,
+      );
+      res.status(200).json(doctorDetails);
     } catch (err) {
       console.log(err);
+      res.status(500).send("Error fetching all doctors");
     }
   }
-  public async getTotalFees(req: Request, res: Response): Promise<void> {
+
+  //deletes doctor
+  public async getDeleteDoctor(req: Request, res: Response): Promise<void> {
     try {
-      const treatmentFees = await Treatment.find()
-        .populate("medication")
-        .exec();
-      res.status(200).json(treatmentFees);
+      //calls the action which is service and passes its params into the action
+      await this.doctorService.getDeleteDoctor(req.params.doctorId);
+      res.status(200);
     } catch (err) {
       console.log(err);
+      res.status(500).send("Error deleting specific doctor");
     }
   }
+  //get doctor appointments
   public async getDoctorAppointments(
     req: Request,
     res: Response,
   ): Promise<void> {
+    //calls the action which is service and passes its params into the action
     try {
-      const appointments = await Appointment.find({
-        doctor: req.params.doctorId,
-      })
-        .populate("patient")
-        .exec();
-      res.status(200).json(appointments);
+      const doctorAppointments =
+        await this.appointmentService.getDoctorAppointments(
+          req.params.doctorId,
+        );
+      res.status(200).json(doctorAppointments);
     } catch (err) {
       console.log(err);
+      res.status(500).send("Error getting doctor appointments");
     }
   }
-  public async getPatientAppointments(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
-    try {
-      const appointments = await Appointment.find({
-        patient: req.params.patientId,
-      })
-        .populate("doctor")
-        .exec();
-      res.status(200).json(appointments);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-  public async getPatientAppointmentsByDate(
-    req: Request,
-    res: Response,
-  ): Promise<void> {
-    try {
-      const startOfDay = new Date(req.params.date);
-      startOfDay.setUTCHours(0, 0, 0, 0);
 
-      const endOfDay = new Date(req.params.date);
-      endOfDay.setUTCHours(23, 59, 59, 999);
-
-      const appointments = await Appointment.find({
-        startDate: {
-          $gte: startOfDay.toISOString(),
-        },
-        endDate: {
-          $lte: endOfDay.toISOString(),
-        },
-      })
-        .populate("doctor patient")
-        .exec();
-      res.status(200).json(appointments);
-    } catch (err) {
-      console.log(err);
-    }
-  }
+  //get doctor treatments
   public async getDoctorTreatments(req: Request, res: Response): Promise<void> {
     try {
-      const treatment = await Treatment.find({
-        doctor: req.params.doctorId,
-      })
-        .populate("doctor")
-        .exec();
-      res.status(200).json(treatment);
+      //calls the action which is service and passes its params into the action
+      const doctorTreatments = await this.treatmentService.getDoctorTreatments(
+        req.params.doctorId,
+      );
+      res.status(200).json(doctorTreatments);
     } catch (err) {
       console.log(err);
+      res.status(500).send("Error getting doctor treatments");
     }
   }
-  public async getPatientRecords(req: Request, res: Response): Promise<void> {
+
+  //get all patients
+  public async getAllPatients(req: Request, res: Response): Promise<void> {
     try {
-      const records = await HealthRecords.find({
-        patient: req.params.patientId,
-      })
-        .populate("treatments")
-        .exec();
-      res.status(200).json(records);
+      //calls the action which is service
+      const allPatients = await this.patientService.getAllPatients();
+      res.status(200).json(allPatients);
     } catch (err) {
       console.log(err);
+      res.status(500).send("Error getting all patients");
     }
   }
+
+  //get patient detail
+  public async getPatientDetails(req: Request, res: Response): Promise<void> {
+    try {
+      //calls the action which is service and passes its params into the action
+      const allPatients = await this.patientService.getPatientDetails(
+        req.params.patientId,
+      );
+      res.status(200).json(allPatients);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Error getting all patients");
+    }
+  }
+
+  //get patient medication
   public async getPatientMedications(
     req: Request,
     res: Response,
   ): Promise<void> {
     try {
-      const patientMedication = await Medication.findById(
-        req.params.medicationId,
-      ).exec();
+      //calls the action which is service and passes its params into the action
+      const patientMedication =
+        await this.medicationService.getPatientMedications(
+          req.params.medicationId,
+        );
       res.status(200).json(patientMedication);
     } catch (err) {
       console.log(err);
+      res.status(500).send("Error getting patient medication");
     }
   }
-  public async getDoctorDetails(req: Request, res: Response): Promise<void> {
+
+  //get patient records
+  public async getPatientRecords(req: Request, res: Response): Promise<void> {
     try {
-      const doctorById = await Doctor.findById(req.params.doctorId)
-        .populate("patient")
-        .exec();
-      res.status(200).json(doctorById);
+      //calls the action which is service and passes its params into the action
+      const patientRecords = await this.recordService.getPatientRecords(
+        req.params.patientId,
+      );
+      res.status(200).json(patientRecords);
     } catch (err) {
       console.log(err);
+      res.status(500).send("Error getting patient records");
     }
   }
-  public async getPatientDetails(req: Request, res: Response): Promise<void> {
+
+  //get patient appointments
+  public async getPatientAppointments(
+    req: Request,
+    res: Response,
+  ): Promise<void> {
     try {
-      const patientById = await Patient.findById(req.params.patientId)
-        .populate("doctor")
-        .exec();
-      res.status(200).json(patientById);
+      //calls the action which is service and passes its params into the action
+      const patientAppointments =
+        await this.appointmentService.getPatientAppointments(
+          req.params.patientId,
+        );
+      res.status(200).json(patientAppointments);
     } catch (err) {
       console.log(err);
+      res.status(500).send("Error getting patient appointments");
     }
   }
-  public async deleteDoctor(req: Request, res: Response): Promise<void> {
+
+  //get patient appointments by date
+  public async getPatientAppointmentsByDate(
+    req: Request,
+    res: Response,
+  ): Promise<void> {
     try {
-      await Doctor.findByIdAndDelete(req.params.doctorId);
-      res.status(200);
+      //calls the action which is service and passes its params into the action
+      const patientAppointmentsByDate =
+        await this.appointmentService.getPatientAppointmentsByDate(
+          req.params.date,
+        );
+      res.status(200).json(patientAppointmentsByDate);
     } catch (err) {
       console.log(err);
+      res.status(500).send("Error getting patient appointments by date");
+    }
+  }
+
+  //get total fees for dashboard
+  public async getTotalFees(req: Request, res: Response): Promise<void> {
+    try {
+      //calls the action which is service
+      const totalFees = await this.treatmentService.getTotalFees();
+      res.status(200).json(totalFees);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Error getting total fees");
     }
   }
 }
-
-export default AdminController.getInstance();
