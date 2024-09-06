@@ -5,19 +5,31 @@ import { FaUserDoctor } from "react-icons/fa6";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { FaHospitalUser } from "react-icons/fa";
+import { TfiClose } from "react-icons/tfi";
 import { useState } from "react";
-export default function AdminLayout() {
-  const [sideNavTabLink, setNavTabLink] = useState("");
+interface AdminLayout {
+  setResponsiveModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+export default function AdminLayout({ setResponsiveModal }: AdminLayout) {
+  const [sideNavTabLink, setNavTabLink] = useState<string>("");
   return (
     <nav
       id="sidebar"
-      className="bg-darkBlue w-48 h-full text-white flex flex-col gap-10 p-3"
+      className="bg-darkBlue w-48 h-screen text-white flex flex-col gap-10 p-3"
     >
       <ul>
-        <li>
+        <li className="flex items-center justify-between">
           <a href="/admin">
             <HealthAndSafetyIcon />
           </a>
+          <div
+            className="xs:block sm:block md:block lg:hidden"
+            onClick={() => {
+              setResponsiveModal(false);
+            }}
+          >
+            <TfiClose size={20} />
+          </div>
         </li>
       </ul>
       <div className="h-full flex flex-col justify-between">
