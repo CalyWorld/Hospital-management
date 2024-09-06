@@ -43,11 +43,8 @@ export default function AdminDashBoard() {
     <>
       {location.pathname === "/admin" ||
       location.pathname === "/admin/dashboard" ? (
-        <div className="flex gap-10 m-10">
-          <div
-            className="left-side-container flex flex-col gap-10"
-            style={{ width: "65%" }}
-          >
+        <div className="md:flex gap-10 m-10">
+          <div className="left-side-container flex flex-col gap-10">
             <div className="welcome-info relative">
               <img
                 className="h-full w-full"
@@ -66,7 +63,7 @@ export default function AdminDashBoard() {
               </div>
             </div>
             <div className="stats-info flex flex-col gap-5">
-              <div className="flex justify-between p-5 shadow bg-white rounded-md">
+              <div className="flex flex-col md:flex-row justify-between p-5 shadow bg-white rounded-md">
                 <div className="flex items-center p-2 gap-3">
                   <FaUserDoctor size={30} />
                   <div>
@@ -89,7 +86,7 @@ export default function AdminDashBoard() {
                   </div>
                 </div>
               </div>
-              <div className="today-appointment-info flex justify-between p-5 shadow bg-white rounded-md">
+              <div className="today-appointment-info flex flex-col md:flex-row justify-between p-5 shadow bg-white rounded-md">
                 <div className="flex items-center p-2 gap-3">
                   <FaCalendarAlt size={30} />
                   <div>
@@ -140,16 +137,15 @@ export default function AdminDashBoard() {
                       </Link>
                     ))
                   ) : (
-                    <div>NO AVAILABLE DOCTOR TODAY</div>
+                    <div className="text-darkGray">
+                      NO AVAILABLE DOCTOR TODAY
+                    </div>
                   )}
                 </div>
               </div>
             </div>
           </div>
-          <div
-            className="right-side-container divide-y divide-gray flex flex-col shadow bg-white rounded-md"
-            style={{ width: "35%" }}
-          >
+          <div className="right-side-container divide-y divide-gray flex flex-col shadow bg-white rounded-md md:flex">
             <div className="calender-info p-3 flex flex-col items-center">
               <DateCalendarValue value={value} setValue={setValue} />
             </div>
