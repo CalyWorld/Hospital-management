@@ -12,10 +12,11 @@ interface AdminLayout {
 }
 export default function AdminLayout({ setResponsiveModal }: AdminLayout) {
   const [sideNavTabLink, setNavTabLink] = useState<string>("");
+
   return (
     <nav
       id="sidebar"
-      className="bg-darkBlue w-48 h-screen text-white flex flex-col gap-10 p-3"
+      className="bg-darkBlue w-48 fixed md:static top-0 left-0 right-0 bottom-0 text-white flex flex-col p-3 min-h-screen"
     >
       <ul>
         <li className="flex items-center justify-between">
@@ -32,84 +33,84 @@ export default function AdminLayout({ setResponsiveModal }: AdminLayout) {
           </div>
         </li>
       </ul>
-      <div className="h-full flex flex-col justify-between">
-        <ul className="flex flex-col items-center gap-3">
-          <li className="w-full">
-            <Link
-              to={`/admin/dashboard`}
-              className={`${
-                sideNavTabLink === "dashboard"
-                  ? "flex gap-4 p-2 w-full items-center cursor-pointer shadow bg-[#4b5563] rounded-md"
-                  : "flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
-              }`}
-              onClick={() => {
-                setNavTabLink("dashboard");
-              }}
-            >
-              <HomeIcon sx={{ fontSize: 23 }} />
-              <p>Dashboard</p>
-            </Link>
-          </li>
-          <li className="w-full">
-            <Link
-              to={`/admin/doctors`}
-              className={`${
-                sideNavTabLink === "doctors"
-                  ? "flex gap-4 p-2 w-full items-center cursor-pointer shadow bg-[#4b5563] rounded-md"
-                  : "flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
-              }`}
-              onClick={() => {
-                setNavTabLink("doctors");
-              }}
-            >
-              <FaUserDoctor size={23} />
-              <p>Doctor</p>
-            </Link>
-          </li>
-          <li className="w-full">
-            <Link
-              to={`/admin/patients`}
-              className={`${
-                sideNavTabLink === "patients"
-                  ? "flex gap-4 p-2 w-full items-center  cursor-pointer shadow bg-[#4b5563] rounded-md"
-                  : "flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
-              }`}
-              onClick={() => {
-                setNavTabLink("patients");
-              }}
-            >
-              <FaHospitalUser size={23} />
-              <p>Patient</p>
-            </Link>
-          </li>
-        </ul>
-        <ul className="flex flex-col items-center gap-5">
-          <div
+      <ul className="flex flex-col items-center gap-3 flex-grow mt-5">
+        <li className="w-full">
+          <Link
+            to={`/admin/dashboard`}
             className={`${
-              sideNavTabLink === "settings"
-                ? "flex gap-5 p-2 w-full items-center justify-center cursor-pointer shadow bg-[#4b5563] rounded-md"
-                : "flex gap-5 p-2 w-full items-center justify-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
+              sideNavTabLink === "dashboard"
+                ? "flex gap-4 p-2 w-full items-center cursor-pointer shadow bg-[#4b5563] rounded-md"
+                : "flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
             }`}
             onClick={() => {
-              setNavTabLink("settings");
+              setNavTabLink("dashboard");
             }}
           >
-            <SettingsIcon />
-          </div>
-          <div
+            <HomeIcon sx={{ fontSize: 23 }} />
+            <p>Dashboard</p>
+          </Link>
+        </li>
+        <li className="w-full">
+          <Link
+            to={`/admin/doctors`}
             className={`${
-              sideNavTabLink === "logout"
-                ? "flex gap-5 p-2 w-full items-center justify-center cursor-pointer shadow bg-[#4b5563] rounded-md"
-                : "flex gap-5 p-2 w-full items-center justify-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
+              sideNavTabLink === "doctors"
+                ? "flex gap-4 p-2 w-full items-center cursor-pointer shadow bg-[#4b5563] rounded-md"
+                : "flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
             }`}
             onClick={() => {
-              setNavTabLink("logout");
+              setNavTabLink("doctors");
             }}
           >
-            <LogoutIcon />
-          </div>
-        </ul>
-      </div>
+            <FaUserDoctor size={23} />
+            <p>Doctor</p>
+          </Link>
+        </li>
+        <li className="w-full">
+          <Link
+            to={`/admin/patients`}
+            className={`${
+              sideNavTabLink === "patients"
+                ? "flex gap-4 p-2 w-full items-center  cursor-pointer shadow bg-[#4b5563] rounded-md"
+                : "flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
+            }`}
+            onClick={() => {
+              setNavTabLink("patients");
+            }}
+          >
+            <FaHospitalUser size={23} />
+            <p>Patient</p>
+          </Link>
+        </li>
+      </ul>
+
+      {/* Settings and Logout at the bottom */}
+      <ul className="flex flex-col items-center gap-5">
+        <div
+          className={`${
+            sideNavTabLink === "settings"
+              ? "flex gap-5 p-2 w-full items-center justify-center cursor-pointer shadow bg-[#4b5563] rounded-md"
+              : "flex gap-5 p-2 w-full items-center justify-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
+          }`}
+          onClick={() => {
+            setNavTabLink("settings");
+          }}
+        >
+          <SettingsIcon />
+        </div>
+        <div
+          className={`${
+            sideNavTabLink === "logout"
+              ? "flex gap-5 p-2 w-full items-center justify-center cursor-pointer shadow bg-[#4b5563] rounded-md"
+              : "flex gap-5 p-2 w-full items-center justify-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
+          }`}
+          onClick={() => {
+            setNavTabLink("logout");
+          }}
+        >
+          <LogoutIcon />
+        </div>
+      </ul>
     </nav>
   );
 }
