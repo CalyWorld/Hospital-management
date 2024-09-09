@@ -16,7 +16,7 @@ export default function AdminLayout({ setResponsiveModal }: AdminLayout) {
   return (
     <nav
       id="sidebar"
-      className="bg-darkBlue w-48 fixed md:static top-0 left-0 right-0 bottom-0 text-white flex flex-col p-3 min-h-screen"
+      className="bg-darkBlue w-48 fixed md:static top-0 left-0 bottom-0 z-20 md:z-auto text-white flex flex-col p-3 min-h-screen"
     >
       <ul>
         <li className="flex items-center justify-between">
@@ -85,7 +85,7 @@ export default function AdminLayout({ setResponsiveModal }: AdminLayout) {
       </ul>
 
       {/* Settings and Logout at the bottom */}
-      <ul className="flex flex-col items-center gap-5">
+      <ul className="flex flex-col items-center gap-5 mt-auto">
         <div
           className={`${
             sideNavTabLink === "settings"
