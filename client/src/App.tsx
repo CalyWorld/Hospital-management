@@ -215,52 +215,39 @@ function App() {
   if (!router) return;
   return (
     <div className="relative">
-      <div
-        onClick={() => {
-          if (
-            openActionForm === "deleteDoctorForm" ||
-            openActionForm === "deletePatientForm" ||
-            openActionForm === "editPatientForm" ||
-            openActionForm === "editDoctorForm" ||
-            openActionForm === "bookPatient"
-          ) {
-            setActionForm("");
-            setSelectedId("");
-          }
-        }}
-      >
-        <RouterProvider router={router} />
-      </div>
+      <RouterProvider router={router} />
       {openActionForm && (
         <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: "1000",
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          onClick={() => {
+            setActionForm("");
+            setSelectedId("");
           }}
         >
-          {openActionForm === "editDoctorForm" && selectedId && (
-            <EditDoctorDetail
-              setActionForm={setActionForm}
-              selectedId={selectedId}
-              setSelectedId={setSelectedId}
-              doctors={doctors}
-              setDoctor={setDoctor}
-              loading={loading}
-            />
-          )}
-          {openActionForm === "deleteDoctorForm" && selectedId && (
-            <DeleteDoctor
-              selectedId={selectedId}
-              setActionForm={setActionForm}
-              setSelectedId={setSelectedId}
-              doctors={doctors}
-              setDoctor={setDoctor}
-            />
-          )}
-          {/* {openActionForm === "editPatientForm" && selectedId && (
+          <div
+            className="bg-white shadow-lg rounded-md w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {openActionForm === "editDoctorForm" && selectedId && (
+              <EditDoctorDetail
+                setActionForm={setActionForm}
+                selectedId={selectedId}
+                setSelectedId={setSelectedId}
+                doctors={doctors}
+                setDoctor={setDoctor}
+                loading={loading}
+              />
+            )}
+            {openActionForm === "deleteDoctorForm" && selectedId && (
+              <DeleteDoctor
+                selectedId={selectedId}
+                setActionForm={setActionForm}
+                setSelectedId={setSelectedId}
+                doctors={doctors}
+                setDoctor={setDoctor}
+              />
+            )}
+            {/* {openActionForm === "editPatientForm" && selectedId && (
             <EditDoctorDetail
               setActionForm={setActionForm}
               selectedId={selectedId}
@@ -279,9 +266,10 @@ function App() {
               setDoctor={setDoctor}
             />
           )} */}
-          {openActionForm === "bookPatient" && selectedId && (
-            <BookAppointment setActionForm={setActionForm} />
-          )}
+            {openActionForm === "bookPatient" && selectedId && (
+              <BookAppointment setActionForm={setActionForm} />
+            )}
+          </div>
         </div>
       )}
     </div>
