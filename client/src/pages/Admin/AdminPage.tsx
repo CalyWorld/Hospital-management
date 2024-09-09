@@ -18,16 +18,16 @@ export default function AdminPage({ openActionForm }: TableProps) {
   return (
     <div className="flex h-screen">
       {isFormOpen && (
-        <div className="absolute inset-0 z-10 backdrop-blur-sm bg-darkBlue/30"></div>
+        <div className="fixed inset-0 z-10 backdrop-blur-sm bg-darkBlue/30"></div>
       )}
       <div className="flex w-full">
         <div
-          className="flex items-center xs:block sm:block md:block lg:hidden p-2"
+          className="lg:hidden p-2 flex"
           onClick={() => setResponsiveModal(true)}
         >
           <TfiMenu size={40} />
         </div>
-        <div className="xs:hidden sm:hidden md:hidden lg:block">
+        <div className="hidden lg:block">
           <AdminLayout setResponsiveModal={setResponsiveModal} />
         </div>
         <div id="detail" className="w-full flex flex-col">
@@ -38,10 +38,14 @@ export default function AdminPage({ openActionForm }: TableProps) {
         </div>
       </div>
       {openResponsiveModal && (
-        <div className="absolute z-20 lg:hidden">
-          <div className="relative h-full">
+        <div className="fixed inset-0 z-20 flex">
+          <div className="w-48 bg-darkBlue">
             <AdminLayout setResponsiveModal={setResponsiveModal} />
           </div>
+          <div
+            className="flex-grow"
+            onClick={() => setResponsiveModal(false)}
+          ></div>
         </div>
       )}
     </div>
