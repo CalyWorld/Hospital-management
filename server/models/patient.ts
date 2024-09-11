@@ -1,5 +1,6 @@
 import mongoose, { Schema, Model, Types } from "mongoose";
-import { IImage } from "./admin";
+import { IImage } from "./superAdmin";
+
 export interface IPatient {
   username: string;
   password: string;
@@ -8,11 +9,14 @@ export interface IPatient {
   image: IImage;
   gender: string;
   country: string;
-  address: string;
-  phoneBook: number;
+  address?: string;
+  phoneBook?: number;
   age: number;
   createdAt: Date;
-  doctor: Types.ObjectId[];
+  hospital: Types.ObjectId; // Reference to Hospital
+  doctor?: Types.ObjectId[]; // References to Doctors
+  __v?: number;
+  _id?: string;
 }
 
 const patientSchema = new Schema<IPatient>({
@@ -29,8 +33,9 @@ const patientSchema = new Schema<IPatient>({
   address: { type: String },
   phoneBook: { type: Number },
   age: { type: Number, required: true },
-  createdAt: { type: Date, required: true },
-  doctor: [{ type: Schema.Types.ObjectId, ref: "Doctor" }],
+  createdAt: { type: Date, default: Date.now },
+  hospital: { type: Schema.Types.ObjectId, ref: "Hospital", required: true }, // Reference to Hospital
+  doctor: [{ type: Schema.Types.ObjectId, ref: "Doctor" }], // References to Doctors
 });
 
 export const Patient: Model<IPatient> = mongoose.model(
