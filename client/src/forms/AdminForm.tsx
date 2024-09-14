@@ -1,7 +1,8 @@
 import * as z from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { setAdminUser } from "../redux/adminUserSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAdminUser } from "../contexts/adminUserContext";
 const adminFormSchema = z.object({
   username: z.string().min(4, { message: "username is required" }),
   password: z
@@ -12,6 +13,7 @@ const adminFormSchema = z.object({
 type adminSignInSchemaType = z.infer<typeof adminFormSchema>;
 
 export default function AdminForm() {
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -20,7 +22,6 @@ export default function AdminForm() {
     resolver: zodResolver(adminFormSchema),
   });
 
-  const { setAdminUser } = useAdminUser();
   const onSubmit: SubmitHandler<adminSignInSchemaType> = async (data) => {
     try {
       const adminUser = { username: data.username, password: data.password };
@@ -34,7 +35,7 @@ export default function AdminForm() {
       });
       if (response.ok) {
         const user = await response.json();
-        setAdminUser(user);
+        dispatch(setAdminUser(user));
       } else {
         const errorData = await response.json();
         console.log(errorData.message);
