@@ -1,32 +1,26 @@
-import { Doctor } from "../contexts/doctorUserContext";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
-import openEditDoctorForm from "./openEditDoctorForm";
-import openDeleteDoctorForm from "./openDeleteDoctor";
-import bookPatient from "./bookPatient";
+import openDeleteDoctorModal from "../modals/openDeleteDoctorModal";
+import openEditDoctorModal from "../modals/openEditDoctorModal";
+import bookPatient from "../modals/bookPatientModal";
 import { FaLink } from "react-icons/fa6";
 import { ActionDoctorEnum } from "./actionEnum";
+import { DoctorUser } from "../types";
+import { AppDispatch } from "../redux/store";
+
 export function createDoctorTableData(
-  { _id, id, createdAt, firstName, lastName, age, country, gender }: Doctor,
-  path: string,
+  { _id, id, createdAt, firstName, lastName, age, country, gender }: DoctorUser,
   currentAction: typeof ActionDoctorEnum,
-  setAction?: React.Dispatch<React.SetStateAction<string>>,
-  setSelectedId?: React.Dispatch<React.SetStateAction<string>>,
+  dispatch: AppDispatch,
 ) {
-  const location = useLocation();
   const username = (
     <div className="flex justify-center items-center gap-2">
       <p>
         {firstName} {lastName}
       </p>
-      <Link
-        key={_id}
-        to={
-          location.pathname.includes("/admin") ? `/admin/${path}/${_id}` : "#"
-        }
-      >
+      <Link key={_id} to={`/admin/doctors/doctor/${_id}`}>
         <FaLink />
       </Link>
     </div>
@@ -36,31 +30,21 @@ export function createDoctorTableData(
     <div className="flex gap-2 justify-center">
       <button
         onClick={() => {
-          openEditDoctorForm(
-            currentAction.EditDoctorForm,
-            setAction,
-            setSelectedId,
-            _id,
-          );
+          openEditDoctorModal(dispatch, currentAction.EditDoctorForm, _id);
         }}
       >
         <EditIcon />
       </button>
       <button
         onClick={() => {
-          openDeleteDoctorForm(
-            currentAction.DeleteDoctorForm,
-            setAction,
-            setSelectedId,
-            _id,
-          );
+          openDeleteDoctorModal(dispatch, currentAction.DeleteDoctorForm, _id);
         }}
       >
         <DeleteIcon />
       </button>
       <button
         onClick={() => {
-          bookPatient(currentAction, setAction, _id);
+          bookPatient(dispatch, currentAction.BookPatient, _id);
         }}
       >
         <EventAvailableIcon />
