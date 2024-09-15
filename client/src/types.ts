@@ -22,8 +22,8 @@ export interface DoctorUser {
   createdAt: Date;
   hospital: string; // Reference to Hospital
   specialization?: string; // Optional field for specialization
-  startDate?: Date;
-  endDate?: Date;
+  startDate: Date;
+  endDate: Date;
   startTime?: Date;
   endTime?: Date;
   address?: string;
