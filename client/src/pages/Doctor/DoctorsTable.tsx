@@ -14,13 +14,14 @@ import Box from "@mui/material/Box";
 import { columns } from "../../components/columnStructure";
 import { searchName } from "../../components/searchTableName";
 import { createDoctorTableData } from "../../components/createDoctorTableData";
-import { TableProps } from "../../components/tableProps";
 import { ActionDoctorEnum } from "../../components/actionEnum";
 import { InputBase } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 export interface Row {
-  _id: string | undefined;
-  id: string;
-  createdAt: string;
+  _id?: string;
+  id: number;
+  createdAt: Date;
   username: React.ReactElement;
   age: number;
   country: string;
@@ -28,37 +29,43 @@ export interface Row {
   action?: JSX.Element;
 }
 
-export default function DoctorsTable({
-  setActionForm,
-  setSelectedId,
-  doctors,
-  loading,
-}: TableProps) {
+export default function DoctorsTable() {
   const path = "doctors/doctor";
+  const dispatch = useDispatch();
   const currentAction: typeof ActionDoctorEnum = ActionDoctorEnum;
-  const tableRows =
-    doctors?.map((doctor) =>
-      createDoctorTableData(
-        doctor,
-        path,
-        currentAction,
-        setActionForm,
-        setSelectedId,
-      ),
-    ) ?? [];
-  const [searchedItems, setSearchedItem] = useState<Row[]>(tableRows);
+
+  const doctors = useSelector(
+    (state: RootState) => state.doctorAndPatientUser.doctors,
+  );
+  const loading = useSelector(
+    (state: RootState) => state.doctorAndPatientUser.loading,
+  );
+
+  const [searchedItems, setSearchedItem] = useState<Row[]>([]);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+
+  // const isAdminPath = location.pathname.includes("/admin");
+
+  const tableRows =
+    doctors?.map((doctor) =>
+      createDoctorTableData(doctor, currentAction, dispatch),
+    ) ?? [];
+
+  // console.log(doctors);
+
   useEffect(() => {
     if (searchedItems.length === 0 && tableRows.length > 0) {
       setSearchedItem(tableRows);
     }
-  }, [tableRows]);
+  }, [tableRows, searchedItems]);
 
   const productsToRender = searchedItems.length ? searchedItems : tableRows;
+
   const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
+
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -74,7 +81,7 @@ export default function DoctorsTable({
           <CircularProgress />
         </Box>
       ) : (
-        <div className="">
+        <div>
           <Paper
             sx={{
               width: "100%",
@@ -84,29 +91,30 @@ export default function DoctorsTable({
             <Paper
               component="form"
               sx={{
-                p: "2px 4px",
+                p: "2px 2px",
                 display: "flex",
-                alignItems: "center",
-                width: "20%",
-                marginLeft: "5px",
+                width: "100%",
+                maxWidth: "200px",
                 marginTop: "5px",
                 marginBottom: "5px",
-                // boxShadow: "none",
+                marginLeft: "5px",
+                borderRadius: "4px",
+                boxShadow: "0px 0px 4px rgba(0,0,0,0.2)", // Optional: subtle shadow
               }}
             >
               <InputBase
-                // sx={{ width: "15%" }}
                 placeholder="Enter Doctor Name"
                 onChange={(e) => {
                   searchName(e, tableRows, setSearchedItem);
                 }}
                 inputProps={{ "aria-label": "enter doctor name" }}
+                sx={{ flex: 1 }}
               />
               <IconButton type="button" aria-label="search">
                 <SearchIcon style={{ fill: "blue" }} />
               </IconButton>
             </Paper>
-            <TableContainer sx={{ maxHeight: 110 }}>
+            <TableContainer sx={{ maxHeight: 440 }}>
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
@@ -117,7 +125,6 @@ export default function DoctorsTable({
                         style={{
                           minWidth: column.minWidth,
                         }}
-                        sx={{ background: "inherit" }}
                       >
                         {column.label}
                       </TableCell>
