@@ -4,54 +4,50 @@ import { FaUserDoctor, FaMoneyBill } from "react-icons/fa6";
 import { FaHospitalUser, FaCalendarAlt } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { Outlet, useLocation } from "react-router";
-import { useAdminUser } from "../../contexts/adminUserContext";
 import dayjs, { Dayjs } from "dayjs";
 import DateCalendarValue from "../../components/calendar";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 export default function AdminDashBoard() {
-  const {
-    useGetDoctorAndPatientData,
-    useGetTotalRevenue,
-    useGetPatientAppointmentsByDateTime,
-  } = useAdminUser();
-  const { doctors, patients } = useGetDoctorAndPatientData();
-  const { totalRevenue } = useGetTotalRevenue();
+  const { doctors, patients } = useSelector(
+    (state: RootState) => state.doctorAndPatientUser,
+  );
   const location = useLocation();
   const currentDate = new Date();
+
   const [value, setValue] = React.useState<Dayjs | null>(dayjs(currentDate));
-  const getMonthAndDate = (date: Dayjs | null) => {
-    return date ? date.toISOString() : "";
-  };
-  const date = getMonthAndDate(value);
-  const startOfDay = new Date(date);
-  startOfDay.setUTCHours(0, 0, 0, 0);
 
-  const endOfDay = new Date(date);
-  endOfDay.setUTCHours(23, 59, 59, 999);
+  const startOfDay = new Date();
+  startOfDay.setUTCHours(0, 0, 0, 0); // Set to start of day in UTC
 
-  const patientAppointmentDataByDateTime =
-    useGetPatientAppointmentsByDateTime(date);
-  const patientAppointMentLoading = !patientAppointmentDataByDateTime;
+  const endOfDay = new Date();
+  endOfDay.setUTCHours(23, 59, 59, 999); // Set to end of day in UTC
+
+  console.log(startOfDay, endOfDay);
+
   const rangeOfDoctorsAvailable = doctors?.filter(
     (doctor) =>
       new Date(doctor.startDate) <= endOfDay &&
       new Date(doctor.endDate) >= startOfDay,
   );
 
+  console.log(rangeOfDoctorsAvailable);
+
   return (
     <>
       {location.pathname === "/admin" ||
       location.pathname === "/admin/dashboard" ? (
-        <div className="md:flex gap-10 m-10">
-          <div className="left-side-container flex flex-col gap-10">
+        <div className="lg:flex gap-10 ml-10 mr-14 mt-10 mb-0">
+          <div className="left-side-container flex flex-col gap-10 w-[100%]">
             <div className="welcome-info relative">
               <img
                 className="h-full w-full"
                 src="https://www.mathematica.org/-/media/internet/health-graphics-and-photos/health-graphics/2020/medical_health_interactive_web.jpg"
                 alt="welcome"
               />
-              <div className="absolute left-[30px] top-[70px] text-white flex flex-col h-[20%] justify-between">
+              <div className="absolute left-[30px] top-[70px] text-white flex flex-col h-[20%]">
                 <h1>
                   Welcome <span className="font-semibold">Admin</span>
                 </h1>
@@ -62,7 +58,7 @@ export default function AdminDashBoard() {
                 </p>
               </div>
             </div>
-            <div className="stats-info flex flex-col gap-5">
+            <div className="stats-info flex flex-col gap-2 justify-between">
               <div className="flex flex-col md:flex-row justify-between p-5 shadow bg-white rounded-md">
                 <div className="flex items-center p-2 gap-3">
                   <FaUserDoctor size={30} />
@@ -81,7 +77,7 @@ export default function AdminDashBoard() {
                 <div className="flex items-center p-2 gap-3">
                   <FaMoneyBill size={30} />
                   <div>
-                    <p className="font-semibold">{`₱${totalRevenue}`}</p>
+                    {/* <p className="font-semibold">{`₱${totalRevenue}`}</p> */}
                     <p>Total Revenue</p>
                   </div>
                 </div>
@@ -91,7 +87,7 @@ export default function AdminDashBoard() {
                   <FaCalendarAlt size={30} />
                   <div>
                     <p className="font-semibold">
-                      {patientAppointmentDataByDateTime?.length}
+                      {/* {patientAppointmentDataByDateTime?.length} */}
                     </p>
                     <p>Appointments</p>
                     <p className="text-darkGray">Today</p>
@@ -108,48 +104,55 @@ export default function AdminDashBoard() {
                   </div>
                 </div>
               </div>
-              <div className="available-doctors-for-the-day">
-                <h2 className="font-bold">Todays Doctors</h2>
-                <div className="flex w-full mt-3">
-                  {doctors === null ? (
-                    <div className="flex justify-center items-center w-full">
-                      <Box>
-                        <CircularProgress />
-                      </Box>
-                    </div>
-                  ) : rangeOfDoctorsAvailable &&
-                    rangeOfDoctorsAvailable.length > 0 ? (
-                    rangeOfDoctorsAvailable?.map((doctor) => (
-                      <Link
-                        to={`/admin/doctors/doctor/${doctor._id}`}
-                        key={doctor._id}
-                      >
-                        <div
-                          key={doctor._id}
-                          className="flex flex-col shadow bg-white rounded-md justify-center items-center p-3 h-64 w-64"
-                        >
-                          <div>image of patient</div>
-                          <p>{`${doctor.firstName} ${doctor.lastName}`}</p>
-                          {`${dayjs(doctor.startDate).format(
-                            "hh:mm A",
-                          )} to ${dayjs(doctor.endDate).format("hh:mm A")}`}
+              <div className="available-doctors-for-the-day w-full relative">
+                <h2 className="font-bold">Today's Doctors</h2>
+                <div className="relative w-full mt-3">
+                  <div className="overflow-x-auto pb-4 snap-x snap-mandatory max-w-[calc(4*16rem)] relative">
+                    <div className="flex space-x-4 w-max">
+                      {doctors === null ? (
+                        <div className="flex justify-center items-center w-full h-64">
+                          <Box>
+                            <CircularProgress />
+                          </Box>
                         </div>
-                      </Link>
-                    ))
-                  ) : (
-                    <div className="text-darkGray">
-                      NO AVAILABLE DOCTOR TODAY
+                      ) : rangeOfDoctorsAvailable &&
+                        rangeOfDoctorsAvailable.length > 0 ? (
+                        rangeOfDoctorsAvailable.map((doctor) => (
+                          <div
+                            key={doctor._id}
+                            className="snap-center shrink-0 w-64 h-64 bg-white shadow rounded-md p-3 flex flex-col justify-center items-center"
+                          >
+                            <Link to={`/admin/doctors/doctor/${doctor._id}`}>
+                              <div className="flex flex-col justify-center items-center">
+                                <div>image of patient</div>
+                                <p>{`${doctor.firstName} ${doctor.lastName}`}</p>
+                                <p>
+                                  {`${dayjs(doctor.startDate).format(
+                                    "hh:mm A",
+                                  )} to ${dayjs(doctor.endDate).format(
+                                    "hh:mm A",
+                                  )}`}
+                                </p>
+                              </div>
+                            </Link>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-darkGray w-full h-64 flex items-center justify-center">
+                          NO AVAILABLE DOCTOR TODAY
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="right-side-container divide-y divide-gray flex flex-col shadow bg-white rounded-md md:flex">
+          <div className="right-side-container w-[100%] divide-y divide-gray flex flex-col shadow bg-white rounded-md mt-4 lg:mt-0">
             <div className="calender-info p-3 flex flex-col items-center">
               <DateCalendarValue value={value} setValue={setValue} />
             </div>
-            {patientAppointMentLoading ? (
+            {/* {patientAppointMentLoading ? (
               <Box sx={{ display: "flex", justifyContent: "center" }}>
                 <CircularProgress />
               </Box>
@@ -196,7 +199,7 @@ export default function AdminDashBoard() {
               <div className="flex flex-col items-center">
                 <p>No Appointments Today</p>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       ) : (
