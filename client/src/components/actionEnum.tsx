@@ -6,5 +6,4 @@ export enum ActionDoctorEnum {
 export enum ActionPatientEnum {
   DeletePatientForm = "deletePatientForm",
   EditPatientForm = "editPatientForm",
-  BookPatient = "bookPatient",
 }
