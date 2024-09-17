@@ -1,12 +1,23 @@
-export interface HospitalState {
-  name: string;
-  address: string;
-  createdAt: Date;
-  doctors?: DoctorUser[]; // References to Doctors
-  patients?: PatientUser[]; // References to Patients
-  image?: IImage; // Image of the Hospital
+export interface AdminUser {
+  username: string;
+  password: string;
+  role: "super-admin" | "hospital-admin";
+  hospital?: string[]; // Reference to Hospital
+  createdAt?: Date;
   __v?: number;
   _id?: string;
+}
+
+export interface Appointments {
+  _id: string;
+  title: string;
+  patient: string;
+  doctor: string;
+  starteDate: Date;
+  endDate: Date;
+  status: string;
+  createdAt: string;
+  __v?: number;
 }
 
 export interface DoctorUser {
@@ -34,6 +45,22 @@ export interface DoctorUser {
   id: number;
 }
 
+export interface HospitalState {
+  name: string;
+  address: string;
+  createdAt: Date;
+  doctors?: DoctorUser[]; // References to Doctors
+  patients?: PatientUser[]; // References to Patients
+  image?: IImage; // Image of the Hospital
+  __v?: number;
+  _id?: string;
+}
+
+export interface IImage {
+  data: Buffer;
+  contentType: string;
+}
+
 export interface PatientUser {
   username: JSX.Element | string;
   password: string;
@@ -54,17 +81,13 @@ export interface PatientUser {
   id: number;
 }
 
-export interface IImage {
-  data: Buffer;
-  contentType: string;
-}
-
-export interface AdminUser {
-  username: string;
-  password: string;
-  role: "super-admin" | "hospital-admin";
-  hospital?: string[]; // Reference to Hospital
-  createdAt?: Date;
+export interface Treatments {
+  _id: string;
+  name: string;
+  date: Date;
+  totalFee: number;
+  doctor: string;
+  medications: string[];
+  createdAt: string;
   __v?: number;
-  _id?: string;
 }
