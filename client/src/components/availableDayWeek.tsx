@@ -1,6 +1,6 @@
-import { Doctor } from "../contexts/doctorUserContext";
-export const availableDaysOfWeek = (doctorDetails: Doctor) => {
-  if (!doctorDetails) return;
+import { DoctorUser } from "../types";
+export const availableDaysOfWeek = (doctorDetails: DoctorUser) => {
+  // if (!doctorDetails) return;
   let currentDate = new Date(doctorDetails?.startDate);
   let endDate = new Date(doctorDetails?.endDate);
   const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];

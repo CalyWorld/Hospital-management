@@ -1,6 +1,8 @@
-import { Doctor } from "../contexts/doctorUserContext";
-export const availableTimeOfDay = (doctorDetails: Doctor | null) => {
-  if (!doctorDetails) return;
+import { DoctorUser } from "../types";
+export const availableTimeOfDay = (doctorDetails: DoctorUser) => {
+  if (!doctorDetails || !doctorDetails.startTime || !doctorDetails.endTime)
+    return;
+
   const doctorStartTime = new Date(doctorDetails.startTime);
   const doctorEndTime = new Date(doctorDetails.endTime);
 
