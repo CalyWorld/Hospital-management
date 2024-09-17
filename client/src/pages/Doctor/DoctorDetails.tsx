@@ -1,7 +1,6 @@
 import { useParams, Outlet } from "react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAdminUser } from "../../contexts/adminUserContext";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { completeAppointment } from "../../components/completeAppointment";
@@ -9,25 +8,43 @@ import { scheduledAppointMent } from "../../components/scheduledAppointment";
 import { availableTimeOfDay } from "../../components/availableTimeDay";
 import { availableDaysOfWeek } from "../../components/availableDayWeek";
 import { doctorRevenue } from "../../components/doctorRevenue";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store";
+import { fetchDoctorThunk } from "../../redux/doctorAndPatientDetailsSlice";
+import { fetchDoctorAppointmentsThunk } from "../../redux/appointmentsSlice";
+import { fetchDoctorTreatmentsThunk } from "../../redux/treamentSlice";
 export function DoctorDetails() {
+  const dispatch: AppDispatch = useDispatch();
+  const doctor = useSelector(
+    (state: RootState) => state.doctorAndPatientDetail.doctor,
+  );
+  const doctorAppointments = useSelector(
+    (state: RootState) => state.doctorAndPatientAppointments.doctorsAppointment,
+  );
+  const doctorTreatments = useSelector(
+    (state: RootState) => state.doctorAndPatientTreatments.doctorTreatments,
+  );
+  const loading = useSelector(
+    (state: RootState) => state.doctorAndPatientDetail.loading,
+  );
   const { doctorId } = useParams();
   const [activeTabLink, setActiveTabLink] = useState<string>("");
-  const {
-    useGetDoctorDetails,
-    useGetDoctorAppointments,
-    useGetDoctorTreatments,
-  } = useAdminUser();
-  if (!doctorId) {
-    return;
-  }
-  const doctorDetails = useGetDoctorDetails(doctorId);
-  const doctorAppointments = useGetDoctorAppointments(doctorId);
-  const doctorTreatments = useGetDoctorTreatments(doctorId);
+
+  if (!doctorId || !doctorAppointments) return;
+
+  useEffect(() => {
+    dispatch(fetchDoctorThunk(doctorId));
+    dispatch(fetchDoctorAppointmentsThunk(doctorId));
+    dispatch(fetchDoctorTreatmentsThunk(doctorId));
+  }, [dispatch]);
+
   const { totalRevenueAllTime, totalRevenueCurrentMonth } =
     doctorRevenue(doctorTreatments);
+
   const isCompleted = completeAppointment(doctorAppointments);
   const isScheduled = scheduledAppointMent(doctorAppointments);
-  const loading = !doctorDetails;
+
+  if (!doctor) return;
 
   return (
     <div className="flex flex-col gap-5 p-3">
@@ -37,7 +54,7 @@ export function DoctorDetails() {
         </Box>
       ) : (
         <div className="flex flex-col gap-5">
-          <h1 className="text-2xl">{`${doctorDetails?.firstName} ${doctorDetails?.lastName}`}</h1>
+          <h1 className="text-2xl">{`${doctor?.firstName} ${doctor?.lastName}`}</h1>
           <div className="flex justify-center gap-10 p-5">
             <div className="w-full flex flex-col gap-10">
               <div className="flex gap-1">
@@ -129,7 +146,7 @@ export function DoctorDetails() {
                   onClick={() => {
                     setActiveTabLink("doctor");
                   }}
-                >{`Patients (${doctorDetails?.patient?.length})`}</Link>
+                >{`Patients (${doctor?.patients?.length})`}</Link>
               </div>
               <Outlet />
             </div>
@@ -150,19 +167,19 @@ export function DoctorDetails() {
               <div className=" flex flex-col bg-[#e5e7eb] gap-10 p-3 shadow rounded-md">
                 <div>
                   <p className="text-[#6b7280]">Phone number</p>
-                  <p>{`+63 ${doctorDetails.phoneBook}`}</p>
+                  <p>{`${doctor?.phoneBook}`}</p>
                 </div>
                 <div>
                   <p className="text-[#6b7280]">Address</p>
-                  <p>{doctorDetails.address}</p>
+                  <p>{doctor?.address}</p>
                 </div>
                 <div>
                   <p className="text-[#6b7280]">Availaiblity</p>
-                  <div>{availableDaysOfWeek(doctorDetails)}</div>
+                  <div>{availableDaysOfWeek(doctor)}</div>
                 </div>
                 <div>
                   <p className="text-[#6b7280]">Available hours</p>
-                  <div>{availableTimeOfDay(doctorDetails)}</div>
+                  <div>{availableTimeOfDay(doctor)}</div>
                 </div>
               </div>
             </div>
