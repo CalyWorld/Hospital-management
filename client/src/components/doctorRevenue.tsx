@@ -1,6 +1,6 @@
-import { Treatment } from "../contexts/adminUserContext";
+import { Treatments } from "../types";
 import { currentMonth } from "./currentMonth";
-export const doctorRevenue = (doctorTreatments: Treatment[] | null) => {
+export const doctorRevenue = (doctorTreatments: Treatments[] | null) => {
   const allTreatmentsFees = doctorTreatments?.map(
     (treatment) => treatment.totalFee,
   );
