@@ -1,6 +1,4 @@
-import { useParams } from "react-router";
 import { useState } from "react";
-import { Appointment, useAdminUser } from "../../contexts/adminUserContext";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,9 +9,12 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { Appointments } from "../../types";
 
 interface Column {
-  id: keyof Appointment;
+  id: string;
   label: string;
   minWidth?: number;
   align?: "center";
@@ -32,33 +33,32 @@ const columns: Column[] = [
   { id: "patientName", label: "PATIENT", minWidth: 40, align: "center" },
 ];
 
-function createData({ _id, title, status, date, patient }: Appointment) {
+function createData({ _id, title, status, createdAt, patient }: Appointments) {
   const patientName = `${patient?.firstName} ${patient.lastName}`;
-  const formattedDate = new Date(date).toLocaleDateString("en-us", {
+  const formattedDate = new Date(createdAt).toLocaleDateString("en-us", {
     year: "numeric",
     month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
-    timeZoneName: "short",
+    // timeZoneName: "short",
   });
   const statusAndDate = `${status} ${formattedDate}`;
   return { _id, title, patientName, statusAndDate };
 }
 
 export default function DoctorCompletedAppointmentTable() {
-  const { useGetDoctorAppointments } = useAdminUser();
+  const doctorAppointments = useSelector(
+    (state: RootState) => state.doctorAndPatientAppointments.doctorsAppointment,
+  );
+  const loading = useSelector(
+    (state: RootState) => state.doctorAndPatientAppointments.loading,
+  );
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { doctorId } = useParams();
-  if (!doctorId) {
-    return;
-  }
-  const doctorAppointmentData = useGetDoctorAppointments(doctorId);
-  const loading = !doctorAppointmentData;
 
   const rows = (
-    doctorAppointmentData?.map((appointment) => {
+    doctorAppointments?.map((appointment) => {
       if (appointment.status.toLocaleLowerCase() === "completed") {
         return createData(appointment);
       }
@@ -84,7 +84,7 @@ export default function DoctorCompletedAppointmentTable() {
         </Box>
       ) : rows.length ? (
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 110 }}>
+          <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
