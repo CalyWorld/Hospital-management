@@ -2,15 +2,24 @@ import AdminHeader from "./AdminHeader";
 import AdminLayout from "./AdminLayout";
 import { Outlet } from "react-router";
 import { TfiMenu } from "react-icons/tfi";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { useState, useEffect } from "react";
+import {
+  fetchDoctorsThunk,
+  fetchPatientsThunk,
+} from "../../redux/doctorAndPatientSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../redux/store";
 
 export default function AdminPage() {
+  const dispatch: AppDispatch = useDispatch();
   const [openResponsiveModal, setResponsiveModal] = useState<boolean>(false);
   const actionForm = useSelector(
     (state: RootState) => state.actionForm.openActionForm,
   );
+  useEffect(() => {
+    dispatch(fetchDoctorsThunk());
+    dispatch(fetchPatientsThunk());
+  }, [dispatch]);
 
   return (
     <div className="flex h-screen overflow-hidden">
