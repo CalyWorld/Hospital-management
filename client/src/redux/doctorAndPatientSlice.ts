@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { DoctorUser, PatientUser } from "../types";
-
+import Cookies from "js-cookie";
 // Define the initial state
 interface DoctorAndPatientState {
   doctors: DoctorUser[];
@@ -15,10 +15,17 @@ const initialState: DoctorAndPatientState = {
   loading: false,
   error: null,
 };
-
 // Fetch functions
 const fetchDoctors = async (): Promise<DoctorUser[]> => {
-  const response = await fetch("http://localhost:3000/api/admin/doctor");
+  const token = Cookies.get("token");
+  const response = await fetch("http://localhost:3000/api/admin/doctor", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`, // Include the JWT here
+    },
+    credentials: "include", // Include this if using cookies
+  });
   if (!response.ok) {
     throw new Error("Failed to fetch doctors");
   }
@@ -26,7 +33,15 @@ const fetchDoctors = async (): Promise<DoctorUser[]> => {
 };
 
 const fetchPatients = async (): Promise<PatientUser[]> => {
-  const response = await fetch("http://localhost:3000/api/admin/patient");
+  const token = Cookies.get("token");
+  const response = await fetch("http://localhost:3000/api/admin/patient", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`, // Include the JWT here
+    },
+    credentials: "include", // Include this if using cookies
+  });
   if (!response.ok) {
     throw new Error("Failed to fetch patients");
   }
@@ -37,14 +52,14 @@ const fetchPatients = async (): Promise<PatientUser[]> => {
 export const fetchDoctorsThunk = createAsyncThunk<DoctorUser[], void>(
   "doctorAndPatientUser/fetchDoctors",
   async () => {
-    return fetchDoctors();
+    return await fetchDoctors();
   },
 );
 
 export const fetchPatientsThunk = createAsyncThunk<PatientUser[], void>(
   "doctorAndPatientUser/fetchPatients",
   async () => {
-    return fetchPatients();
+    return await fetchPatients();
   },
 );
 
