@@ -15,11 +15,10 @@ const initialState: TreatmentState = {
   error: null,
 };
 
-const token = Cookies.get("token");
-
 const fetchDoctorTreatments = async (
   doctorId: string,
 ): Promise<Treatments[]> => {
+  const token = Cookies.get("token");
   const response = await fetch(
     `http://localhost:3000/api/admin/doctor/treatments/${doctorId}`,
     {
@@ -40,6 +39,7 @@ const fetchDoctorTreatments = async (
 const fetchPatientTreatments = async (
   patientId: string,
 ): Promise<Treatments[]> => {
+  const token = Cookies.get("token");
   const response = await fetch(
     `http://localhost:3000/api/admin/patient/treatments/${patientId}`,
     {

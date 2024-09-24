@@ -12,11 +12,11 @@ const initialState: HealthRecordsState = {
   loading: false,
   error: null,
 };
-const token = Cookies.get("token");
 
 const fetchHealthRecords = async (
   patientId: string,
 ): Promise<HealthRecords[]> => {
+  const token = Cookies.get("token");
   const response = await fetch(
     `http://localhost:3000/api/admin/patient/records/${patientId}`,
     {

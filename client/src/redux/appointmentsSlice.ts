@@ -13,11 +13,11 @@ const initialState: AppointmentState = {
   loading: false,
   error: null,
 };
-const token = Cookies.get("token");
 
 const fetchDoctorAppointments = async (
   doctorId: string,
 ): Promise<Appointments[]> => {
+  const token = Cookies.get("token");
   const response = await fetch(
     `http://localhost:3000/api/admin/doctor/appointments/${doctorId}`,
     {
@@ -38,6 +38,7 @@ const fetchDoctorAppointments = async (
 const fetchPatientAppointments = async (
   patientId: string,
 ): Promise<Appointments[]> => {
+  const token = Cookies.get("token");
   const response = await fetch(
     `http://localhost:3000/api/admin/patient/appointments/${patientId}`,
     {
