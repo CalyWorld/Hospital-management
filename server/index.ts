@@ -5,11 +5,10 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import logger from "morgan";
 import mongoose from "mongoose";
+import { seedDatabase } from "./seedDatabase";
 const passport = require("./middleware/passportConfig");
 const authRoutes = require("./routes/authRoute");
 const adminRoutes = require("./routes/adminRoute");
-const doctorRoutes = require("./routes/doctorRoute");
-const patientRoutes = require("./routes/patientRoute");
 
 dotenv.config();
 
@@ -31,6 +30,8 @@ main().catch((err) => console.log(err));
 
 async function main() {
   await mongoose.connect(mongoDB);
+  // console.log("connecting to database");
+  // seedDatabase();
 }
 
 app.use(express.json());
@@ -42,8 +43,6 @@ app.use(passport.session());
 
 app.use(authRoutes);
 app.use(adminRoutes);
-app.use(doctorRoutes);
-app.use(patientRoutes);
 
 app.use(logger("dev"));
 app.use(cookieParser());
