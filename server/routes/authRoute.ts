@@ -1,89 +1,50 @@
 import express, { NextFunction, Request, Response } from "express";
-import passport from "passport";
 import bcrypt from "bcryptjs";
+import dotenv from "dotenv";
+import { Admin, IAdmin } from "../models/admin";
+import jwt from "jsonwebtoken";
 const router = express.Router();
 const asyncHandler = require("express-async-handler");
+
+dotenv.config();
+const secretKey = process.env.JWT_SECRET;
+if (!secretKey) {
+  throw new Error("JWT_SECRET is not defined in the environment variables");
+}
+const generateToken = (admin: IAdmin) => {
+  const payload = {
+    id: admin._id,
+    username: admin.username,
+  };
+  return jwt.sign(payload, secretKey, { expiresIn: "24h" });
+};
 
 // Admin authentication
 router.post(
   "/api/admin/login",
-  passport.authenticate("admin", {
-    successRedirect: "/api/admin",
-    failureRedirect: "/api/admin/login",
+  asyncHandler(async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+    try {
+      const admin = await Admin.findOne({ username });
+      if (!admin)
+        return res.status(401).json({ message: "Incorrect Admin Username" });
+
+      const isMatch = await bcrypt.compare(password, admin.password);
+      if (!isMatch)
+        return res.status(401).json({ message: "Incorrect Admin Password" });
+
+      const token = generateToken(admin);
+
+      res.json({ token, admin: { id: admin._id, username: admin.username } });
+    } catch (error) {
+      console.error("Login error", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
   }),
 );
 
 router.get(
   "/api/admin/logout",
-  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      req.logout((err) => {
-        if (err) {
-          return next(err);
-        }
-        res.json(null);
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  }),
-);
-
-// Doctor authentication
-router.post(
-  "/api/doctor/login",
-  passport.authenticate("doctor", {
-    successRedirect: "/api/doctor",
-    failureRedirect: "/api/doctor/login",
-  }),
-);
-
-router.post("/api/doctor/signup", (req: Request, res: Response) => {
-  res.send("doctor sign up");
-});
-
-router.get(
-  "/api/doctor/logout",
-  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      req.logout((err) => {
-        if (err) {
-          return next(err);
-        }
-        res.json(null);
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  }),
-);
-
-// Patient authentication
-router.post(
-  "/api/patient/login",
-  passport.authenticate("patient", {
-    successRedirect: "/api/patient",
-    failureRedirect: "/api/patient/login",
-  }),
-);
-
-// router.post("/api/patient/signup", asyncHandler(async(req: Request, res: Response, next:NextFunction) => {
-//   bcrypt.hash(
-//     req.body.password,
-//     10,
-//     async(err:Error, hashPassword:string)=>{
-//       if(err){
-//         return next(err)
-//       }
-//       const patient =  new Patient({
-//         username: req.body.username
-//       })
-//     }
-//   )
-// }));
-
-router.get(
-  "/api/patient/logout",
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
       req.logout((err) => {

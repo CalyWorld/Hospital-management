@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import passport from "passport";
 import { AdminController } from "../controllers/adminController";
 import { AdminService } from "../services/adminService";
 import { DoctorService } from "../services/doctorService";
@@ -30,6 +31,7 @@ const adminController = new AdminController(
 // Admin Routes
 router.get(
   "/api/admin",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getAdmin(req, res),
   ),
@@ -38,30 +40,35 @@ router.get(
 // Doctor Routes
 router.get(
   "/api/admin/doctor",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getAllDoctors(req, res),
   ),
 );
 router.get(
   "/api/admin/doctor/appointments/:doctorId",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getDoctorAppointments(req, res),
   ),
 );
 router.get(
   "/api/admin/doctor/treatments/:doctorId",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getDoctorTreatments(req, res),
   ),
 );
 router.get(
   "/api/admin/doctor/:doctorId",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getDoctorDetails(req, res),
   ),
 );
 router.delete(
   "/api/admin/doctor/:doctorId/delete",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getDeleteDoctor(req, res),
   ),
@@ -70,36 +77,42 @@ router.delete(
 // Patient Routes
 router.get(
   "/api/admin/patient",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getAllPatients(req, res),
   ),
 );
 router.get(
   "/api/admin/patient/appointments/:patientId",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getPatientAppointments(req, res),
   ),
 );
 router.get(
   "/api/admin/patient/records/:patientId",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getPatientRecords(req, res),
   ),
 );
 router.get(
   "/api/admin/patient/medications/:medicationId",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getPatientMedications(req, res),
   ),
 );
 router.get(
   "/api/admin/patient/:patientId",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getPatientDetails(req, res),
   ),
 );
 router.get(
   "/api/admin/patients/appointments/:date",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getPatientAppointmentsByDate(req, res),
   ),
@@ -107,6 +120,7 @@ router.get(
 // General Routes
 router.get(
   "/api/admin/totalFees",
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getTotalFees(req, res),
   ),
