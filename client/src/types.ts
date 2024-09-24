@@ -11,7 +11,7 @@ export interface AdminUser {
 export interface Appointments {
   _id: string;
   title: string;
-  patient: string;
+  patient: PatientUser;
   doctor: string;
   starteDate: Date;
   endDate: Date;
@@ -38,7 +38,7 @@ export interface DoctorUser {
   startTime?: Date;
   endTime?: Date;
   address?: string;
-  patients?: string[]; // References to Patients
+  patients?: PatientUser[]; // References to Patients
   actions?: JSX.Element;
   __v?: number;
   _id?: string;
@@ -54,6 +54,14 @@ export interface HospitalState {
   image?: IImage; // Image of the Hospital
   __v?: number;
   _id?: string;
+}
+
+export interface HealthRecords {
+  name: string;
+  patient: string;
+  treatments: string[];
+  _id: string;
+  __v: number;
 }
 
 export interface IImage {
@@ -74,7 +82,7 @@ export interface PatientUser {
   createdAt: Date;
   hospital: string; // Reference to Hospital
   address?: string;
-  doctors?: string[]; // References to doctors
+  doctor?: string[]; // References to doctors
   actions?: JSX.Element;
   __v?: number;
   _id?: string;
