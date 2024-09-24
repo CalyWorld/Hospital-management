@@ -27,14 +27,13 @@ router.post(
     try {
       const admin = await Admin.findOne({ username });
       if (!admin)
-        return res.status(401).json({ message: "Incorrect Admin Username" });
+        return res.status(401).json({ message: "incorrect admin Username" });
 
       const isMatch = await bcrypt.compare(password, admin.password);
       if (!isMatch)
-        return res.status(401).json({ message: "Incorrect Admin Password" });
+        return res.status(401).json({ message: "incorrect admin password" });
 
       const token = generateToken(admin);
-
       res.json({ token, admin: { id: admin._id, username: admin.username } });
     } catch (error) {
       console.error("Login error", error);
