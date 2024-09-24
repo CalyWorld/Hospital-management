@@ -5,7 +5,7 @@ export class DoctorService {
     return await Doctor.find().exec();
   }
   async getDoctorDetails(id: string) {
-    return await Doctor.findById(id).populate("patient").exec();
+    return await Doctor.findById(id).populate("patients").exec();
   }
   async getDeleteDoctor(id: string) {
     return await Doctor.findByIdAndDelete(id).exec();

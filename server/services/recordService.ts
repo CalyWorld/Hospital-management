@@ -1,8 +1,8 @@
-import { HealthRecords } from "../models/records";
+import { HealthRecord } from "../models/healthRecords";
 
 export class RecordService {
   async getPatientRecords(id: string) {
-    return await HealthRecords.find({ patient: id })
+    return await HealthRecord.find({ patient: id })
       .populate("treatments")
       .exec();
   }
