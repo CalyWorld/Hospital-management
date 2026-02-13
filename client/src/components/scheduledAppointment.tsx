@@ -3,7 +3,7 @@ import { Appointments } from "../types";
 export const scheduledAppointMent = (appointments: Appointments[]) => {
   const isScheduled = appointments?.filter(
     (appointment) =>
-      appointment.status.toLocaleLowerCase() === "scheduled" || "canceled",
+      ["scheduled", "canceled"].includes(appointment.status.toLowerCase()),
   );
   return isScheduled;
 };
