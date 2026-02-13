@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { setAdminUser, setToken } from "../redux/adminUserSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { buildApiUrl } from "../config/api";
 
 // Zod schema
 const adminFormSchema = z.object({
@@ -31,7 +32,7 @@ export default function AdminForm() {
   const onSubmit: SubmitHandler<adminSignInSchemaType> = async (data) => {
     try {
       const adminUser = { username: data.username, password: data.password };
-      const response = await fetch("http://localhost:3000/api/admin/login", {
+      const response = await fetch(buildApiUrl("/api/admin/login"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

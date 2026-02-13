@@ -1,77 +1,49 @@
 import { useParams, Outlet } from "react-router";
 import { Link } from "react-router-dom";
-import {
-  Medications,
-  Records,
-  useAdminUser,
-} from "../../contexts/adminUserContext";
 import Box from "@mui/material/Box";
 import { useEffect, useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import { completeAppointment } from "../../components/completeAppointment";
 import { scheduledAppointMent } from "../../components/scheduledAppointment";
-import { patientRevenue } from "../../components/patientRevenue";
+import { AppDispatch, RootState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPatientThunk } from "../../redux/doctorAndPatientDetailsSlice";
+import { fetchPatientAppointmentsThunk } from "../../redux/appointmentsSlice";
+import { fetchHealthRecordsThunk } from "../../redux/healthRecordsSlice";
 export function PatientDetails() {
-  const [activeTabLink, setActiveTabLink] = useState<string>("");
-  const [patientRecords, setPatientRecord] = useState<Records[] | null>(null);
-  const [medications, setMedications] = useState<Medications[] | null>(null);
-  const { useGetPatientDetails, useGetPatientAppointments } = useAdminUser();
+  const dispatch: AppDispatch = useDispatch();
+  const patient = useSelector(
+    (state: RootState) => state.doctorAndPatientDetail.patient,
+  );
+  const patientAppointments = useSelector(
+    (state: RootState) =>
+      state.doctorAndPatientAppointments.patientsAppointment,
+  );
+  const healthRecords = useSelector(
+    (state: RootState) => state.healthRecords.healthRecords,
+  );
+  const loading = useSelector(
+    (state: RootState) => state.doctorAndPatientDetail.loading,
+  );
   const { patientId } = useParams();
+  const [activeTabLink, setActiveTabLink] = useState<string>("");
+
   if (!patientId) {
     return;
   }
-  const patientDetails = useGetPatientDetails(patientId);
-  const patientAppointments = useGetPatientAppointments(patientId);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const apiUrl = `http://localhost:3000/api/admin/patient/records/${patientId}`;
-        const recordsResponse = await fetch(apiUrl, {
-          method: "GET",
-        });
-        const patientRecordsData = await recordsResponse.json();
-        setPatientRecord(patientRecordsData);
-
-        const medicationIds = patientRecordsData
-          ?.flatMap((records: Records) =>
-            records.treatments.map((treatment) => treatment.medication),
-          )
-          .flat();
-
-        await Promise.all(
-          medicationIds?.map(async (medicationId: string) => {
-            try {
-              const apiUrl = `http://localhost:3000/api/admin/patient/medications/${medicationId}`;
-              const response = await fetch(apiUrl, {
-                method: "GET",
-              });
-              const medicationData = await response.json();
-              setMedications([medicationData]);
-            } catch (err) {
-              console.error(
-                `Error Fetching medication with ID ${medicationId}`,
-                err,
-              );
-            }
-          }) || [],
-        );
-      } catch (err) {
-        console.error("err getting records", err);
-      }
-    };
-    fetchData();
-  }, [patientId]);
+    dispatch(fetchPatientThunk(patientId));
+    dispatch(fetchPatientAppointmentsThunk(patientId));
+    dispatch(fetchHealthRecordsThunk(patientId));
+  }, [dispatch]);
 
   const isCompleted = completeAppointment(patientAppointments);
   const isScheduled = scheduledAppointMent(patientAppointments);
-  const {
-    totalTreatmentRevenue,
-    totalRevenueCurrentMonth,
-    totalMedicationRevenueAllTime,
-  } = patientRevenue({ patientRecords, medications });
-  const loading = !patientDetails;
 
+  if (!patient) return;
+
+  console.log(healthRecords);
   return (
     <div className="flex flex-col gap-5 p-3">
       {loading ? (
@@ -80,7 +52,7 @@ export function PatientDetails() {
         </Box>
       ) : (
         <div className="flex flex-col gap-5">
-          <h1 className="text-2xl">{`${patientDetails?.firstName} ${patientDetails?.lastName}`}</h1>
+          <h1 className="text-2xl">{`${patient.firstName} ${patient.lastName}`}</h1>
           <div className="flex justify-center gap-10 p-5">
             <div className="w-full flex flex-col gap-10">
               <div className="flex gap-1">
@@ -171,7 +143,7 @@ export function PatientDetails() {
                   onClick={() => {
                     setActiveTabLink("doctor");
                   }}
-                >{`Doctors (${patientDetails?.doctor?.length})`}</Link>
+                >{`Doctors (${patient.doctor?.length})`}</Link>
               </div>
               <Outlet />
             </div>
@@ -180,28 +152,28 @@ export function PatientDetails() {
                 <div className="flex justify-between">
                   <div>
                     <h2>Fees last 30 days</h2>
-                    <h1>{`₱${
+                    {/* <h1>{`₱${
                       totalRevenueCurrentMonth + totalMedicationRevenueAllTime
-                    }`}</h1>
+                    }`}</h1> */}
                   </div>
                   <div>chart</div>
                 </div>
                 <div className="">
                   <h2>All Time Fees</h2>
-                  <h1>{`₱${
+                  {/* <h1>{`₱${
                     totalTreatmentRevenue + totalMedicationRevenueAllTime
-                  }`}</h1>
+                  }`}</h1> */}
                 </div>
               </div>
               <div className=" flex flex-col bg-[#e5e7eb] gap-10 p-3 shadow rounded-md">
                 {" "}
                 <div>
                   <p className="text-[#6b7280]">Phone number</p>
-                  <p>{`+63 ${patientDetails.phoneBook}`}</p>
+                  <p>{`+63 ${patient.phoneBook}`}</p>
                 </div>
                 <div>
                   <p className="text-[#6b7280]">Address</p>
-                  <p>{patientDetails.address}</p>
+                  <p>{patient.address}</p>
                 </div>
               </div>
             </div>

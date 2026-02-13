@@ -9,6 +9,7 @@ import React, {
 import Cookies from "js-cookie";
 import { Doctor } from "./doctorUserContext";
 import { Patient } from "./patientUserContext";
+import { buildApiUrl } from "../config/api";
 interface AdminUser {
   username: string;
   password: string;
@@ -136,10 +137,10 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
       async function fetchData() {
         try {
           const [doctorResponse, patientResponse] = await Promise.all([
-            fetch("http://localhost:3000/api/admin/doctor", {
+            fetch(buildApiUrl("/api/admin/doctor"), {
               method: "GET",
             }),
-            fetch("http://localhost:3000/api/admin/patient", {
+            fetch(buildApiUrl("/api/admin/patient"), {
               method: "GET",
             }),
           ]);
@@ -172,6 +173,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
   };
 
   const useUpdateAdminUserDetails = (updatedDetails: AdminUser) => {
+    void updatedDetails;
     // const { setAdminUser } = useGetDoctorAndPatientData();
     // setAdminUser((prevAdminUser) => ({
     //   ...prevAdminUser,
@@ -187,7 +189,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     useEffect(() => {
       const fetchDoctorDetails = async () => {
         try {
-          const apiUrl = `http://localhost:3000/api/admin/doctor/${doctorId}`;
+          const apiUrl = buildApiUrl(`/api/admin/doctor/${doctorId}`);
           const doctorDetailsResponse = await fetch(apiUrl, {
             method: "GET",
           });
@@ -211,7 +213,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     useEffect(() => {
       const fetchPatientDetails = async () => {
         try {
-          const apiUrl = `http://localhost:3000/api/admin/patient/${patientId}`;
+          const apiUrl = buildApiUrl(`/api/admin/patient/${patientId}`);
           const patientDetailsResponse = await fetch(apiUrl, {
             method: "GET",
           });
@@ -236,7 +238,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     useEffect(() => {
       const fetchAppointments = async () => {
         try {
-          const apiUrl = `http://localhost:3000/api/admin/doctor/appointments/${doctorId}`;
+          const apiUrl = buildApiUrl(`/api/admin/doctor/appointments/${doctorId}`);
           const appointmentsResponse = await fetch(apiUrl, {
             method: "GET",
           });
@@ -261,7 +263,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     useEffect(() => {
       const fetchTreatments = async () => {
         try {
-          const apiUrl = `http://localhost:3000/api/admin/doctor/treatments/${doctorId}`;
+          const apiUrl = buildApiUrl(`/api/admin/doctor/treatments/${doctorId}`);
           const treatmentsResponse = await fetch(apiUrl, {
             method: "GET",
           });
@@ -286,7 +288,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     useEffect(() => {
       const fetchAppointments = async () => {
         try {
-          const apiUrl = `http://localhost:3000/api/admin/patient/appointments/${patientId}`;
+          const apiUrl = buildApiUrl(`/api/admin/patient/appointments/${patientId}`);
           const appointmentsResponse = await fetch(apiUrl, {
             method: "GET",
           });
@@ -312,7 +314,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     useEffect(() => {
       const fetchAppointmentsByDateTime = async () => {
         try {
-          const apiUrl = `http://localhost:3000/api/admin/patients/appointments/${date}`;
+          const apiUrl = buildApiUrl(`/api/admin/patients/appointments/${date}`);
           const appointmentsResponse = await fetch(apiUrl, {
             method: "GET",
           });
@@ -356,7 +358,7 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     useEffect(() => {
       const fetchTreatMents = async () => {
         try {
-          const apiUrl = `http://localhost:3000/api/admin/totalFees`;
+          const apiUrl = buildApiUrl(`/api/admin/totalFees`);
           const treatMentResponse = await fetch(apiUrl, {
             method: "GET",
           });

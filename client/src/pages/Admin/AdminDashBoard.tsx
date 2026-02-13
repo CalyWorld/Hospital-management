@@ -25,7 +25,7 @@ export default function AdminDashBoard() {
   const endOfDay = new Date();
   endOfDay.setUTCHours(23, 59, 59, 999); // Set to end of day in UTC
 
-  console.log(startOfDay, endOfDay);
+  // console.log(startOfDay, endOfDay);
 
   const rangeOfDoctorsAvailable = doctors?.filter(
     (doctor) =>
@@ -33,14 +33,14 @@ export default function AdminDashBoard() {
       new Date(doctor.endDate) >= startOfDay,
   );
 
-  console.log(rangeOfDoctorsAvailable);
+  // console.log(rangeOfDoctorsAvailable);
 
   return (
     <>
       {location.pathname === "/admin" ||
       location.pathname === "/admin/dashboard" ? (
-        <div className="lg:flex gap-10 ml-10 mr-14 mt-10 mb-0">
-          <div className="left-side-container flex flex-col gap-10 w-[100%]">
+        <div className="max-w-full lg:flex gap-10 ml-10 mr-14 mt-10 mb-0">
+          <div className="left-side-container flex flex-col gap-10">
             <div className="welcome-info relative">
               <img
                 className="h-full w-full"
@@ -106,25 +106,25 @@ export default function AdminDashBoard() {
               </div>
               <div className="available-doctors-for-the-day w-full relative">
                 <h2 className="font-bold">Today's Doctors</h2>
-                <div className="relative w-full mt-3">
-                  <div className="overflow-x-auto pb-4 snap-x snap-mandatory max-w-[calc(4*16rem)] relative">
-                    <div className="flex space-x-4 w-max">
-                      {doctors === null ? (
-                        <div className="flex justify-center items-center w-full h-64">
-                          <Box>
-                            <CircularProgress />
-                          </Box>
-                        </div>
-                      ) : rangeOfDoctorsAvailable &&
-                        rangeOfDoctorsAvailable.length > 0 ? (
-                        rangeOfDoctorsAvailable.map((doctor) => (
+                {doctors === null ? (
+                  <div className="flex justify-center items-center w-full h-64">
+                    <Box>
+                      <CircularProgress />
+                    </Box>
+                  </div>
+                ) : rangeOfDoctorsAvailable &&
+                  rangeOfDoctorsAvailable.length > 0 ? (
+                  <div className="relative w-full mt-3">
+                    <div className="overflow-x-auto pb-4 snap-x snap-mandatory max-w-[calc(4*16rem)] relative">
+                      <div className="flex space-x-4 w-max">
+                        {rangeOfDoctorsAvailable.map((doctor) => (
                           <div
                             key={doctor._id}
                             className="snap-center shrink-0 w-64 h-64 bg-white shadow rounded-md p-3 flex flex-col justify-center items-center"
                           >
                             <Link to={`/admin/doctors/doctor/${doctor._id}`}>
                               <div className="flex flex-col justify-center items-center">
-                                <div>image of patient</div>
+                                <div>image of doctor</div>
                                 <p>{`${doctor.firstName} ${doctor.lastName}`}</p>
                                 <p>
                                   {`${dayjs(doctor.startDate).format(
@@ -136,19 +136,19 @@ export default function AdminDashBoard() {
                               </div>
                             </Link>
                           </div>
-                        ))
-                      ) : (
-                        <div className="text-darkGray w-full h-64 flex items-center justify-center">
-                          NO AVAILABLE DOCTOR TODAY
-                        </div>
-                      )}
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="text-darkGray w-full h-64">
+                    NO AVAILABLE DOCTOR TODAY
+                  </div>
+                )}
               </div>
             </div>
           </div>
-          <div className="right-side-container w-[100%] divide-y divide-gray flex flex-col shadow bg-white rounded-md mt-4 lg:mt-0">
+          <div className="right-side-container divide-y divide-gray flex flex-col shadow bg-white rounded-md mt-4 lg:mt-0">
             <div className="calender-info p-3 flex flex-col items-center">
               <DateCalendarValue value={value} setValue={setValue} />
             </div>

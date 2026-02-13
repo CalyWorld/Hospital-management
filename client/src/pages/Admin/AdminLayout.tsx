@@ -3,6 +3,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import { FaUserDoctor } from "react-icons/fa6";
 import SettingsIcon from "@mui/icons-material/Settings";
+import EventIcon from "@mui/icons-material/Event";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { FaHospitalUser } from "react-icons/fa";
 import { TfiClose } from "react-icons/tfi";
@@ -48,6 +49,22 @@ export default function AdminLayout({ setResponsiveModal }: AdminLayout) {
           >
             <HomeIcon sx={{ fontSize: 23 }} />
             <p>Dashboard</p>
+          </Link>
+        </li>
+        <li className="w-full">
+          <Link
+            to={"/admin/appointments"}
+            className={`${
+              sideNavTabLink === "appointments"
+                ? "flex gap-4 p-2 w-full items-center cursor-pointer shadow bg-[#4b5563] rounded-md"
+                : "flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
+            }`}
+            onClick={() => {
+              setNavTabLink("appointments");
+            }}
+          >
+            <EventIcon />
+            <p>Appointments</p>
           </Link>
         </li>
         <li className="w-full">

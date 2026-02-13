@@ -140,7 +140,7 @@ export default function DoctorScheduledAppointmentTable() {
         </Paper>
       ) : (
         <div className="flex justify-center">
-          No Scheduled or Canceled Appointment so far
+          No Scheduled Appointment so far
         </div>
       )}
     </div>

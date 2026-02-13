@@ -1,29 +1,29 @@
-import { TableProps } from "../components/tableProps";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { setDoctors } from "../redux/doctorAndPatientSlice";
+import { resetActionForm } from "../redux/actionFormSlice";
+import { SelectedId } from "./EditDoctorDetailsForm";
+import { buildApiUrl } from "../config/api";
 
-export default function DeleteDoctor({
-  setActionForm,
-  selectedId,
-  setSelectedId,
-  doctors,
-  setDoctor,
-}: TableProps) {
-  if (!setActionForm || !setSelectedId) return;
-
+export default function DeleteDoctor({ selectedId }: SelectedId) {
+  const dispatch = useDispatch();
+  const doctors = useSelector(
+    (state: RootState) => state.doctorAndPatientUser.doctors,
+  );
   const doctorId = selectedId;
   const doctor = doctors?.filter((doctor) => doctor._id === doctorId);
 
   if (!doctor) return;
+
   async function handleDoctorDelete() {
     const selectedDoctor = doctors?.filter((doctor) => doctor._id !== doctorId);
-    if (!setActionForm || !setSelectedId || !setDoctor || !selectedDoctor)
-      return;
+    if (!selectedId) return;
     try {
-      await fetch(`http://localhost:3000/api/admin/doctor/${doctorId}/delete`, {
+      await fetch(buildApiUrl(`/api/admin/doctor/${doctorId}/delete`), {
         method: "DELETE",
       });
-      setDoctor(selectedDoctor);
-      setActionForm("");
-      setSelectedId("");
+      dispatch(setDoctors(selectedDoctor));
+      dispatch(resetActionForm());
     } catch (error) {
       console.error("Error deleting doctor:", error);
     }
@@ -42,8 +42,7 @@ export default function DeleteDoctor({
         <button
           className="text-black py-2 px-4 rounded"
           onClick={() => {
-            setActionForm("");
-            setSelectedId("");
+            dispatch(resetActionForm());
           }}
         >
           Cancel

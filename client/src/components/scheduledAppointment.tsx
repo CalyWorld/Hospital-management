@@ -1,6 +1,6 @@
-import { Appointment } from "../contexts/adminUserContext";
+import { Appointments } from "../types";
 
-export const scheduledAppointMent = (appointments: Appointment[] | null) => {
+export const scheduledAppointMent = (appointments: Appointments[]) => {
   const isScheduled = appointments?.filter(
     (appointment) =>
       appointment.status.toLocaleLowerCase() === "scheduled" || "canceled",

@@ -10,7 +10,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import IconButton from "@mui/material/IconButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { Patient } from "../../contexts/patientUserContext";
 import { useState, useEffect } from "react";
 import { createPatientTableData } from "../../components/createPatientTableData";
 import { searchName } from "../../components/searchTableName";
@@ -18,20 +17,17 @@ import { columns } from "../../components/columnStructure";
 import { Row } from "../Doctor/DoctorsTable";
 import { ActionPatientEnum } from "../../components/actionEnum";
 import { InputBase } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { useDispatch } from "react-redux";
+import { PatientUser } from "../../types";
 
-export default function PatientsTable() {
+interface PatientsTable {
+  patients?: PatientUser[];
+  loading?: boolean;
+}
+export default function PatientsTable({ patients, loading }: PatientsTable) {
   const dispatch = useDispatch();
   const currentAction: typeof ActionPatientEnum = ActionPatientEnum;
 
-  const patients = useSelector(
-    (state: RootState) => state.doctorAndPatientUser.patients,
-  );
-  const loading = useSelector(
-    (state: RootState) => state.doctorAndPatientUser.loading,
-  );
-  // console.log(patients);
   const [searchedItems, setSearchedItem] = useState<Row[]>([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -40,8 +36,6 @@ export default function PatientsTable() {
     patients?.map((patient) =>
       createPatientTableData(patient, currentAction, dispatch),
     ) ?? [];
-
-  // console.log(patients);
 
   useEffect(() => {
     if (searchedItems.length === 0 && tableRows.length > 0) {
@@ -60,7 +54,6 @@ export default function PatientsTable() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
   return (
     <div className="p-3">
       <h2 className="text-2xl mb-4">LATEST PATIENTS</h2>

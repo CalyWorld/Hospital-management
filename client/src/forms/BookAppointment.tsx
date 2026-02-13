@@ -1,10 +1,11 @@
-import { TableProps } from "../pages/Doctor/DoctorsTable";
+interface BookAppointmentProps {
+  selectedId: string;
+}
 
-export default function BookAppointment({ setActionForm }: TableProps) {
-  if (!setActionForm) return;
+export default function BookAppointment({ selectedId }: BookAppointmentProps) {
   return (
     <div className="shadow-lg bg-[white] rounded-md  p-4 w-96">
-      book appointment
+      {`book appointment for ${selectedId}`}
     </div>
   );
 }

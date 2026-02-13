@@ -16,6 +16,7 @@ import { DoctorDetails } from "./pages/Doctor/DoctorDetails";
 import DoctorScheduledAppointmentTable from "./pages/Doctor/DoctorScheduledAppointmentTable";
 import DoctorCompletedAppointmentTable from "./pages/Doctor/DoctorCompletedAppointmentTable";
 import PatientsTable from "./pages/Patient/PatientsTable";
+import AppointmentsHomePage from "./pages/Appointments/AppointmentsHomepage";
 
 function App() {
   const dispatch: AppDispatch = useDispatch();
@@ -45,6 +46,10 @@ function App() {
               element: <PatientDetails />,
             },
           ],
+        },
+        {
+          path: "appointments",
+          element: <AppointmentsHomePage />,
         },
         {
           path: "doctors",

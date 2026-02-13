@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { DoctorUser, PatientUser } from "../types";
 import Cookies from "js-cookie";
+import { buildApiUrl } from "../config/api";
 interface DoctorAndPatientDetailState {
   doctor: DoctorUser | null;
   patient: PatientUser | null;
@@ -18,7 +19,7 @@ const initialState: DoctorAndPatientDetailState = {
 const fetchDoctor = async (doctorId: string): Promise<DoctorUser> => {
   const token = Cookies.get("token");
   const response = await fetch(
-    `http://localhost:3000/api/admin/doctor/${doctorId}`,
+    buildApiUrl(`/api/admin/doctor/${doctorId}`),
     {
       method: "GET",
       headers: {
@@ -37,7 +38,7 @@ const fetchDoctor = async (doctorId: string): Promise<DoctorUser> => {
 const fetchPatient = async (patientId: string): Promise<PatientUser> => {
   const token = Cookies.get("token");
   const response = await fetch(
-    `http://localhost:3000/api/admin/patient/${patientId}`,
+    buildApiUrl(`/api/admin/patient/${patientId}`),
     {
       method: "GET",
       headers: {

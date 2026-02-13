@@ -1,6 +1,6 @@
-import { Appointment } from "../contexts/adminUserContext";
+import { Appointments } from "../types";
 
-export const completeAppointment = (appointments: Appointment[] | null) => {
+export const completeAppointment = (appointments: Appointments[]) => {
   const isCompleted = appointments?.filter(
     (appointment) => appointment.status.toLocaleLowerCase() === "completed",
   );

@@ -16,8 +16,8 @@ import { searchName } from "../../components/searchTableName";
 import { createDoctorTableData } from "../../components/createDoctorTableData";
 import { ActionDoctorEnum } from "../../components/actionEnum";
 import { InputBase } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { useDispatch } from "react-redux";
+import { DoctorUser } from "../../types";
 export interface Row {
   _id?: string;
   id: number;
@@ -29,30 +29,23 @@ export interface Row {
   action?: JSX.Element;
 }
 
-export default function DoctorsTable() {
-  const path = "doctors/doctor";
+interface DoctorsTable {
+  doctors?: DoctorUser[];
+  loading?: boolean;
+}
+
+export default function DoctorsTable({ doctors, loading }: DoctorsTable) {
   const dispatch = useDispatch();
   const currentAction: typeof ActionDoctorEnum = ActionDoctorEnum;
-
-  const doctors = useSelector(
-    (state: RootState) => state.doctorAndPatientUser.doctors,
-  );
-  const loading = useSelector(
-    (state: RootState) => state.doctorAndPatientUser.loading,
-  );
 
   const [searchedItems, setSearchedItem] = useState<Row[]>([]);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
 
-  // const isAdminPath = location.pathname.includes("/admin");
-
   const tableRows =
     doctors?.map((doctor) =>
       createDoctorTableData(doctor, currentAction, dispatch),
     ) ?? [];
-
-  // console.log(doctors);
 
   useEffect(() => {
     if (searchedItems.length === 0 && tableRows.length > 0) {

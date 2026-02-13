@@ -51,7 +51,7 @@ export const PatientProvider: React.FC<PatientProviderProps> = ({
   children,
 }: PatientProviderProps) => {
   const [patients, setPatient] = useState<Patient[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading] = useState<boolean>(true);
   // useEffect(() => {
   //   let idCounter = 0;
   //   const fetchData = async () => {

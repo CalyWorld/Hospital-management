@@ -16,10 +16,6 @@ export default {
       darkGray: "#4b5563",
       gray: "#d4d4d8",
     },
-    fontFamily: {
-      sans: ["Graphik", "sans-serif"],
-      serif: ["Merriweather", "serif"],
-    },
   },
   plugins: [],
 };

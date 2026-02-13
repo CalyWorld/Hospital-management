@@ -32,9 +32,9 @@ const columns: Column[] = [
   { id: "doctorName", label: "DOCTOR", minWidth: 40, align: "center" },
 ];
 
-function createData({ _id, title, status, date, doctor }: Appointment) {
+function createData({ _id, title, status, startDate, doctor }: Appointment) {
   const doctorName = `${doctor.firstName} ${doctor.lastName}`;
-  const formattedDate = new Date(date).toLocaleDateString("en-us", {
+  const formattedDate = new Date(startDate).toLocaleDateString("en-us", {
     year: "numeric",
     month: "short",
     day: "numeric",
