@@ -60,8 +60,9 @@ export default function DoctorScheduledAppointmentTable() {
   const rows = (
     doctorAppointments?.map((appointment) => {
       if (
-        appointment.status.toLocaleLowerCase() === "scheduled" ||
-        "canceled"
+        ["scheduled", "canceled", "cancelled"].includes(
+          appointment.status.toLowerCase(),
+        )
       ) {
         return createData(appointment);
       }

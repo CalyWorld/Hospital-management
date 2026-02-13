@@ -3,6 +3,8 @@ import { AppDispatch, RootState } from "../redux/store";
 import { setPatients } from "../redux/doctorAndPatientSlice";
 import { resetActionForm } from "../redux/actionFormSlice";
 import { buildApiUrl } from "../config/api";
+import Cookies from "js-cookie";
+import { useState } from "react";
 
 interface SelectedId {
   selectedId: string;
@@ -13,6 +15,8 @@ export default function DeletePatientForm({ selectedId }: SelectedId) {
   const patients = useSelector(
     (state: RootState) => state.doctorAndPatientUser.patients,
   );
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const patient = patients.find((row) => row._id === selectedId);
 
@@ -22,14 +26,24 @@ export default function DeletePatientForm({ selectedId }: SelectedId) {
     }
 
     try {
+      setSubmitting(true);
+      setError(null);
+      const token = Cookies.get("token");
       const response = await fetch(
         buildApiUrl(`/api/admin/patient/${selectedId}/delete`),
         {
           method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
         },
       );
 
       if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        setError(errorData.message || "Failed to delete patient.");
         return;
       }
 
@@ -38,6 +52,9 @@ export default function DeletePatientForm({ selectedId }: SelectedId) {
       dispatch(resetActionForm());
     } catch (error) {
       console.error("Error deleting patient:", error);
+      setError("Unexpected error while deleting patient.");
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -58,13 +75,15 @@ export default function DeletePatientForm({ selectedId }: SelectedId) {
         >
           Cancel
         </button>
+        {error && <p className="text-red-500 text-xs italic">{error}</p>}
         <button
-          className="bg-darkBlue text-white py-2 px-4 rounded"
+          className="bg-darkBlue text-white py-2 px-4 rounded disabled:opacity-60"
+          disabled={submitting}
           onClick={() => {
             handlePatientDelete();
           }}
         >
-          Delete
+          {submitting ? "Deleting..." : "Delete"}
         </button>
       </div>
     </div>

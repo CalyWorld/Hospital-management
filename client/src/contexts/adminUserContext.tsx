@@ -314,15 +314,29 @@ export const AdminUserProvider: React.FC<AdminUserProviderProps> = ({
     useEffect(() => {
       const fetchAppointmentsByDateTime = async () => {
         try {
+          setLoading(true);
+          const token = Cookies.get("token");
           const apiUrl = buildApiUrl(`/api/admin/patients/appointments/${date}`);
           const appointmentsResponse = await fetch(apiUrl, {
             method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            credentials: "include",
           });
+
+          if (!appointmentsResponse.ok) {
+            throw new Error("Failed to fetch appointments by date");
+          }
+
           const appointmentsData = await appointmentsResponse.json();
-          setLoading(false);
           setPatientAppointmentDataByDateTime(appointmentsData);
+          setLoading(false);
         } catch (error) {
           console.error("Error fetching appointments:", error);
+          setPatientAppointmentDataByDateTime([]);
+          setLoading(false);
         }
       };
 

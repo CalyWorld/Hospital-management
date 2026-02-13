@@ -10,7 +10,9 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { useAdminUser } from "../../contexts/adminUserContext";
 export default function AdminDashBoard() {
+  const { useGetPatientAppointmentsByDateTime } = useAdminUser();
   const { doctors, patients } = useSelector(
     (state: RootState) => state.doctorAndPatientUser,
   );
@@ -18,6 +20,10 @@ export default function AdminDashBoard() {
   const currentDate = new Date();
 
   const [value, setValue] = React.useState<Dayjs | null>(dayjs(currentDate));
+  const selectedDate = (value ?? dayjs(currentDate)).format("YYYY-MM-DD");
+  const patientAppointmentDataByDateTime =
+    useGetPatientAppointmentsByDateTime(selectedDate);
+  const patientAppointMentLoading = patientAppointmentDataByDateTime === null;
 
   const startOfDay = new Date();
   startOfDay.setUTCHours(0, 0, 0, 0); // Set to start of day in UTC
@@ -87,7 +93,7 @@ export default function AdminDashBoard() {
                   <FaCalendarAlt size={30} />
                   <div>
                     <p className="font-semibold">
-                      {/* {patientAppointmentDataByDateTime?.length} */}
+                      {patientAppointmentDataByDateTime?.length ?? 0}
                     </p>
                     <p>Appointments</p>
                     <p className="text-darkGray">Today</p>
@@ -152,7 +158,7 @@ export default function AdminDashBoard() {
             <div className="calender-info p-3 flex flex-col items-center">
               <DateCalendarValue value={value} setValue={setValue} />
             </div>
-            {/* {patientAppointMentLoading ? (
+            {patientAppointMentLoading ? (
               <Box sx={{ display: "flex", justifyContent: "center" }}>
                 <CircularProgress />
               </Box>
@@ -199,7 +205,7 @@ export default function AdminDashBoard() {
               <div className="flex flex-col items-center">
                 <p>No Appointments Today</p>
               </div>
-            )} */}
+            )}
           </div>
         </div>
       ) : (
