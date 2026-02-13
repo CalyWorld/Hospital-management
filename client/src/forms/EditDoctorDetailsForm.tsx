@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as z from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -53,19 +53,21 @@ export default function EditDoctorDetail({ selectedId }: SelectedId) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const doctorId = selectedId;
-  const doctor = doctors?.filter(
-    (doctor: DoctorUser) => doctor._id === doctorId,
-  );
-  if (doctor && doctor.length > 0 && !editDoctor) {
+  const doctor = doctors?.find((doctor: DoctorUser) => doctor._id === doctorId);
+
+  useEffect(() => {
+    if (!doctor) {
+      return;
+    }
     setEditDoctorForm({
-      firstName: doctor[0].firstName ?? "",
-      lastName: doctor[0].lastName ?? "",
-      gender: doctor[0].gender.toLowerCase(),
-      country: doctor[0].country ?? "",
-      age: doctor[0].age,
-      address: doctor[0].address ?? "",
+      firstName: doctor.firstName ?? "",
+      lastName: doctor.lastName ?? "",
+      gender: doctor.gender.toLowerCase(),
+      country: doctor.country ?? "",
+      age: doctor.age,
+      address: doctor.address ?? "",
     });
-  }
+  }, [doctor]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -118,6 +120,15 @@ export default function EditDoctorDetail({ selectedId }: SelectedId) {
       setSubmitting(false);
     }
   };
+
+  if (!editDoctor) {
+    return (
+      <div className="p-5">
+        <p className="text-sm text-gray-600">Doctor not found.</p>
+      </div>
+    );
+  }
+
   return (
     <form className="p-5" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-4">
@@ -131,7 +142,7 @@ export default function EditDoctorDetail({ selectedId }: SelectedId) {
                 type="text"
                 placeholder="Jane"
                 {...register("firstName")}
-                value={editDoctor?.firstName}
+                value={editDoctor.firstName}
                 onChange={(e) => handleChange(e)}
               />
             </label>
@@ -148,7 +159,7 @@ export default function EditDoctorDetail({ selectedId }: SelectedId) {
                 type="text"
                 placeholder="Doe"
                 {...register("lastName")}
-                value={editDoctor?.lastName}
+                value={editDoctor.lastName}
                 onChange={(e) => handleChange(e)}
               />
             </label>
@@ -166,7 +177,7 @@ export default function EditDoctorDetail({ selectedId }: SelectedId) {
                   className="block appearance-none w-full bg-gray-200 border border-gray-300 text-gray-700 py-2 px-3 pr-8 rounded leading-tight focus:outline-none focus:border-gray-500"
                   id="gender"
                   {...register("gender")}
-                  value={editDoctor?.gender}
+                  value={editDoctor.gender}
                   onChange={(e) => handleChange(e)}
                 >
                   <option value="male">Male</option>
@@ -193,7 +204,7 @@ export default function EditDoctorDetail({ selectedId }: SelectedId) {
                 type="text"
                 placeholder="USA"
                 {...register("country")}
-                value={editDoctor?.country}
+                value={editDoctor.country}
                 onChange={(e) => handleChange(e)}
               />
             </label>
@@ -210,7 +221,7 @@ export default function EditDoctorDetail({ selectedId }: SelectedId) {
                 type="text"
                 placeholder="21"
                 {...register("age", { valueAsNumber: true })}
-                value={Number(editDoctor?.age)}
+                value={editDoctor.age}
                 onChange={(e) => handleChange(e)}
               />
             </label>
@@ -225,7 +236,7 @@ export default function EditDoctorDetail({ selectedId }: SelectedId) {
                 type="text"
                 placeholder="Makati Manila"
                 {...register("address")}
-                value={editDoctor?.address}
+                value={editDoctor.address}
                 onChange={(e) => handleChange(e)}
               />
             </label>

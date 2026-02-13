@@ -1,31 +1,51 @@
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { AppDispatch, RootState } from "../redux/store";
 import { setDoctors } from "../redux/doctorAndPatientSlice";
 import { resetActionForm } from "../redux/actionFormSlice";
 import { SelectedId } from "./EditDoctorDetailsForm";
 import { buildApiUrl } from "../config/api";
+import Cookies from "js-cookie";
+import { useState } from "react";
 
 export default function DeleteDoctor({ selectedId }: SelectedId) {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const doctors = useSelector(
     (state: RootState) => state.doctorAndPatientUser.doctors,
   );
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const doctorId = selectedId;
-  const doctor = doctors?.filter((doctor) => doctor._id === doctorId);
+  const doctor = doctors.filter((row) => row._id === doctorId);
 
-  if (!doctor) return;
+  if (doctor.length === 0) return;
 
   async function handleDoctorDelete() {
-    const selectedDoctor = doctors?.filter((doctor) => doctor._id !== doctorId);
+    const selectedDoctor = doctors.filter((row) => row._id !== doctorId);
     if (!selectedId) return;
     try {
-      await fetch(buildApiUrl(`/api/admin/doctor/${doctorId}/delete`), {
+      setSubmitting(true);
+      setError(null);
+      const token = Cookies.get("token");
+      const response = await fetch(buildApiUrl(`/api/admin/doctor/${doctorId}/delete`), {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: "include",
       });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        setError(errorData.message || "Failed to delete doctor.");
+        return;
+      }
       dispatch(setDoctors(selectedDoctor));
       dispatch(resetActionForm());
     } catch (error) {
       console.error("Error deleting doctor:", error);
+      setError("Unexpected error while deleting doctor.");
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -47,13 +67,15 @@ export default function DeleteDoctor({ selectedId }: SelectedId) {
         >
           Cancel
         </button>
+        {error && <p className="text-red-500 text-xs italic">{error}</p>}
         <button
-          className="bg-darkBlue text-white py-2 px-4 rounded"
+          className="bg-darkBlue text-white py-2 px-4 rounded disabled:opacity-60"
+          disabled={submitting}
           onClick={() => {
             handleDoctorDelete();
           }}
         >
-          Delete
+          {submitting ? "Deleting..." : "Delete"}
         </button>
       </div>
     </div>

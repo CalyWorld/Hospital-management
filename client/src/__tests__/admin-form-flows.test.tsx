@@ -5,6 +5,7 @@ import BookAppointment from "../forms/BookAppointment";
 import EditDoctorDetail from "../forms/EditDoctorDetailsForm";
 import EditPatientDetailsForm from "../forms/EditPatientDetailsForm";
 import DeletePatientForm from "../forms/DeletePatientForm";
+import DeleteDoctor from "../forms/DeleteDoctorForm";
 
 const mockDispatch = vi.fn();
 
@@ -242,11 +243,13 @@ describe("Admin form flows", () => {
     const [url, options] = (global.fetch as unknown as ReturnType<typeof vi.fn>).mock.calls[0];
     expect(String(url).includes("/api/admin/patient/patient-1/delete")).toBe(true);
     expect(options.method).toBe("DELETE");
+    expect(options.headers.Authorization).toBe("Bearer test-token");
   });
 
-  it("does not dispatch patient delete state updates when delete fails", async () => {
+  it("shows patient delete error and does not dispatch updates when delete fails", async () => {
     (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: false,
+      json: async () => ({ message: "Cannot delete patient" }),
     });
 
     render(<DeletePatientForm selectedId="patient-1" />);
@@ -255,6 +258,46 @@ describe("Admin form flows", () => {
 
     await waitFor(() => {
       expect((global.fetch as unknown as ReturnType<typeof vi.fn>).mock.calls.length).toBe(1);
+      expect(screen.getByText("Cannot delete patient")).toBeTruthy();
+    });
+
+    expect(mockDispatch.mock.calls.length).toBe(0);
+  });
+
+  it("deletes doctor successfully", async () => {
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
+      ok: true,
+      json: async () => ({}),
+    });
+
+    render(<DeleteDoctor selectedId="doctor-1" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+
+    await waitFor(() => {
+      expect((global.fetch as unknown as ReturnType<typeof vi.fn>).mock.calls.length).toBe(1);
+      expect(mockDispatch.mock.calls.length).toBe(2);
+    });
+
+    const [url, options] = (global.fetch as unknown as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(String(url).includes("/api/admin/doctor/doctor-1/delete")).toBe(true);
+    expect(options.method).toBe("DELETE");
+    expect(options.headers.Authorization).toBe("Bearer test-token");
+  });
+
+  it("shows doctor delete error and does not dispatch updates when delete fails", async () => {
+    (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue({
+      ok: false,
+      json: async () => ({ message: "Cannot delete doctor" }),
+    });
+
+    render(<DeleteDoctor selectedId="doctor-1" />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+
+    await waitFor(() => {
+      expect((global.fetch as unknown as ReturnType<typeof vi.fn>).mock.calls.length).toBe(1);
+      expect(screen.getByText("Cannot delete doctor")).toBeTruthy();
     });
 
     expect(mockDispatch.mock.calls.length).toBe(0);
