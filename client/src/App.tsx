@@ -7,6 +7,8 @@ import AdminDashBoard from "./pages/Admin/AdminDashBoard";
 import EditDoctorDetail from "./forms/EditDoctorDetailsForm";
 import DeleteDoctor from "./forms/DeleteDoctorForm";
 import BookAppointment from "./forms/BookAppointment";
+import EditPatientDetailsForm from "./forms/EditPatientDetailsForm";
+import DeletePatientForm from "./forms/DeletePatientForm";
 import { AppDispatch } from "./redux/store";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "./redux/store";
@@ -114,25 +116,12 @@ function App() {
             {openActionForm === "bookPatient" && selectedId && (
               <BookAppointment selectedId={selectedId} />
             )}
-            {/* {openActionForm === "editPatientForm" && selectedId && (
-            <EditDoctorDetail
-              setActionForm={setActionForm}
-              selectedId={selectedId}
-              setSelectedId={setSelectedId}
-              patients={patients}
-              setDoctor={setDoctor}
-              loading={loading}
-            />
-          )}
-          {openActionForm === "deletePatientForm" && selectedId && (
-            <DeleteDoctor
-              selectedId={selectedId}
-              setActionForm={setActionForm}
-              setSelectedId={setSelectedId}
-              patients={patients}
-              setDoctor={setDoctor}
-            />
-          )} */}
+            {openActionForm === "editPatientForm" && selectedId && (
+              <EditPatientDetailsForm selectedId={selectedId} />
+            )}
+            {openActionForm === "deletePatientForm" && selectedId && (
+              <DeletePatientForm selectedId={selectedId} />
+            )}
           </div>
         </div>
       )}

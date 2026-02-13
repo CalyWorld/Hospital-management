@@ -59,6 +59,37 @@ export class AdminController {
     }
   }
 
+  //update doctor details
+  public async updateDoctorDetails(req: Request, res: Response): Promise<void> {
+    try {
+      const { firstName, lastName, gender, country, age, address } = req.body;
+      if (
+        !firstName ||
+        !lastName ||
+        !gender ||
+        !country ||
+        typeof age !== "number" ||
+        !address
+      ) {
+        res.status(400).json({ message: "Missing required doctor fields" });
+        return;
+      }
+
+      const updatedDoctor = await this.doctorService.updateDoctorDetails(
+        req.params.doctorId,
+        { firstName, lastName, gender, country, age, address },
+      );
+      if (!updatedDoctor) {
+        res.status(404).json({ message: "Doctor not found" });
+        return;
+      }
+      res.status(200).json(updatedDoctor);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Error updating doctor details");
+    }
+  }
+
   //deletes doctor
   public async getDeleteDoctor(req: Request, res: Response): Promise<void> {
     try {
@@ -128,6 +159,50 @@ export class AdminController {
     }
   }
 
+  //update patient details
+  public async updatePatientDetails(req: Request, res: Response): Promise<void> {
+    try {
+      const { firstName, lastName, gender, country, age, address, phoneBook } =
+        req.body;
+      if (
+        !firstName ||
+        !lastName ||
+        !gender ||
+        !country ||
+        typeof age !== "number" ||
+        !address ||
+        typeof phoneBook !== "number"
+      ) {
+        res.status(400).json({ message: "Missing required patient fields" });
+        return;
+      }
+
+      const updatedPatient = await this.patientService.updatePatientDetails(
+        req.params.patientId,
+        { firstName, lastName, gender, country, age, address, phoneBook },
+      );
+      if (!updatedPatient) {
+        res.status(404).json({ message: "Patient not found" });
+        return;
+      }
+      res.status(200).json(updatedPatient);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Error updating patient details");
+    }
+  }
+
+  //delete patient
+  public async deletePatient(req: Request, res: Response): Promise<void> {
+    try {
+      await this.patientService.deletePatient(req.params.patientId);
+      res.status(200).json({ message: "Patient deleted" });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Error deleting patient");
+    }
+  }
+
   //get patient medication
   public async getPatientMedications(
     req: Request,
@@ -193,6 +268,29 @@ export class AdminController {
     } catch (err) {
       console.log(err);
       res.status(500).send("Error getting patient appointments by date");
+    }
+  }
+
+  //create appointment
+  public async createAppointment(req: Request, res: Response): Promise<void> {
+    try {
+      const { title, doctorId, patientId, startDate, endDate } = req.body;
+      if (!title || !doctorId || !patientId || !startDate || !endDate) {
+        res.status(400).json({ message: "Missing required appointment fields" });
+        return;
+      }
+
+      const appointment = await this.appointmentService.createAppointment({
+        title,
+        doctorId,
+        patientId,
+        startDate,
+        endDate,
+      });
+      res.status(201).json(appointment);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error creating appointment";
+      res.status(400).json({ message });
     }
   }
 

@@ -52,6 +52,13 @@ router.get(
     adminController.getDoctorAppointments(req, res),
   ),
 );
+router.post(
+  "/api/admin/appointment",
+  passport.authenticate("jwt", { session: false }),
+  asyncHandler(async (req: Request, res: Response) =>
+    adminController.createAppointment(req, res),
+  ),
+);
 router.get(
   "/api/admin/doctor/treatments/:doctorId",
   passport.authenticate("jwt", { session: false }),
@@ -64,6 +71,13 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getDoctorDetails(req, res),
+  ),
+);
+router.patch(
+  "/api/admin/doctor/:doctorId",
+  passport.authenticate("jwt", { session: false }),
+  asyncHandler(async (req: Request, res: Response) =>
+    adminController.updateDoctorDetails(req, res),
   ),
 );
 router.delete(
@@ -108,6 +122,20 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   asyncHandler(async (req: Request, res: Response) =>
     adminController.getPatientDetails(req, res),
+  ),
+);
+router.patch(
+  "/api/admin/patient/:patientId",
+  passport.authenticate("jwt", { session: false }),
+  asyncHandler(async (req: Request, res: Response) =>
+    adminController.updatePatientDetails(req, res),
+  ),
+);
+router.delete(
+  "/api/admin/patient/:patientId/delete",
+  passport.authenticate("jwt", { session: false }),
+  asyncHandler(async (req: Request, res: Response) =>
+    adminController.deletePatient(req, res),
   ),
 );
 router.get(
