@@ -5,7 +5,6 @@ import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import openDeleteDoctorModal from "../modals/openDeleteDoctorModal";
 import openEditDoctorModal from "../modals/openEditDoctorModal";
 import bookPatient from "../modals/bookPatientModal";
-import { FaLink } from "react-icons/fa6";
 import { ActionDoctorEnum } from "./actionEnum";
 import { DoctorUser } from "../types";
 import { AppDispatch } from "../redux/store";
@@ -16,12 +15,9 @@ export function createDoctorTableData(
   dispatch: AppDispatch,
 ) {
   const username = (
-    <div className="flex justify-center items-center gap-2">
-      <p>
+    <div className="flex justify-center items-center">
+      <Link key={_id} to={`/admin/doctors/doctor/${_id}`} className="underline">
         {firstName} {lastName}
-      </p>
-      <Link key={_id} to={`/admin/doctors/doctor/${_id}`}>
-        <FaLink />
       </Link>
     </div>
   );

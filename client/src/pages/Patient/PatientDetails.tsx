@@ -1,4 +1,4 @@
-import { useParams, Outlet } from "react-router";
+import { useParams, Outlet, useLocation, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import Box from "@mui/material/Box";
 import { useEffect, useState } from "react";
@@ -19,14 +19,13 @@ export function PatientDetails() {
     (state: RootState) =>
       state.doctorAndPatientAppointments.patientsAppointment,
   );
-  const healthRecords = useSelector(
-    (state: RootState) => state.healthRecords.healthRecords,
-  );
   const loading = useSelector(
     (state: RootState) => state.doctorAndPatientDetail.loading,
   );
   const { patientId } = useParams();
-  const [activeTabLink, setActiveTabLink] = useState<string>("");
+  const [activeTabLink, setActiveTabLink] = useState<string>("active");
+  const location = useLocation();
+  const navigate = useNavigate();
 
   if (!patientId) {
     return;
@@ -36,14 +35,32 @@ export function PatientDetails() {
     dispatch(fetchPatientThunk(patientId));
     dispatch(fetchPatientAppointmentsThunk(patientId));
     dispatch(fetchHealthRecordsThunk(patientId));
-  }, [dispatch]);
+  }, [dispatch, patientId]);
+
+  useEffect(() => {
+    if (location.pathname.endsWith(`/patients/patient/${patientId}`)) {
+      navigate(`/admin/patients/patient/${patientId}/active`, {
+        replace: true,
+      });
+    } else if (location.pathname.endsWith("/completion")) {
+      setActiveTabLink("completed");
+    } else if (location.pathname.endsWith("/doctors")) {
+      setActiveTabLink("doctor");
+    } else {
+      setActiveTabLink("active");
+    }
+  }, [location.pathname, navigate, patientId]);
 
   const isCompleted = completeAppointment(patientAppointments);
   const isScheduled = scheduledAppointMent(patientAppointments);
+  const doctorCount = Array.isArray(patient?.doctor)
+    ? patient.doctor.length
+    : patient?.doctor
+      ? 1
+      : 0;
 
   if (!patient) return;
 
-  console.log(healthRecords);
   return (
     <div className="flex flex-col gap-5 p-3">
       {loading ? (
@@ -143,7 +160,7 @@ export function PatientDetails() {
                   onClick={() => {
                     setActiveTabLink("doctor");
                   }}
-                >{`Doctors (${patient.doctor?.length})`}</Link>
+                >{`Doctors (${doctorCount})`}</Link>
               </div>
               <Outlet />
             </div>

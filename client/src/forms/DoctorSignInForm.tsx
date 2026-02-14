@@ -1,6 +1,7 @@
 import * as z from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
 const doctorFormSchema = z.object({
   username: z.string().min(4, { message: "username is required" }),
@@ -12,6 +13,8 @@ const doctorFormSchema = z.object({
 type doctorSignInSchemaType = z.infer<typeof doctorFormSchema>;
 
 export default function DoctorForm() {
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -21,6 +24,8 @@ export default function DoctorForm() {
   });
 
   const onSubmit: SubmitHandler<doctorSignInSchemaType> = async (data) => {
+    setServerError(null);
+    setSubmitting(true);
     try {
       const doctorUser = { username: data.username, password: data.password };
       const response = await fetch(`${import.meta.env.VITE_API_DOCTOR_API}`, {
@@ -32,13 +37,15 @@ export default function DoctorForm() {
         credentials: "include",
       });
       if (response.ok) {
-        console.log(response);
+        setServerError(null);
       } else {
-        const errorData = await response.json();
-        console.log(errorData.message);
+        const errorData = await response.json().catch(() => ({}));
+        setServerError(errorData.message || "Failed to sign in as doctor.");
       }
-    } catch (err) {
-      console.log("error occured during admin sign in", err);
+    } catch {
+      setServerError("An unexpected error occurred. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
   return (
@@ -79,7 +86,7 @@ export default function DoctorForm() {
               errors.password ? "border-rose-500" : ""
             }`}
             id="password"
-            type="text"
+            type="password"
             placeholder="Enter Password"
             {...register("password")}
           />
@@ -89,8 +96,11 @@ export default function DoctorForm() {
             </p>
           )}
         </label>
+        {serverError && <p className="text-red-500 text-center">{serverError}</p>}
         <div className="flex justify-center">
-          <button>Sign in</button>
+          <button disabled={submitting}>
+            {submitting ? "Signing in..." : "Sign in"}
+          </button>
         </div>
       </form>
     </div>

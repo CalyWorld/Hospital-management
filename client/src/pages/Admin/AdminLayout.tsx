@@ -8,16 +8,35 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { FaHospitalUser } from "react-icons/fa";
 import { TfiClose } from "react-icons/tfi";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
+import { setAdminUser, setToken } from "../../redux/adminUserSlice";
+import { useNavigate } from "react-router-dom";
 interface AdminLayout {
   setResponsiveModal: React.Dispatch<React.SetStateAction<boolean>>;
+  theme: "light" | "dark";
 }
-export default function AdminLayout({ setResponsiveModal }: AdminLayout) {
+export default function AdminLayout({ setResponsiveModal, theme }: AdminLayout) {
+  const dispatch: AppDispatch = useDispatch();
+  const navigate = useNavigate();
   const [sideNavTabLink, setNavTabLink] = useState<string>("");
+  const navClassName =
+    theme === "dark"
+      ? "bg-slate-900 text-slate-100"
+      : "bg-darkBlue text-white";
+  const hoverClass = theme === "dark" ? "hover:bg-slate-700" : "hover:bg-[#374151]";
+  const activeClass = theme === "dark" ? "bg-slate-700" : "bg-[#4b5563]";
+
+  const handleLogout = () => {
+    dispatch(setAdminUser(null));
+    dispatch(setToken(null));
+    navigate("/admin");
+  };
 
   return (
     <nav
       id="sidebar"
-      className="bg-darkBlue w-48 fixed md:static top-0 left-0 bottom-0 z-20 md:z-auto text-white flex flex-col p-3 min-h-screen"
+      className={`${navClassName} w-48 fixed md:static top-0 left-0 bottom-0 z-20 md:z-auto flex flex-col p-3 min-h-screen`}
     >
       <ul>
         <li className="flex items-center justify-between">
@@ -40,8 +59,8 @@ export default function AdminLayout({ setResponsiveModal }: AdminLayout) {
             to={`/admin/dashboard`}
             className={`${
               sideNavTabLink === "dashboard"
-                ? "flex gap-4 p-2 w-full items-center cursor-pointer shadow bg-[#4b5563] rounded-md"
-                : "flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
+                ? `flex gap-4 p-2 w-full items-center cursor-pointer shadow rounded-md ${activeClass}`
+                : `flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md ${hoverClass}`
             }`}
             onClick={() => {
               setNavTabLink("dashboard");
@@ -56,8 +75,8 @@ export default function AdminLayout({ setResponsiveModal }: AdminLayout) {
             to={"/admin/appointments"}
             className={`${
               sideNavTabLink === "appointments"
-                ? "flex gap-4 p-2 w-full items-center cursor-pointer shadow bg-[#4b5563] rounded-md"
-                : "flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
+                ? `flex gap-4 p-2 w-full items-center cursor-pointer shadow rounded-md ${activeClass}`
+                : `flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md ${hoverClass}`
             }`}
             onClick={() => {
               setNavTabLink("appointments");
@@ -72,8 +91,8 @@ export default function AdminLayout({ setResponsiveModal }: AdminLayout) {
             to={`/admin/doctors`}
             className={`${
               sideNavTabLink === "doctors"
-                ? "flex gap-4 p-2 w-full items-center cursor-pointer shadow bg-[#4b5563] rounded-md"
-                : "flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
+                ? `flex gap-4 p-2 w-full items-center cursor-pointer shadow rounded-md ${activeClass}`
+                : `flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md ${hoverClass}`
             }`}
             onClick={() => {
               setNavTabLink("doctors");
@@ -88,8 +107,8 @@ export default function AdminLayout({ setResponsiveModal }: AdminLayout) {
             to={`/admin/patients`}
             className={`${
               sideNavTabLink === "patients"
-                ? "flex gap-4 p-2 w-full items-center  cursor-pointer shadow bg-[#4b5563] rounded-md"
-                : "flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
+                ? `flex gap-4 p-2 w-full items-center cursor-pointer shadow rounded-md ${activeClass}`
+                : `flex gap-4 p-2 w-full items-center cursor-pointer hover:shadow rounded-md ${hoverClass}`
             }`}
             onClick={() => {
               setNavTabLink("patients");
@@ -103,26 +122,30 @@ export default function AdminLayout({ setResponsiveModal }: AdminLayout) {
 
       {/* Settings and Logout at the bottom */}
       <ul className="flex flex-col items-center gap-5 mt-auto">
-        <div
+        <Link
+          to={"/admin/settings"}
           className={`${
             sideNavTabLink === "settings"
-              ? "flex gap-5 p-2 w-full items-center justify-center cursor-pointer shadow bg-[#4b5563] rounded-md"
-              : "flex gap-5 p-2 w-full items-center justify-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
+              ? `flex gap-5 p-2 w-full items-center justify-center cursor-pointer shadow rounded-md ${activeClass}`
+              : `flex gap-5 p-2 w-full items-center justify-center cursor-pointer hover:shadow rounded-md ${hoverClass}`
           }`}
           onClick={() => {
             setNavTabLink("settings");
+            setResponsiveModal(false);
           }}
         >
           <SettingsIcon />
-        </div>
+        </Link>
         <div
           className={`${
             sideNavTabLink === "logout"
-              ? "flex gap-5 p-2 w-full items-center justify-center cursor-pointer shadow bg-[#4b5563] rounded-md"
-              : "flex gap-5 p-2 w-full items-center justify-center cursor-pointer hover:shadow rounded-md hover:bg-[#374151]"
+              ? `flex gap-5 p-2 w-full items-center justify-center cursor-pointer shadow rounded-md ${activeClass}`
+              : `flex gap-5 p-2 w-full items-center justify-center cursor-pointer hover:shadow rounded-md ${hoverClass}`
           }`}
           onClick={() => {
             setNavTabLink("logout");
+            setResponsiveModal(false);
+            handleLogout();
           }}
         >
           <LogoutIcon />

@@ -50,8 +50,7 @@ export default function DeletePatientForm({ selectedId }: SelectedId) {
       const nextPatients = patients.filter((row) => row._id !== selectedId);
       dispatch(setPatients(nextPatients));
       dispatch(resetActionForm());
-    } catch (error) {
-      console.error("Error deleting patient:", error);
+    } catch {
       setError("Unexpected error while deleting patient.");
     } finally {
       setSubmitting(false);

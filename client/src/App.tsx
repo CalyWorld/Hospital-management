@@ -1,9 +1,5 @@
-import DoctorHomePage from "./pages/Doctor/DoctorHomePage";
-import PatientHomePage from "./pages/Patient/PatientHomePage";
-import AdminHomePage from "./pages/Admin/AdminHomePage";
+import { lazy, Suspense, useMemo } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import ErrorPage from "./errorPage";
-import AdminDashBoard from "./pages/Admin/AdminDashBoard";
 import EditDoctorDetail from "./forms/EditDoctorDetailsForm";
 import DeleteDoctor from "./forms/DeleteDoctorForm";
 import BookAppointment from "./forms/BookAppointment";
@@ -13,81 +9,149 @@ import { AppDispatch } from "./redux/store";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "./redux/store";
 import { resetActionForm } from "./redux/actionFormSlice";
-import { PatientDetails } from "./pages/Patient/PatientDetails";
-import { DoctorDetails } from "./pages/Doctor/DoctorDetails";
-import DoctorScheduledAppointmentTable from "./pages/Doctor/DoctorScheduledAppointmentTable";
-import DoctorCompletedAppointmentTable from "./pages/Doctor/DoctorCompletedAppointmentTable";
-import PatientsTable from "./pages/Patient/PatientsTable";
-import AppointmentsHomePage from "./pages/Appointments/AppointmentsHomepage";
+
+const AdminHomePage = lazy(() => import("./pages/Admin/AdminHomePage"));
+const AdminDashBoard = lazy(() => import("./pages/Admin/AdminDashBoard"));
+const DoctorHomePage = lazy(() => import("./pages/Doctor/DoctorHomePage"));
+const PatientHomePage = lazy(() => import("./pages/Patient/PatientHomePage"));
+const AppointmentsHomePage = lazy(
+  () => import("./pages/Appointments/AppointmentsHomepage"),
+);
+const AdminSettings = lazy(() => import("./pages/Admin/AdminSettings"));
+const ErrorPage = lazy(() => import("./errorPage"));
+const DoctorDetails = lazy(() =>
+  import("./pages/Doctor/DoctorDetails").then((module) => ({
+    default: module.DoctorDetails,
+  })),
+);
+const PatientDetails = lazy(() =>
+  import("./pages/Patient/PatientDetails").then((module) => ({
+    default: module.PatientDetails,
+  })),
+);
+const DoctorScheduledAppointmentTable = lazy(
+  () => import("./pages/Doctor/DoctorScheduledAppointmentTable"),
+);
+const DoctorCompletedAppointmentTable = lazy(
+  () => import("./pages/Doctor/DoctorCompletedAppointmentTable"),
+);
+const PatientsTable = lazy(() => import("./pages/Patient/PatientsTable"));
+const PatientScheduledAppointmentTable = lazy(
+  () => import("./pages/Patient/PatientScheduledAppointmentTable"),
+);
+const PatientCompletedAppointmentTable = lazy(
+  () => import("./pages/Patient/PatientCompletedAppointmentTable"),
+);
+
+function withSuspense(element: JSX.Element) {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center py-10 text-darkGray">
+          Loading...
+        </div>
+      }
+    >
+      {element}
+    </Suspense>
+  );
+}
 
 function App() {
   const dispatch: AppDispatch = useDispatch();
   const { openActionForm, selectedId } = useSelector(
     (state: RootState) => state.actionForm,
   );
-  const router = createBrowserRouter([
-    {
-      path: "/admin",
-      element: <AdminHomePage />,
-      errorElement: <ErrorPage />,
-      children: [
+  const router = useMemo(
+    () =>
+      createBrowserRouter([
         {
-          index: true,
-          element: <AdminDashBoard />,
-        },
-        {
-          path: "dashboard",
-          element: <AdminDashBoard />,
+          path: "/admin",
+          element: withSuspense(<AdminHomePage />),
+          errorElement: withSuspense(<ErrorPage />),
           children: [
             {
-              path: "doctor/:doctorId/*",
-              element: <DoctorDetails />,
+              index: true,
+              element: withSuspense(<AdminDashBoard />),
             },
             {
-              path: "patient/:patientId/*",
-              element: <PatientDetails />,
-            },
-          ],
-        },
-        {
-          path: "appointments",
-          element: <AppointmentsHomePage />,
-        },
-        {
-          path: "doctors",
-          element: <DoctorHomePage />,
-          children: [
-            {
-              path: "doctor/:doctorId/*",
-              element: <DoctorDetails />,
+              path: "dashboard",
+              element: withSuspense(<AdminDashBoard />),
               children: [
                 {
-                  index: true,
-                  path: "active",
-                  element: <DoctorScheduledAppointmentTable />,
+                  path: "doctor/:doctorId/*",
+                  element: withSuspense(<DoctorDetails />),
                 },
                 {
-                  path: "completion",
-                  element: <DoctorCompletedAppointmentTable />,
+                  path: "patient/:patientId/*",
+                  element: withSuspense(<PatientDetails />),
                 },
-                { path: "patients", element: <PatientsTable /> },
+              ],
+            },
+            {
+              path: "appointments",
+              element: withSuspense(<AppointmentsHomePage />),
+            },
+            {
+              path: "settings",
+              element: withSuspense(<AdminSettings />),
+            },
+            {
+              path: "doctors",
+              element: withSuspense(<DoctorHomePage />),
+              children: [
+                {
+                  path: "doctor/:doctorId/*",
+                  element: withSuspense(<DoctorDetails />),
+                  children: [
+                    {
+                      index: true,
+                      path: "active",
+                      element: withSuspense(<DoctorScheduledAppointmentTable />),
+                    },
+                    {
+                      path: "completion",
+                      element: withSuspense(<DoctorCompletedAppointmentTable />),
+                    },
+                    {
+                      path: "patients",
+                      element: withSuspense(<PatientsTable />),
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: "patients",
+              element: withSuspense(<PatientHomePage />),
+              children: [
+                {
+                  path: "patient/:patientId/*",
+                  element: withSuspense(<PatientDetails />),
+                  children: [
+                    {
+                      path: "active",
+                      element: withSuspense(<PatientScheduledAppointmentTable />),
+                    },
+                    {
+                      path: "completion",
+                      element: withSuspense(<PatientCompletedAppointmentTable />),
+                    },
+                    {
+                      path: "doctors",
+                      element: withSuspense(
+                        <PatientsTable mode="doctorsForPatient" />,
+                      ),
+                    },
+                  ],
+                },
               ],
             },
           ],
         },
-        {
-          path: "patients",
-          element: <PatientHomePage />,
-          children: [
-            {
-              path: "patient/:patientId/*",
-              element: <PatientDetails />,
-            },
-          ],
-        },
-      ],
-    },
-  ]);
+      ]),
+    [],
+  );
 
   const handleClose = () => {
     dispatch(resetActionForm());

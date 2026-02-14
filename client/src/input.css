@@ -29,3 +29,39 @@
     background-color: #f9f9f9;
   }
 }
+
+.admin-theme-dark #detail .bg-white {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+.admin-theme-dark #detail .text-black {
+  color: #e2e8f0 !important;
+}
+
+.admin-theme-dark #detail .text-darkGray {
+  color: #94a3b8 !important;
+}
+
+.admin-theme-dark #detail .border-gray-200,
+.admin-theme-dark #detail .border-gray-300 {
+  border-color: #334155 !important;
+}
+
+.admin-theme-dark #detail .MuiPaper-root {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+.admin-theme-dark #detail .MuiTableCell-root {
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+
+.admin-theme-dark #detail input,
+.admin-theme-dark #detail select,
+.admin-theme-dark #detail textarea {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}

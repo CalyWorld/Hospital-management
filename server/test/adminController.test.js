@@ -29,13 +29,14 @@ function createController(overrides = {}) {
   const doctorService = {
     getAllDoctors: async () => [{ _id: 'd1' }],
     getDoctorDetails: async (id) => ({ _id: id }),
-    getDeleteDoctor: async () => undefined,
+    getDeleteDoctor: async () => ({ _id: 'd1' }),
     ...(overrides.doctorService || {}),
   };
 
   const patientService = {
     getAllPatients: async () => [{ _id: 'p1' }],
     getPatientDetails: async (id) => ({ _id: id }),
+    deletePatient: async () => ({ _id: 'p1' }),
     ...(overrides.patientService || {}),
   };
 
@@ -119,6 +120,7 @@ describe('AdminController', () => {
     res = createRes();
     await controller.getDeleteDoctor(req, res);
     assert.equal(res.statusCode, 200);
+    assert.deepEqual(res.body, { message: 'Doctor deleted' });
   });
 
   it('handles patient endpoints', async () => {
@@ -148,6 +150,29 @@ describe('AdminController', () => {
     res = createRes();
     await controller.getPatientAppointmentsByDate(req, res);
     assert.deepEqual(res.body, [{ _id: 'a3' }]);
+  });
+
+  it('returns 404 when delete doctor/patient target is missing', async () => {
+    const controller = createController({
+      doctorService: {
+        getDeleteDoctor: async () => null,
+      },
+      patientService: {
+        deletePatient: async () => null,
+      },
+    });
+
+    let req = { params: { doctorId: 'doc-404' } };
+    let res = createRes();
+    await controller.getDeleteDoctor(req, res);
+    assert.equal(res.statusCode, 404);
+    assert.deepEqual(res.body, { message: 'Doctor not found' });
+
+    req = { params: { patientId: 'pat-404' } };
+    res = createRes();
+    await controller.deletePatient(req, res);
+    assert.equal(res.statusCode, 404);
+    assert.deepEqual(res.body, { message: 'Patient not found' });
   });
 
   it('returns collection and total endpoints', async () => {

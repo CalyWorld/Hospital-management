@@ -4,11 +4,14 @@ import App from "./App.tsx";
 import "./input.css";
 import { Provider } from "react-redux";
 import store from "./redux/store.ts";
+import { AdminUserProvider } from "./contexts/adminUserContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <AdminUserProvider>
+        <App />
+      </AdminUserProvider>
     </Provider>
   </React.StrictMode>,
 );

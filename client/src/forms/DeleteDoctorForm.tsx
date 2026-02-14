@@ -41,8 +41,7 @@ export default function DeleteDoctor({ selectedId }: SelectedId) {
       }
       dispatch(setDoctors(selectedDoctor));
       dispatch(resetActionForm());
-    } catch (error) {
-      console.error("Error deleting doctor:", error);
+    } catch {
       setError("Unexpected error while deleting doctor.");
     } finally {
       setSubmitting(false);

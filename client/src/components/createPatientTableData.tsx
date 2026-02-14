@@ -3,7 +3,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import openEditPatientModal from "../modals/openEditPatientModal";
 import openDeletePatientModal from "../modals/openPatientDeleteModal";
-import { FaLink } from "react-icons/fa6";
 import { ActionPatientEnum } from "./actionEnum";
 import { AppDispatch } from "../redux/store";
 import { PatientUser } from "../types";
@@ -23,12 +22,9 @@ export function createPatientTableData(
   dispatch: AppDispatch,
 ) {
   const username = (
-    <div className="flex justify-center items-center gap-2">
-      <p>
+    <div className="flex justify-center items-center">
+      <Link key={_id} to={`/admin/patients/patient/${_id}`} className="underline">
         {firstName} {lastName}
-      </p>
-      <Link key={_id} to={`/admin/patients/patient/${_id}`}>
-        <FaLink />
       </Link>
     </div>
   );

@@ -17,6 +17,15 @@ export class AdminController {
     private recordService: RecordService,
     private appointmentService: AppointmentService,
   ) {}
+
+  private sendServerError(
+    res: Response,
+    message: string,
+    error: unknown,
+  ): void {
+    console.log(error);
+    res.status(500).json({ message });
+  }
   //get admin method in adminController
   public async getAdmin(req: Request, res: Response): Promise<void> {
     if (req.isAuthenticated()) {
@@ -85,8 +94,7 @@ export class AdminController {
       }
       res.status(200).json(updatedDoctor);
     } catch (err) {
-      console.log(err);
-      res.status(500).send("Error updating doctor details");
+      this.sendServerError(res, "Error updating doctor details", err);
     }
   }
 
@@ -94,11 +102,16 @@ export class AdminController {
   public async getDeleteDoctor(req: Request, res: Response): Promise<void> {
     try {
       //calls the action which is service and passes its params into the action
-      await this.doctorService.getDeleteDoctor(req.params.doctorId);
-      res.status(200);
+      const deletedDoctor = await this.doctorService.getDeleteDoctor(
+        req.params.doctorId,
+      );
+      if (!deletedDoctor) {
+        res.status(404).json({ message: "Doctor not found" });
+        return;
+      }
+      res.status(200).json({ message: "Doctor deleted" });
     } catch (err) {
-      console.log(err);
-      res.status(500).send("Error deleting specific doctor");
+      this.sendServerError(res, "Error deleting specific doctor", err);
     }
   }
   //get doctor appointments
@@ -187,19 +200,23 @@ export class AdminController {
       }
       res.status(200).json(updatedPatient);
     } catch (err) {
-      console.log(err);
-      res.status(500).send("Error updating patient details");
+      this.sendServerError(res, "Error updating patient details", err);
     }
   }
 
   //delete patient
   public async deletePatient(req: Request, res: Response): Promise<void> {
     try {
-      await this.patientService.deletePatient(req.params.patientId);
+      const deletedPatient = await this.patientService.deletePatient(
+        req.params.patientId,
+      );
+      if (!deletedPatient) {
+        res.status(404).json({ message: "Patient not found" });
+        return;
+      }
       res.status(200).json({ message: "Patient deleted" });
     } catch (err) {
-      console.log(err);
-      res.status(500).send("Error deleting patient");
+      this.sendServerError(res, "Error deleting patient", err);
     }
   }
 
@@ -289,8 +306,16 @@ export class AdminController {
       });
       res.status(201).json(appointment);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Error creating appointment";
-      res.status(400).json({ message });
+      const message =
+        err instanceof Error ? err.message : "Error creating appointment";
+      const clientErrors = new Set([
+        "Doctor not found",
+        "Patient not found",
+        "Invalid appointment date",
+        "Appointment end date must be after start date",
+      ]);
+      const statusCode = clientErrors.has(message) ? 400 : 500;
+      res.status(statusCode).json({ message });
     }
   }
 

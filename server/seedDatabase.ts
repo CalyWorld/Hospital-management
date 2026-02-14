@@ -15,37 +15,68 @@ async function hashPassword(password: string) {
   const saltRounds = 10;
   return bcrypt.hash(password, saltRounds);
 }
+
+function atLocalTime(baseDate: Date, hour: number, minute = 0) {
+  const date = new Date(baseDate);
+  date.setHours(hour, minute, 0, 0);
+  return date;
+}
+
+function addDays(baseDate: Date, days: number) {
+  const date = new Date(baseDate);
+  date.setDate(date.getDate() + days);
+  return date;
+}
+
+function randomDateInRange(start: Date, end: Date) {
+  const startMs = start.getTime();
+  const endMs = end.getTime();
+  const randomMs = startMs + Math.random() * (endMs - startMs);
+  return new Date(randomMs);
+}
 export async function seedDatabase() {
   try {
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const nextMonthEnd = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+
+    const todayAvailabilityStart = atLocalTime(now, 9, 0);
+    const tomorrowAvailabilityStart = atLocalTime(addDays(now, 1), 9, 0);
+    const nextWeekAvailabilityStart = atLocalTime(addDays(now, 7), 9, 0);
+
     // SuperAdmin
     const superAdmin = await SuperAdmin.create({
       username: "superadmin1",
       password: await hashPassword("superadminpass"),
-      createdAt: new Date(),
+      createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
     });
 
     // Hospitals
     const hospitals = await Hospital.insertMany([
-      { name: "City Hospital", address: "123 Main St", createdAt: new Date() },
+      {
+        name: "City Hospital",
+        address: "123 Main St",
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
+      },
       {
         name: "Greenwood Medical Center",
         address: "456 Elm St",
-        createdAt: new Date(),
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
       {
         name: "Sunnydale Clinic",
         address: "789 Oak St",
-        createdAt: new Date(),
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
       {
         name: "Downtown Health",
         address: "101 Pine St",
-        createdAt: new Date(),
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
       {
         name: "Lakeside Hospital",
         address: "202 Maple St",
-        createdAt: new Date(),
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
     ]);
 
@@ -56,35 +87,35 @@ export async function seedDatabase() {
         password: await hashPassword("password1"),
         role: "hospital-admin",
         hospital: hospitals[0]._id,
-        createdAt: new Date(),
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
       {
         username: "admin2",
         password: await hashPassword("password2"),
         role: "hospital-admin",
         hospital: hospitals[1]._id,
-        createdAt: new Date(),
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
       {
         username: "admin3",
         password: await hashPassword("password3"),
         role: "hospital-admin",
         hospital: hospitals[2]._id,
-        createdAt: new Date(),
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
       {
         username: "admin4",
         password: await hashPassword("password4"),
         role: "hospital-admin",
         hospital: hospitals[3]._id,
-        createdAt: new Date(),
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
       {
         username: "admin5",
         password: await hashPassword("password5"),
         role: "hospital-admin",
         hospital: hospitals[4]._id,
-        createdAt: new Date(),
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
     ]);
 
@@ -155,6 +186,20 @@ export async function seedDatabase() {
         const randomAddressIndex = Math.floor(Math.random() * addresses.length);
 
         // Creating Doctor entries
+        const availabilityStart =
+          i === 0 && j === 0
+            ? todayAvailabilityStart
+            : i === 0 && j === 1
+              ? tomorrowAvailabilityStart
+              : i === 0 && j === 2
+                ? nextWeekAvailabilityStart
+                : atLocalTime(
+                    randomDateInRange(currentMonthStart, nextMonthEnd),
+                    8 + (j % 3),
+                    0,
+                  );
+        const availabilityEnd = atLocalTime(availabilityStart, 17, 0);
+
         const doctor = {
           username: `dr${i * 5 + j}`,
           password: `docpass${i * 5 + j}`,
@@ -165,11 +210,11 @@ export async function seedDatabase() {
           age: 30 + j * 2,
           phoneBook: 1234567890 + j,
           specialization: specialization[j % specialization.length],
-          createdAt: new Date(),
-          startTime: new Date(),
-          endTime: new Date(),
-          startDate: new Date(),
-          endDate: new Date(),
+          createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
+          startTime: availabilityStart,
+          endTime: availabilityEnd,
+          startDate: availabilityStart,
+          endDate: availabilityEnd,
           address: addresses[randomAddressIndex],
           hospital: hospitals[i]._id,
           image: { data: Buffer.from("image data"), contentType: "image/jpeg" },
@@ -186,7 +231,7 @@ export async function seedDatabase() {
           country: "USA",
           age: 20 + j * 3,
           phoneBook: 2345678901 + j,
-          createdAt: new Date(),
+          createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
           address: addresses[randomAddressIndex],
           hospital: hospitals[i]._id,
           doctor: [], // Will update this with corresponding doctors after inserting
@@ -206,7 +251,7 @@ export async function seedDatabase() {
     for (const patient of patients) {
       const randomDoctor = doctors[Math.floor(Math.random() * doctors.length)];
       await Patient.findByIdAndUpdate(patient._id, {
-        doctor: randomDoctor._id,
+        doctor: [randomDoctor._id],
       });
       await Doctor.findByIdAndUpdate(randomDoctor._id, {
         $push: { patients: patient._id },
@@ -218,30 +263,55 @@ export async function seedDatabase() {
       patients.map((patient) => ({
         patient: patient._id,
         treatments: [], // Will add treatments separately
-        createdAt: new Date(),
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
       })),
     );
 
     // Medications
     const medications = await Medication.insertMany([
-      { name: "Aspirin", quantity: 30, fee: 10, createdAt: new Date() },
-      { name: "Ibuprofen", quantity: 20, fee: 15, createdAt: new Date() },
-      { name: "Tylenol", quantity: 30, fee: 4.99, createdAt: new Date() },
-      { name: "Amoxicillin", quantity: 20, fee: 10.99, createdAt: new Date() },
-      { name: "Benadryl", quantity: 25, fee: 7.99, createdAt: new Date() },
+      {
+        name: "Aspirin",
+        quantity: 30,
+        fee: 10,
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
+      },
+      {
+        name: "Ibuprofen",
+        quantity: 20,
+        fee: 15,
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
+      },
+      {
+        name: "Tylenol",
+        quantity: 30,
+        fee: 4.99,
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
+      },
+      {
+        name: "Amoxicillin",
+        quantity: 20,
+        fee: 10.99,
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
+      },
+      {
+        name: "Benadryl",
+        quantity: 25,
+        fee: 7.99,
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
+      },
     ]);
 
     // Treatments
     const treatments = await Treatment.insertMany(
       patients.map((patient, index) => ({
         name: `Treatment ${index + 1}`,
-        date: new Date(),
+        date: randomDateInRange(currentMonthStart, nextMonthEnd),
         totalFee: 100 + index * 10,
         doctor: doctors[Math.floor(Math.random() * doctors.length)]._id,
         medications: [
           medications[Math.floor(Math.random() * medications.length)]._id,
         ],
-        createdAt: new Date(),
+        createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
       })),
     );
 
@@ -258,15 +328,29 @@ export async function seedDatabase() {
 
     // Appointments
     await Appointment.insertMany(
-      patients.map((patient, index) => ({
-        title: `Appointment ${index + 1}`,
-        patient: patient._id,
-        doctor: doctors[Math.floor(Math.random() * doctors.length)]._id,
-        startDate: new Date(),
-        endDate: new Date(new Date().getTime() + 60 * 60 * 1000), // 1 hour later
-        status: "Scheduled",
-        createdAt: new Date(),
-      })),
+      patients.map((patient, index) => {
+        const chosenDoctor = doctors[Math.floor(Math.random() * doctors.length)];
+        const anchorDate =
+          index % 10 === 0
+            ? todayAvailabilityStart
+            : index % 10 === 1
+              ? tomorrowAvailabilityStart
+              : index % 10 === 2
+                ? nextWeekAvailabilityStart
+                : randomDateInRange(currentMonthStart, nextMonthEnd);
+        const startDate = atLocalTime(anchorDate, 9 + (index % 7), 0);
+        const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+
+        return {
+          title: `Appointment ${index + 1}`,
+          patient: patient._id,
+          doctor: chosenDoctor._id,
+          startDate,
+          endDate,
+          status: index % 5 === 0 ? "Completed" : "Scheduled",
+          createdAt: randomDateInRange(currentMonthStart, nextMonthEnd),
+        };
+      }),
     );
 
     // Messages
@@ -276,35 +360,35 @@ export async function seedDatabase() {
         recipient: patients[0]._id,
         onModel: "Patient",
         content: "Your appointment is confirmed.",
-        dateSent: new Date(),
+        dateSent: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
       {
         sender: patients[1]._id,
         recipient: doctors[1]._id,
         onModel: "Doctor",
         content: "I need to reschedule my appointment.",
-        dateSent: new Date(),
+        dateSent: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
       {
         sender: doctors[2]._id,
         recipient: patients[2]._id,
         onModel: "Patient",
         content: "Your lab results are ready.",
-        dateSent: new Date(),
+        dateSent: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
       {
         sender: patients[3]._id,
         recipient: doctors[3]._id,
         onModel: "Doctor",
         content: "Can I get a prescription refill?",
-        dateSent: new Date(),
+        dateSent: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
       {
         sender: doctors[4]._id,
         recipient: patients[4]._id,
         onModel: "Patient",
         content: "Reminder for your upcoming appointment.",
-        dateSent: new Date(),
+        dateSent: randomDateInRange(currentMonthStart, nextMonthEnd),
       },
     ]);
 

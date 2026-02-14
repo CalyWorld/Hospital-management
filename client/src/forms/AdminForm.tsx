@@ -19,6 +19,7 @@ type adminSignInSchemaType = z.infer<typeof adminFormSchema>;
 export default function AdminForm() {
   const dispatch = useDispatch();
   const [serverError, setServerError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const {
     register,
@@ -30,6 +31,8 @@ export default function AdminForm() {
   });
 
   const onSubmit: SubmitHandler<adminSignInSchemaType> = async (data) => {
+    setServerError(null);
+    setSubmitting(true);
     try {
       const adminUser = { username: data.username, password: data.password };
       const response = await fetch(buildApiUrl("/api/admin/login"), {
@@ -63,9 +66,10 @@ export default function AdminForm() {
           setServerError(errorData.message); // General errors that are not field-specific
         }
       }
-    } catch (err) {
-      console.log("Error occurred during admin sign-in", err);
+    } catch {
       setServerError("An unexpected error occurred. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -119,7 +123,9 @@ export default function AdminForm() {
           <p className="text-red-500 text-center">{serverError}</p>
         )}
         <div className="flex justify-center bg-darkBlue px-1 py-2 text-white rounded-md">
-          <button type="submit">Sign in</button>
+          <button type="submit" disabled={submitting}>
+            {submitting ? "Signing in..." : "Sign in"}
+          </button>
         </div>
       </form>
     </div>

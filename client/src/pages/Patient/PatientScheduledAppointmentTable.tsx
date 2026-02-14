@@ -1,6 +1,5 @@
-import { useParams } from "react-router";
 import { useState } from "react";
-import { Appointment, useAdminUser } from "../../contexts/adminUserContext";
+import { Appointment } from "../../contexts/adminUserContext";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,6 +10,8 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 interface Column {
   id: keyof Appointment;
@@ -47,15 +48,14 @@ function createData({ _id, title, status, startDate, doctor }: Appointment) {
 }
 
 export default function PatientScheduledAppointmentTable() {
-  const { useGetPatientAppointments } = useAdminUser();
+  const patientAppointmentData = useSelector(
+    (state: RootState) => state.doctorAndPatientAppointments.patientsAppointment,
+  ) as unknown as Appointment[];
+  const loading = useSelector(
+    (state: RootState) => state.doctorAndPatientAppointments.loading,
+  );
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { patientId } = useParams();
-  if (!patientId) {
-    return;
-  }
-  const patientAppointmentData = useGetPatientAppointments(patientId);
-  const loading = !patientAppointmentData;
 
   const rows = (
     patientAppointmentData?.map((appointment) => {

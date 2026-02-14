@@ -82,7 +82,7 @@ export interface PatientUser {
   createdAt: Date;
   hospital: string; // Reference to Hospital
   address?: string;
-  doctor?: string[]; // References to doctors
+  doctor?: (string | DoctorUser)[] | DoctorUser | string; // References to doctors (id or populated)
   actions?: JSX.Element;
   __v?: number;
   _id?: string;

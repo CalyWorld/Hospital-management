@@ -28,6 +28,9 @@ const fetchDoctors = async (): Promise<DoctorUser[]> => {
     credentials: "include", // Include this if using cookies
   });
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("Unauthorized");
+    }
     throw new Error("Failed to fetch doctors");
   }
   return response.json();
@@ -44,6 +47,9 @@ const fetchPatients = async (): Promise<PatientUser[]> => {
     credentials: "include", // Include this if using cookies
   });
   if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("Unauthorized");
+    }
     throw new Error("Failed to fetch patients");
   }
   return response.json();

@@ -26,6 +26,7 @@ describe('adminRoute HTTP', () => {
   const originalGetPatientAppointmentsByDate =
     AppointmentService.prototype.getPatientAppointmentsByDate;
   const originalUpdateDoctorDetails = DoctorService.prototype.updateDoctorDetails;
+  const originalDeleteDoctor = DoctorService.prototype.getDeleteDoctor;
   const originalUpdatePatientDetails = PatientService.prototype.updatePatientDetails;
   const originalDeletePatient = PatientService.prototype.deletePatient;
 
@@ -66,6 +67,7 @@ describe('adminRoute HTTP', () => {
     AppointmentService.prototype.getPatientAppointmentsByDate =
       originalGetPatientAppointmentsByDate;
     DoctorService.prototype.updateDoctorDetails = originalUpdateDoctorDetails;
+    DoctorService.prototype.getDeleteDoctor = originalDeleteDoctor;
     PatientService.prototype.updatePatientDetails = originalUpdatePatientDetails;
     PatientService.prototype.deletePatient = originalDeletePatient;
   });
@@ -182,6 +184,33 @@ describe('adminRoute HTTP', () => {
     assert.equal(response.body.firstName, 'Ana');
   });
 
+  it('DELETE /api/admin/doctor/:doctorId/delete removes doctor', async () => {
+    let deletedId = null;
+    DoctorService.prototype.getDeleteDoctor = async (doctorId) => {
+      deletedId = doctorId;
+      return { _id: doctorId };
+    };
+
+    const response = await request(app)
+      .delete('/api/admin/doctor/doc-1/delete')
+      .set('Authorization', 'Bearer test-token');
+
+    assert.equal(response.status, 200);
+    assert.equal(deletedId, 'doc-1');
+    assert.deepEqual(response.body, { message: 'Doctor deleted' });
+  });
+
+  it('DELETE /api/admin/doctor/:doctorId/delete returns 404 for unknown doctor', async () => {
+    DoctorService.prototype.getDeleteDoctor = async () => null;
+
+    const response = await request(app)
+      .delete('/api/admin/doctor/doc-404/delete')
+      .set('Authorization', 'Bearer test-token');
+
+    assert.equal(response.status, 404);
+    assert.deepEqual(response.body, { message: 'Doctor not found' });
+  });
+
   it('PATCH /api/admin/patient/:patientId validates payload', async () => {
     const response = await request(app)
       .patch('/api/admin/patient/pat-1')
@@ -240,6 +269,7 @@ describe('adminRoute HTTP', () => {
     let deletedId = null;
     PatientService.prototype.deletePatient = async (patientId) => {
       deletedId = patientId;
+      return { _id: patientId };
     };
 
     const response = await request(app)
@@ -249,6 +279,17 @@ describe('adminRoute HTTP', () => {
     assert.equal(response.status, 200);
     assert.equal(deletedId, 'pat-1');
     assert.deepEqual(response.body, { message: 'Patient deleted' });
+  });
+
+  it('DELETE /api/admin/patient/:patientId/delete returns 404 for unknown patient', async () => {
+    PatientService.prototype.deletePatient = async () => null;
+
+    const response = await request(app)
+      .delete('/api/admin/patient/pat-404/delete')
+      .set('Authorization', 'Bearer test-token');
+
+    assert.equal(response.status, 404);
+    assert.deepEqual(response.body, { message: 'Patient not found' });
   });
 
   it('GET /api/admin/patients/appointments/:date returns appointments', async () => {

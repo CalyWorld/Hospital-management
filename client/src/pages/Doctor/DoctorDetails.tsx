@@ -7,6 +7,7 @@ import { scheduledAppointMent } from "../../components/scheduledAppointment";
 import { availableTimeOfDay } from "../../components/availableTimeDay";
 import { availableDaysOfWeek } from "../../components/availableDayWeek";
 import { doctorRevenue } from "../../components/doctorRevenue";
+import { formatCurrencyByCountry } from "../../components/currency";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import { fetchDoctorThunk } from "../../redux/doctorAndPatientDetailsSlice";
@@ -111,13 +112,15 @@ export function DoctorDetails() {
                 <div className="flex justify-between">
                   <div>
                     <h2 className="text-darkBlue">Revenue last 30 days</h2>
-                    <h1 className="text-darkBlue">{`₱${totalRevenueCurrentMonth}`}</h1>
+                    <h1 className="text-darkBlue">
+                      {formatCurrencyByCountry(totalRevenueCurrentMonth, doctor.country)}
+                    </h1>
                   </div>
                   <div>chart</div>
                 </div>
                 <div className="">
                   <h2>All time revenue</h2>
-                  <h1>{`₱${totalRevenueAllTime}`}</h1>
+                  <h1>{formatCurrencyByCountry(totalRevenueAllTime, doctor.country)}</h1>
                 </div>
               </div>
               <div className=" flex flex-col bg-[#e5e7eb] gap-10 p-3 shadow rounded-md">
